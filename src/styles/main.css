@@ -395,3 +395,5 @@ img.thumb { object-fit: contain; }
 .audio-gate .menu-item { font-size: 1.5em; }
 .video-play { position: absolute; inset: 0; z-index: 4; display: grid; place-content: center; justify-items: center; gap: calc(14 * var(--u)); background: rgba(0, 0, 0, .7); color: var(--white); font-size: 1.6em; }
 .video-play svg { width: calc(140 * var(--u)); height: calc(140 * var(--u)); }
+.credits h3 { font-weight: 400; font-size: 1.2em; color: var(--g); text-shadow: var(--glow); margin-top: calc(10 * var(--u)); }
+.credits li .chip { margin-left: .5em; font-size: .8em; }

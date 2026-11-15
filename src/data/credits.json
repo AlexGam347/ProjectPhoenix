@@ -1,14 +1,54 @@
 {
   "team": "Project Phoenix team. NASA Space Apps Challenge.",
-  "sources": [
-    { "name": "DONKI Space Weather Database (NASA CCMC)", "use": "Real solar flares for the Night 4 storm.", "url": "https://ccmc.gsfc.nasa.gov/tools/DONKI/" },
-    { "name": "NASA Open APIs", "use": "Access to DONKI.", "url": "https://api.nasa.gov/" },
-    { "name": "RadLab (OSDR)", "use": "Radiation doses on the Space Station: why shielding matters.", "url": "https://visualization.osdr.nasa.gov/radlab/gui/data-api/" },
-    { "name": "Mars Trek", "use": "Real Mars terrain for the base site.", "url": "https://trek.nasa.gov/mars/" },
-    { "name": "OSDR Open Science Data Repository", "use": "Lettuce grown in space (OSD-385, OSD-723).", "url": "https://osdr.nasa.gov/bio/repo/" },
-    { "name": "Canadian Space Agency: Food production", "use": "Veggie experiment and growing food in space.", "url": "https://www.asc-csa.gc.ca/eng/youth-educators/toolkits/food-production/" },
-    { "name": "ECLSS (NASA)", "use": "Air and water recycling on the Space Station.", "url": "https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/" },
-    { "name": "NASA 3D Resources", "use": "Reference 3D models.", "url": "https://science.nasa.gov/3d-resources/" }
+  "spaceApps": [
+    {
+      "name": "DONKI Space Weather Database (NASA CCMC)",
+      "use": "Real solar flares. The Night 4 storm shows a real flare downloaded from DONKI.",
+      "url": "https://ccmc.gsfc.nasa.gov/tools/DONKI/",
+      "inGame": true
+    },
+    {
+      "name": "NASA Open APIs",
+      "use": "How the game reaches DONKI at build time.",
+      "url": "https://api.nasa.gov/"
+    },
+    {
+      "name": "RadLab (OSDR)",
+      "use": "Radiation doses on the Space Station: why shielding matters.",
+      "url": "https://visualization.osdr.nasa.gov/radlab/gui/data-api/"
+    },
+    {
+      "name": "Mars Trek",
+      "use": "Real Mars terrain for the base site.",
+      "url": "https://trek.nasa.gov/mars/"
+    },
+    {
+      "name": "OSDR Open Science Data Repository",
+      "use": "Lettuce grown in space (OSD-385, OSD-723).",
+      "url": "https://osdr.nasa.gov/bio/repo/"
+    },
+    {
+      "name": "Canadian Space Agency: Food production",
+      "use": "Veggie experiment and growing food in space.",
+      "url": "https://www.asc-csa.gc.ca/eng/youth-educators/toolkits/food-production/"
+    },
+    {
+      "name": "Canadian Space Agency: STEM resources for youth",
+      "use": "Educational activities that guided the tone for ages 7 to 14.",
+      "url": "https://www.asc-csa.gc.ca/eng/youth-educators/resources-stem-and-youth-organizations.asp"
+    }
+  ],
+  "other": [
+    {
+      "name": "ECLSS (NASA)",
+      "use": "Air and water recycling on the Space Station.",
+      "url": "https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/"
+    },
+    {
+      "name": "NASA 3D Resources",
+      "use": "Reference 3D models.",
+      "url": "https://science.nasa.gov/3d-resources/"
+    }
   ],
   "own": "The Central Superbase, its rooms, story and characters are the team's own design.",
   "ai": "Code written with AI assistance (Claude).",

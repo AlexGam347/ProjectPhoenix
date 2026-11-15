@@ -70,6 +70,12 @@ describe('textos', () => {
     expect(Object.keys(story.dreams)).toEqual(['1', '2', '3']);
     expect(Object.keys(story.endings).sort()).toEqual(['bad', 'good', 'mid']);
   });
+  it('los créditos separan los recursos de NASA Space Apps del resto', () => {
+    const space = credits.spaceApps.map((x) => x.name), other = credits.other.map((x) => x.name);
+    expect(space.some((n) => n.startsWith('DONKI'))).toBe(true);
+    expect(credits.spaceApps.find((x) => x.name.startsWith('DONKI'))?.inGame).toBe(true);
+    expect(space.filter((n) => other.includes(n))).toEqual([]);
+  });
   it('los créditos incluyen el aviso de la NASA tal cual', () => {
     expect(credits.disclaimer).toBe('NASA does not endorse any non-U.S. Government entity and is not responsible for information contained on non-U.S. Government websites.');
   });
