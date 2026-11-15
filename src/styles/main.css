@@ -384,3 +384,11 @@ img.thumb { object-fit: contain; }
 .zone-editor textarea { width: 100%; height: 110px; background: #011; color: #0f8; font: 13px var(--f); }
 .rotate { display: none; position: fixed; inset: 0; z-index: 2000; background: #000; color: var(--g); place-items: center; text-align: center; padding: 2em; font: 28px var(--f); }
 @media (orientation: portrait) and (max-width: 700px) { .rotate { display: grid; } }
+
+/* ---------- Permiso de audio y botón de reproducir ---------- */
+.audio-gate { position: absolute; inset: 0; z-index: 50; background: #000; display: grid; place-content: center; justify-items: center; gap: calc(30 * var(--u)); }
+.audio-gate .gate-icon { font-size: calc(140 * var(--u)); color: var(--g); filter: drop-shadow(0 0 calc(10 * var(--u)) rgba(98, 255, 143, .5)); }
+.audio-gate .gate-opts { display: grid; gap: calc(6 * var(--u)); }
+.audio-gate .menu-item { font-size: 1.5em; }
+.video-play { position: absolute; inset: 0; z-index: 4; display: grid; place-content: center; justify-items: center; gap: calc(14 * var(--u)); background: rgba(0, 0, 0, .7); color: var(--white); font-size: 1.6em; }
+.video-play svg { width: calc(140 * var(--u)); height: calc(140 * var(--u)); }

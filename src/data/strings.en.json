@@ -1,6 +1,5 @@
 {
   "title": "PROJECT PHOENIX",
-  "tapToStart": "TAP TO START",
   "menu.new": "NEW GAME",
   "menu.continue": "CONTINUE",
   "menu.options": "OPTIONS",
@@ -63,5 +62,9 @@
   "flare.title": "SOLAR FLARE",
   "flare.src": "NASA DONKI",
   "nosignal": "NO SIGNAL",
-  "earth": "EARTH"
+  "earth": "EARTH",
+  "options.mute": "MUTE",
+  "audio.on": "SOUND ON",
+  "audio.off": "SOUND OFF",
+  "video.play": "PLAY"
 }

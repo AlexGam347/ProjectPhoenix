@@ -1,11 +1,12 @@
 // Controlador de la aplicación: escala el escenario 16:9, guarda y pinta la pantalla de cada fase.
 import story from '../data/story.en.json';
 import { afterVideo, newGame, type Game } from '../state/game';
-import { clearSave, load, loadSettings, save, type Settings } from '../state/save';
+import { clearSave, load, loadSettings, save, saveSettings, type Settings } from '../state/save';
 import { loadFlare, type Flare } from '../nasa/donki';
 import { t } from '../i18n/i18n';
 import { unlock } from '../audio/audio';
 import { h } from './dom';
+import { px } from './pixelIcons';
 import { applySettings, openOptions } from './options';
 import type { Manifest } from './room/roomView';
 import { CreditsScreen } from './screens/credits';
@@ -61,12 +62,21 @@ export class App implements AppApi {
     this.flare = flare;
     this.menu();
     // El audio solo puede arrancar tras la primera interacción.
-    const tap = h('div', { class: 'tap-start', role: 'button', tabindex: '0' }, h('span', {}, t('tapToStart')));
-    const go = () => { unlock(); tap.remove(); (this.stage.querySelector('.menu .btn') as HTMLElement | null)?.focus(); };
-    tap.addEventListener('click', go);
-    tap.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') go(); });
-    this.stage.append(tap);
-    tap.focus();
+    // Los navegadores solo dejan sonar audio y vídeo tras un gesto del jugador: se le pregunta al empezar.
+    const choose = (muted: boolean) => {
+      this.settings.muted = muted;
+      saveSettings(this.settings);
+      applySettings(this.settings);
+      if (!muted) unlock();
+      gate.remove();
+      (this.stage.querySelector('.menu .btn') as HTMLElement | null)?.focus();
+    };
+    const on = h('button', { class: 'menu-item', onclick: () => choose(false), html: `${px('sound')} ${t('audio.on').toLowerCase()}` });
+    const off = h('button', { class: 'menu-item', onclick: () => choose(true), html: `${px('mute')} ${t('audio.off').toLowerCase()}` });
+    const gate = h('div', { class: 'audio-gate', role: 'dialog', 'aria-label': 'Sound' },
+      h('div', { class: 'gate-icon', html: px('sound') }), h('div', { class: 'gate-opts' }, on, off));
+    this.stage.append(gate);
+    (this.settings.muted ? off : on).focus();
   }
 
   private show(s: Screen, name: string) {
@@ -102,15 +112,15 @@ export class App implements AppApi {
     if (g.phase === 'final') clearSave(); else save(g);
     switch (g.phase) {
       case 'dream': {
-        const d = (story.dreams as Record<string, { video: string }>)[String(g.n)];
-        this.show(new StoryScreen({ video: d.video, label: t('dream', { n: g.n }), icon: 'moon' }, () => this.go(afterVideo(this.game))), `dream${g.n}`);
+        const d = (story.dreams as Record<string, { video: string; subs?: boolean }>)[String(g.n)];
+        this.show(new StoryScreen({ video: d.video, subs: d.subs, label: t('dream', { n: g.n }), icon: 'moon' }, () => this.go(afterVideo(this.game)), this.settings), `dream${g.n}`);
         break;
       }
       case 'night': this.show(new NightScreen(this), `night${g.n}`); break;
       case 'quiz': this.show(new QuizScreen(this), 'quiz'); break;
       case 'ending': {
         const e = story.endings[g.ending!];
-        this.show(new StoryScreen({ video: e.video, label: t(`result.${g.ending}`), icon: g.ending === 'good' ? 'rocket' : g.ending === 'mid' ? 'warn' : 'orbit' }, () => this.go(afterVideo(this.game))), 'ending');
+        this.show(new StoryScreen({ video: e.video, label: t(`result.${g.ending}`), icon: g.ending === 'good' ? 'rocket' : g.ending === 'mid' ? 'warn' : 'orbit' }, () => this.go(afterVideo(this.game)), this.settings), 'ending');
         break;
       }
       case 'result': this.show(new ResultScreen(this), 'result'); break;

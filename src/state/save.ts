@@ -26,8 +26,8 @@ export function clearSave() {
   try { localStorage.removeItem(KEY); } catch { /* nada */ }
 }
 
-export interface Settings { volume: number; reduceFlash: boolean; bigText: boolean; lang: 'en' }
-export const DEFAULT_SETTINGS: Settings = { volume: 0.7, reduceFlash: false, bigText: false, lang: 'en' };
+export interface Settings { volume: number; muted: boolean; reduceFlash: boolean; bigText: boolean; lang: 'en' }
+export const DEFAULT_SETTINGS: Settings = { volume: 0.7, muted: false, reduceFlash: false, bigText: false, lang: 'en' };
 
 export function loadSettings(): Settings {
   try {
