@@ -107,10 +107,10 @@ svg.px { width: 1em; height: 1em; display: inline-block; vertical-align: -.12em;
 
 .screen-earth { position: absolute; overflow: hidden; display: grid; place-items: center; text-align: center; color: #ffb46e; pointer-events: none; }
 .screen-earth canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
-.screen-earth .flare { position: relative; background: #1a0503; border: calc(3 * var(--u)) solid #ff7a3c; padding: .2em .7em; font-size: .85em; line-height: 1.05; animation: blink 1.4s steps(2) infinite; }
+.screen-earth .flare { position: relative; background: #1a0503; border: calc(3 * var(--u)) solid #ff7a3c; padding: .2em .7em; font-size: 1em; line-height: 1.05; animation: blink 1.4s steps(2) infinite; }
 .screen-earth .flare b { display: block; font-size: 2em; font-weight: 400; color: #ffcf8a; }
 .screen-earth .flare small { color: #ff9a6a; }
-.screen-earth .nosig { position: relative; color: var(--red); font-size: 2em; letter-spacing: .2em; text-shadow: 0 0 calc(8 * var(--u)) var(--red); }
+.screen-earth .nosig { position: relative; color: var(--red); font-size: 1.5em; letter-spacing: .2em; text-shadow: 0 0 calc(8 * var(--u)) var(--red); }
 
 .zones { position: absolute; inset: 0; width: 100%; height: 100%; }
 .zones polygon { fill: transparent; stroke: transparent; stroke-width: 2; vector-effect: non-scaling-stroke; cursor: pointer; outline: none; }
@@ -397,3 +397,8 @@ img.thumb { object-fit: contain; }
 .video-play svg { width: calc(140 * var(--u)); height: calc(140 * var(--u)); }
 .credits h3 { font-weight: 400; font-size: 1.2em; color: var(--g); text-shadow: var(--glow); margin-top: calc(10 * var(--u)); }
 .credits li .chip { margin-left: .5em; font-size: .8em; }
+
+/* ---------- Renders de Blender: noche hecha en CSS (los renders son de día) ---------- */
+.room.has-render.is-night .art { filter: brightness(.58) saturate(.7) contrast(1.08); }
+.room.has-render .fx .night { background: radial-gradient(ellipse at 50% 72%, rgba(10, 20, 45, .05) 0, rgba(4, 8, 22, .35) 45%, rgba(1, 3, 10, .78) 100%); }
+.room.has-render .fx .sand { background: rgba(200, 110, 40, .38); }

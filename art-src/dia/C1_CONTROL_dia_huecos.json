@@ -1,0 +1,24 @@
+{
+  "sala": "C1_CONTROL",
+  "resolucion": [
+    1920,
+    1080
+  ],
+  "fondo": "C1_CONTROL_dia_base.webp",
+  "huecos": {
+    "Blindaje": {
+      "rect_px": [
+        697,
+        321,
+        1223,
+        522
+      ],
+      "centro_px": [
+        960,
+        422
+      ],
+      "visible": true,
+      "capa": "C1_CONTROL_dia_upg_Blindaje.webp"
+    }
+  }
+}

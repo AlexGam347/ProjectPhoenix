@@ -46,6 +46,13 @@ not full. **Run `npm test` after changing numbers in `src/data/`.**
 Until renders arrive, the game uses the dossier sketches. Drop PNGs in `art-src/` with the names in
 `docs/ART_CONTRACT.md`, run `npm run images`, then redraw the zones with `?zones=edit`.
 
+### Team renders (day set)
+
+`node scripts/import-renders.mjs art-src/dia` imports renders named like `C2_AGUA_dia_base.webp` and
+`C2_AGUA_dia_upg_C1_DepositoI.webp` (the name table is in the script) and writes `public/assets/rooms/manifest.json`.
+`node scripts/check-renders.mjs` composes every room with all its layers and compares it with `*_dia_completa.webp`.
+Rooms with a render use the zones in `render.zones` of `src/data/rooms/*.json`; the sketches keep their own zones.
+
 ## NASA data
 
 - **DONKI** (NASA Open APIs / CCMC): Night 4 shows a real solar flare, downloaded at build time

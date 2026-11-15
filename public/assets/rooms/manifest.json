@@ -1,3 +1,334 @@
 {
- "images": {}
+ "images": {
+  "C1_CONTROL_base": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C1_CONTROL_base-1920.webp",
+   "srcset": "assets/rooms/C1_CONTROL_base-1280.webp 1280w, assets/rooms/C1_CONTROL_base-1920.webp 1920w"
+  },
+  "C1_CONTROL_upg_bli1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C1_CONTROL_upg_bli1-1920.webp",
+   "srcset": "assets/rooms/C1_CONTROL_upg_bli1-1280.webp 1280w, assets/rooms/C1_CONTROL_upg_bli1-1920.webp 1920w",
+   "rect": [
+    697,
+    321,
+    1223,
+    522
+   ]
+  },
+  "C2_AGUA_base": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C2_AGUA_base-1920.webp",
+   "srcset": "assets/rooms/C2_AGUA_base-1280.webp 1280w, assets/rooms/C2_AGUA_base-1920.webp 1920w"
+  },
+  "C2_AGUA_upg_dep1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C2_AGUA_upg_dep1-1920.webp",
+   "srcset": "assets/rooms/C2_AGUA_upg_dep1-1280.webp 1280w, assets/rooms/C2_AGUA_upg_dep1-1920.webp 1920w",
+   "rect": [
+    758,
+    92,
+    1115,
+    418
+   ]
+  },
+  "C2_AGUA_upg_dep2": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C2_AGUA_upg_dep2-1920.webp",
+   "srcset": "assets/rooms/C2_AGUA_upg_dep2-1280.webp 1280w, assets/rooms/C2_AGUA_upg_dep2-1920.webp 1920w",
+   "rect": [
+    1092,
+    92,
+    1381,
+    418
+   ]
+  },
+  "C2_AGUA_upg_dep3": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C2_AGUA_upg_dep3-1920.webp",
+   "srcset": "assets/rooms/C2_AGUA_upg_dep3-1280.webp 1280w, assets/rooms/C2_AGUA_upg_dep3-1920.webp 1920w",
+   "rect": [
+    742,
+    216,
+    1127,
+    544
+   ]
+  },
+  "C2_AGUA_upg_tal1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C2_AGUA_upg_tal1-1920.webp",
+   "srcset": "assets/rooms/C2_AGUA_upg_tal1-1280.webp 1280w, assets/rooms/C2_AGUA_upg_tal1-1920.webp 1920w",
+   "rect": [
+    903,
+    164,
+    981,
+    609
+   ]
+  },
+  "C2_AGUA_upg_tal2": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C2_AGUA_upg_tal2-1920.webp",
+   "srcset": "assets/rooms/C2_AGUA_upg_tal2-1280.webp 1280w, assets/rooms/C2_AGUA_upg_tal2-1920.webp 1920w",
+   "rect": [
+    889,
+    0,
+    986,
+    233
+   ]
+  },
+  "C2_AGUA_upg_rec1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C2_AGUA_upg_rec1-1920.webp",
+   "srcset": "assets/rooms/C2_AGUA_upg_rec1-1280.webp 1280w, assets/rooms/C2_AGUA_upg_rec1-1920.webp 1920w",
+   "rect": [
+    1106,
+    557,
+    1179,
+    693
+   ]
+  },
+  "C3_OXIGENO_base": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C3_OXIGENO_base-1920.webp",
+   "srcset": "assets/rooms/C3_OXIGENO_base-1280.webp 1280w, assets/rooms/C3_OXIGENO_base-1920.webp 1920w"
+  },
+  "C3_OXIGENO_upg_tan1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C3_OXIGENO_upg_tan1-1920.webp",
+   "srcset": "assets/rooms/C3_OXIGENO_upg_tan1-1280.webp 1280w, assets/rooms/C3_OXIGENO_upg_tan1-1920.webp 1920w",
+   "rect": [
+    820,
+    260,
+    1142,
+    420
+   ]
+  },
+  "C3_OXIGENO_upg_tan2": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C3_OXIGENO_upg_tan2-1920.webp",
+   "srcset": "assets/rooms/C3_OXIGENO_upg_tan2-1280.webp 1280w, assets/rooms/C3_OXIGENO_upg_tan2-1920.webp 1920w",
+   "rect": [
+    588,
+    260,
+    832,
+    420
+   ]
+  },
+  "C3_OXIGENO_upg_tan3": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C3_OXIGENO_upg_tan3-1920.webp",
+   "srcset": "assets/rooms/C3_OXIGENO_upg_tan3-1280.webp 1280w, assets/rooms/C3_OXIGENO_upg_tan3-1920.webp 1920w",
+   "rect": [
+    810,
+    378,
+    1154,
+    545
+   ]
+  },
+  "C3_OXIGENO_upg_ele1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C3_OXIGENO_upg_ele1-1920.webp",
+   "srcset": "assets/rooms/C3_OXIGENO_upg_ele1-1280.webp 1280w, assets/rooms/C3_OXIGENO_upg_ele1-1920.webp 1920w",
+   "rect": [
+    763,
+    670,
+    864,
+    812
+   ]
+  },
+  "C3_OXIGENO_upg_ele2": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C3_OXIGENO_upg_ele2-1920.webp",
+   "srcset": "assets/rooms/C3_OXIGENO_upg_ele2-1280.webp 1280w, assets/rooms/C3_OXIGENO_upg_ele2-1920.webp 1920w",
+   "rect": [
+    771,
+    583,
+    867,
+    727
+   ]
+  },
+  "C3_OXIGENO_upg_mox1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C3_OXIGENO_upg_mox1-1920.webp",
+   "srcset": "assets/rooms/C3_OXIGENO_upg_mox1-1280.webp 1280w, assets/rooms/C3_OXIGENO_upg_mox1-1920.webp 1920w",
+   "rect": [
+    985,
+    647,
+    1190,
+    770
+   ]
+  },
+  "C4_INVERNADERO_base": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C4_INVERNADERO_base-1920.webp",
+   "srcset": "assets/rooms/C4_INVERNADERO_base-1280.webp 1280w, assets/rooms/C4_INVERNADERO_base-1920.webp 1920w"
+  },
+  "C4_INVERNADERO_upg_des1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C4_INVERNADERO_upg_des1-1920.webp",
+   "srcset": "assets/rooms/C4_INVERNADERO_upg_des1-1280.webp 1280w, assets/rooms/C4_INVERNADERO_upg_des1-1920.webp 1920w",
+   "rect": [
+    779,
+    593,
+    849,
+    704
+   ]
+  },
+  "C4_INVERNADERO_upg_des2": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C4_INVERNADERO_upg_des2-1920.webp",
+   "srcset": "assets/rooms/C4_INVERNADERO_upg_des2-1280.webp 1280w, assets/rooms/C4_INVERNADERO_upg_des2-1920.webp 1920w",
+   "rect": [
+    839,
+    593,
+    903,
+    704
+   ]
+  },
+  "C4_INVERNADERO_upg_est1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C4_INVERNADERO_upg_est1-1920.webp",
+   "srcset": "assets/rooms/C4_INVERNADERO_upg_est1-1280.webp 1280w, assets/rooms/C4_INVERNADERO_upg_est1-1920.webp 1920w",
+   "rect": [
+    778,
+    0,
+    1287,
+    955
+   ]
+  },
+  "C4_INVERNADERO_upg_est2": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C4_INVERNADERO_upg_est2-1920.webp",
+   "srcset": "assets/rooms/C4_INVERNADERO_upg_est2-1280.webp 1280w, assets/rooms/C4_INVERNADERO_upg_est2-1920.webp 1920w",
+   "rect": [
+    1224,
+    0,
+    1860,
+    529
+   ]
+  },
+  "C4_INVERNADERO_upg_led1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C4_INVERNADERO_upg_led1-1920.webp",
+   "srcset": "assets/rooms/C4_INVERNADERO_upg_led1-1280.webp 1280w, assets/rooms/C4_INVERNADERO_upg_led1-1920.webp 1920w",
+   "rect": [
+    736,
+    650,
+    776,
+    927
+   ]
+  },
+  "C4_INVERNADERO_upg_led2": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C4_INVERNADERO_upg_led2-1920.webp",
+   "srcset": "assets/rooms/C4_INVERNADERO_upg_led2-1280.webp 1280w, assets/rooms/C4_INVERNADERO_upg_led2-1920.webp 1920w",
+   "rect": [
+    779,
+    0,
+    1920,
+    487
+   ]
+  },
+  "C5_ENERGIA_base": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C5_ENERGIA_base-1920.webp",
+   "srcset": "assets/rooms/C5_ENERGIA_base-1280.webp 1280w, assets/rooms/C5_ENERGIA_base-1920.webp 1920w"
+  },
+  "C5_ENERGIA_upg_bat1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C5_ENERGIA_upg_bat1-1920.webp",
+   "srcset": "assets/rooms/C5_ENERGIA_upg_bat1-1280.webp 1280w, assets/rooms/C5_ENERGIA_upg_bat1-1920.webp 1920w",
+   "rect": [
+    735,
+    598,
+    807,
+    739
+   ]
+  },
+  "C5_ENERGIA_upg_bat2": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C5_ENERGIA_upg_bat2-1920.webp",
+   "srcset": "assets/rooms/C5_ENERGIA_upg_bat2-1280.webp 1280w, assets/rooms/C5_ENERGIA_upg_bat2-1920.webp 1920w",
+   "rect": [
+    716,
+    793,
+    795,
+    928
+   ]
+  },
+  "C5_ENERGIA_upg_pan1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C5_ENERGIA_upg_pan1-1920.webp",
+   "srcset": "assets/rooms/C5_ENERGIA_upg_pan1-1280.webp 1280w, assets/rooms/C5_ENERGIA_upg_pan1-1920.webp 1920w",
+   "rect": [
+    703,
+    0,
+    1420,
+    77
+   ]
+  },
+  "C5_ENERGIA_upg_pan2": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C5_ENERGIA_upg_pan2-1920.webp",
+   "srcset": "assets/rooms/C5_ENERGIA_upg_pan2-1280.webp 1280w, assets/rooms/C5_ENERGIA_upg_pan2-1920.webp 1920w",
+   "rect": [
+    736,
+    0,
+    1360,
+    -142
+   ]
+  },
+  "C5_ENERGIA_upg_rea1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C5_ENERGIA_upg_rea1-1920.webp",
+   "srcset": "assets/rooms/C5_ENERGIA_upg_rea1-1280.webp 1280w, assets/rooms/C5_ENERGIA_upg_rea1-1920.webp 1920w",
+   "rect": [
+    1168,
+    565,
+    1181,
+    626
+   ]
+  },
+  "C5_ENERGIA_upg_rob1": {
+   "w": 1920,
+   "h": 1080,
+   "src": "assets/rooms/C5_ENERGIA_upg_rob1-1920.webp",
+   "srcset": "assets/rooms/C5_ENERGIA_upg_rob1-1280.webp 1280w, assets/rooms/C5_ENERGIA_upg_rob1-1920.webp 1920w",
+   "rect": [
+    629,
+    0,
+    683,
+    -184
+   ]
+  }
+ }
 }

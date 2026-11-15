@@ -17,6 +17,8 @@ export interface RoomDef {
   id: RoomId; cam: string; name: string; short: string; resource?: ProdRoom; placeholder: string;
   image: { w: number; h: number }; layers: { base: string; solar?: string; night?: string };
   restartZone?: string; clogZone?: string; zones: ZoneDef[]; anchors: Record<string, unknown>; art: string;
+  /** Zonas y anclas para la cámara de los renders de Blender (los bocetos usan zones/anchors). */
+  render?: { zones: ZoneDef[]; anchors: Record<string, unknown> };
 }
 export const ROOMS: Record<RoomId, RoomDef> = {
   control: controlJson as unknown as RoomDef, agua: aguaJson as unknown as RoomDef, oxi: oxiJson as unknown as RoomDef,
@@ -67,6 +69,9 @@ export class RoomView {
   private lastKey = '';
   private panX = 0;
   private usingImages: boolean;
+  /** Zonas y anclas de la imagen que se está mostrando (render o boceto). */
+  private zones: ZoneDef[];
+  private anchors: Record<string, unknown>;
 
   constructor(public def: RoomDef, private manifest: Manifest | null, private onZone: (z: ZoneDef) => void) {
     this.el = h('div', { class: 'room', 'data-room': def.id });
@@ -77,6 +82,9 @@ export class RoomView {
     this.chips = h('div', { class: 'upg-chips' });
     const base = manifest?.images[def.layers.base];
     this.usingImages = !!base;
+    this.zones = this.usingImages && def.render ? def.render.zones : def.zones;
+    this.anchors = this.usingImages && def.render ? def.render.anchors : def.anchors;
+    this.el.classList.toggle('has-render', this.usingImages);
     const aspect = base ? base.w / base.h : 16 / 9;
     if (aspect > 16 / 9 + 0.01) {
       // Render panorámico: la escena es más ancha que la pantalla y la vista gira (desplaza) con el puntero.
@@ -103,7 +111,7 @@ export class RoomView {
     svg.setAttribute('class', 'zones');
     svg.setAttribute('viewBox', '0 0 1 1');
     svg.setAttribute('preserveAspectRatio', 'none');
-    for (const z of this.def.zones) {
+    for (const z of this.zones) {
       const p = document.createElementNS(NS, 'polygon');
       p.setAttribute('points', z.poly.map((q) => q.join(',')).join(' '));
       p.setAttribute('data-zone', z.id);
@@ -130,7 +138,7 @@ export class RoomView {
     this.label.classList.add('on');
   }
 
-  zone(id: string) { return this.def.zones.find((z) => z.id === id); }
+  zone(id: string) { return this.zones.find((z) => z.id === id); }
 
   highlight(id: string | null) {
     this.hl = id;
@@ -167,7 +175,9 @@ export class RoomView {
         this.art.classList.add('flash-up');
       }
     }
-    this.chips.replaceChildren(...mine.map((u) => h('span', { class: u.id === v.newUpgrade ? 'new' : '' }, u.name)));
+    // Con renders, la lista solo enseña las mejoras que no tienen capa propia (por ejemplo, los prefiltros).
+    const listed = this.usingImages ? mine.filter((u) => !this.manifest?.images[u.layer]) : mine;
+    this.chips.replaceChildren(...listed.map((u) => h('span', { class: u.id === v.newUpgrade ? 'new' : '' }, u.name)));
   }
 
   private img(e: ImageEntry, cls: string) {
@@ -176,10 +186,11 @@ export class RoomView {
 
   update(v: RoomVisual) {
     this.renderArt(v);
+    this.el.classList.toggle('is-night', v.mode === 'night');
     const fx: HTMLElement[] = [];
     if (v.mode === 'night') fx.push(h('div', { class: 'night' }));
     if (v.storm === 'sand') fx.push(h('div', { class: 'sand' }), h('div', { class: 'sand-dust' }));
-    for (const z of this.def.zones) {
+    for (const z of this.zones) {
       if (!z.icon || !FX_ICONS[z.icon]) continue;
       const [cx, cy] = centroid(z.poly);
       fx.push(h('div', { class: 'icon', style: `left:${cx * 100}%;top:${cy * 100}%`, html: FX_ICONS[z.icon] }));
@@ -198,7 +209,7 @@ export class RoomView {
     }
     if (v.doors) {
       for (const [room, st] of Object.entries(v.doors)) {
-        const a = this.def.anchors[`door.${room}`] as number[] | undefined;
+        const a = this.anchors[`door.${room}`] as number[] | undefined;
         if (a) fx.push(h('div', { class: `doorlight ${st === 'ok' ? '' : st}`, style: `left:${a[0] * 100}%;top:${a[1] * 100}%` }));
       }
     }
@@ -210,7 +221,7 @@ export class RoomView {
   }
 
   private renderEarth(v: RoomVisual) {
-    const poly = this.def.anchors.earth as number[][] | undefined;
+    const poly = this.anchors.earth as number[][] | undefined;
     if (!poly || !v.earth || v.earth === 'normal') {
       this.earthEl?.remove();
       this.earthEl = null;
@@ -222,7 +233,9 @@ export class RoomView {
     if (this.earthEl?.dataset.mode === mode) return;
     this.earthEl?.remove();
     cancelAnimationFrame(this.noiseRaf);
-    const el = h('div', { class: 'screen-earth', 'data-mode': mode, style: `left:${b.x0 * 100}%;top:${b.y0 * 100}%;width:${(b.x1 - b.x0) * 100}%;height:${(b.y1 - b.y0) * 100}%` });
+    // El texto escala con el tamaño de la pantalla (en los renders es mucho más pequeña que en el boceto).
+    const fs = (b.x1 - b.x0) * 1920 * 0.055;
+    const el = h('div', { class: 'screen-earth', 'data-mode': mode, style: `left:${b.x0 * 100}%;top:${b.y0 * 100}%;width:${(b.x1 - b.x0) * 100}%;height:${(b.y1 - b.y0) * 100}%;font-size:calc(${fs.toFixed(1)} * var(--u))` });
     if (mode === 'flare' && v.flare) {
       const d = new Date(v.flare.peakTime.replace('Z', ':00Z'));
       const date = isNaN(+d) ? v.flare.peakTime.slice(0, 10) : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
