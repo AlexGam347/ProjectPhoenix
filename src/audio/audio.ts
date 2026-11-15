@@ -60,7 +60,10 @@ function noise(dur: number, gain = 0.2, filterFreq = 800, when = 0) {
 
 export const sfx = {
   click: () => tone(660, 0.06, 'square', 0.06),
-  beep: () => tone(900 + Math.random() * 300, 0.03, 'square', 0.025),
+  /** Voz de YANA: siempre el mismo sonido corto y suave, uno por letra (como en Undertale). */
+  blip: () => blip(),
+  /** Movimiento del cursor de la tablet. */
+  tick: () => tone(1200, 0.018, 'square', 0.02),
   door: () => { noise(0.45, 0.25, 1400); tone(110, 0.3, 'sawtooth', 0.04, 0.05, 70); },
   alarm: () => { tone(880, 0.18, 'square', 0.08); tone(660, 0.18, 'square', 0.08, 0.2); tone(880, 0.18, 'square', 0.08, 0.4); },
   hour: () => tone(440, 0.12, 'triangle', 0.08),
@@ -70,6 +73,25 @@ export const sfx = {
   buy: () => { tone(392, 0.1, 'triangle', 0.12); tone(587, 0.18, 'triangle', 0.12, 0.08); },
   solar: () => { noise(2.2, 0.5, 3000); tone(60, 2.0, 'sawtooth', 0.12, 0, 30); },
 };
+
+let lastBlip = 0;
+function blip() {
+  if (!ctx || !master || volume <= 0) return;
+  const t0 = ctx.currentTime;
+  if (t0 - lastBlip < 0.025) return; // nunca se solapan
+  lastBlip = t0;
+  const o = ctx.createOscillator(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+  o.type = 'triangle';
+  o.frequency.setValueAtTime(520, t0);
+  f.type = 'lowpass';
+  f.frequency.value = 1800;
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(0.07, t0 + 0.004);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.028);
+  o.connect(f).connect(g).connect(master);
+  o.start(t0);
+  o.stop(t0 + 0.035);
+}
 
 /** Ruido grave continuo durante las tormentas. */
 export function storm(on: boolean) {

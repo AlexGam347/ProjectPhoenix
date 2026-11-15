@@ -8,9 +8,9 @@ import { sfx } from '../../audio/audio';
 import { fmt, h } from '../dom';
 import { RES_COLOR, resIcon } from '../icons';
 import { ROOMS } from '../room/roomView';
-import { SB } from '../room/placeholder/engine.js';
 import { upgradeArt } from '../day/upgradeArt';
-import { YANA } from '../yana';
+import { YANA, yanaSprite } from '../yana';
+import { px } from '../pixelIcons';
 import type { AppApi, Screen } from '../app';
 
 /** Una frase de YANA con la causa principal. */
@@ -43,13 +43,13 @@ export class ResultScreen implements Screen {
         h('div', { class: 'rname', html: `${resIcon(r)}<span>${t(`res.${r}`)}</span>` }),
         h('div', { class: 'vbar' }, h('div', { class: 'cap', style: `height:${(Math.min(max, g.base.C[r]) / max) * 100}%` }), fillEl,
           h('div', { class: 'goal', style: `bottom:${(l.goal / max) * 100}%` })),
-        h('div', { class: 'rnum' }, h('b', {}, fmt(l.final)), h('span', {}, `${l.ok ? '✓' : '✗'} ${l.goal}`)),
+        h('div', { class: 'rnum' }, h('b', {}, fmt(l.final)), h('span', { html: `${px(l.ok ? 'check' : 'cross')} ${l.goal}` })),
         h('div', { class: 'rchips' },
-          l.produced ? chip('plus', `+${fmt(l.produced)} ⚙`, 'produced') : null,
-          l.tasks ? chip('plus', `+${fmt(l.tasks)} ✋`, 'tasks') : null,
-          l.wasted >= 0.05 ? chip('waste', `${fmt(l.wasted)} 🗑`, 'lost, storage full') : null,
-          used ? chip('minus', `−${fmt(used)} 👥`, 'used') : null,
-          l.storm ? chip('minus', `−${fmt(l.storm)} 🌪`, 'storm') : null));
+          l.produced ? chip('plus', `+${fmt(l.produced)}${px('gear')}`, 'produced') : null,
+          l.tasks ? chip('plus', `+${fmt(l.tasks)}${px('hand')}`, 'tasks') : null,
+          l.wasted >= 0.05 ? chip('waste', `${fmt(l.wasted)}${px('trash')}`, 'lost, storage full') : null,
+          used ? chip('minus', `−${fmt(used)}${px('crew')}`, 'used') : null,
+          l.storm ? chip('minus', `−${fmt(l.storm)}${px('warn')}`, 'storm') : null));
     });
     const tasks = rep.actions.filter((a) => a.kind === 'task').length;
     const fixes = rep.actions.filter((a) => a.kind === 'repair').length;
@@ -58,18 +58,18 @@ export class ResultScreen implements Screen {
     const stampKey = g.n === 4 ? `result.${g.ending}` : rep.pass ? 'result.passed' : 'result.retry';
     const stampCls = g.n === 4 ? g.ending! : rep.pass ? 'good' : 'bad';
     const next = h('button', { class: 'btn primary', onclick: () => { sfx.click(); this.app.go(afterResult(this.app.game)); } },
-      `${rep.pass || g.n === 4 ? t('result.next') : t('result.retry')} ▶`);
+      (rep.pass || g.n === 4 ? t('result.next') : t('result.retry')).toLowerCase());
     this.el = h('div', { class: 'screen' }, h('div', { class: 'mars-bg' }), h('div', { class: 'backdrop' }),
       h('div', { class: 'result term', role: 'dialog', 'aria-label': `${t('hud.night', { n: g.n })} ${t(stampKey)}` },
         h('header', {}, h('h2', {}, t('hud.night', { n: g.n })), h('div', { class: `stamp ${stampCls}` }, t(stampKey))),
         h('div', { class: 'rcols' }, ...cols),
         h('div', { class: 'jrow' },
           bought.length ? h('div', { class: 'jbought' }, ...bought.map((u) => h('span', { class: 'jitem', title: u.name, html: upgradeArt(u, this.app.manifest, 'sm') }))) : null,
-          h('span', { class: 'chip', 'aria-label': 'tasks done' }, `✋ ${tasks}`),
-          h('span', { class: 'chip', 'aria-label': 'repairs' }, `🔧 ${fixes}`),
-          quiz ? h('span', { class: `chip ${quiz.ok ? 'plus' : 'minus'}`, 'aria-label': 'question' }, `❓ ${quiz.ok ? '✓' : '✗'}`) : null),
+          h('span', { class: 'chip', 'aria-label': 'tasks done', html: `${px('hand')} ${tasks}` }),
+          h('span', { class: 'chip', 'aria-label': 'repairs', html: `${px('wrench')} ${fixes}` }),
+          quiz ? h('span', { class: `chip ${quiz.ok ? 'plus' : 'minus'}`, 'aria-label': 'question', html: `${px('quest')} ${px(quiz.ok ? 'check' : 'cross')}` }) : null),
         h('footer', {},
-          h('div', { class: 'yline' }, h('span', { class: 'yana-face sm', html: `<svg viewBox="-70 -125 190 200">${SB.ari(rep.pass ? 'ok' : 'alarm')}</svg>` }), explain(rep)),
+          h('div', { class: 'yline' }, h('span', { html: yanaSprite(rep.pass ? 'happy' : 'alarm', 'sm') }), explain(rep)),
           next)));
     (rep.pass ? sfx.ok : sfx.bad)();
     setTimeout(() => next.focus(), 50);

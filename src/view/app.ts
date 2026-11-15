@@ -103,14 +103,14 @@ export class App implements AppApi {
     switch (g.phase) {
       case 'dream': {
         const d = (story.dreams as Record<string, { video: string }>)[String(g.n)];
-        this.show(new StoryScreen({ video: d.video, label: t('dream', { n: g.n }), icon: '🌙' }, () => this.go(afterVideo(this.game))), `dream${g.n}`);
+        this.show(new StoryScreen({ video: d.video, label: t('dream', { n: g.n }), icon: 'moon' }, () => this.go(afterVideo(this.game))), `dream${g.n}`);
         break;
       }
       case 'night': this.show(new NightScreen(this), `night${g.n}`); break;
       case 'quiz': this.show(new QuizScreen(this), 'quiz'); break;
       case 'ending': {
         const e = story.endings[g.ending!];
-        this.show(new StoryScreen({ video: e.video, label: t(`result.${g.ending}`), icon: g.ending === 'good' ? '🚀' : g.ending === 'mid' ? '🛰' : '🌑' }, () => this.go(afterVideo(this.game))), 'ending');
+        this.show(new StoryScreen({ video: e.video, label: t(`result.${g.ending}`), icon: g.ending === 'good' ? 'rocket' : g.ending === 'mid' ? 'warn' : 'orbit' }, () => this.go(afterVideo(this.game))), 'ending');
         break;
       }
       case 'result': this.show(new ResultScreen(this), 'result'); break;

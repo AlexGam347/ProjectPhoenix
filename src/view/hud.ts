@@ -1,4 +1,4 @@
-// HUD: 4 barras (reserva, tope y meta), reloj de la noche, tripulación y estado de YANA.
+// HUD de la noche, superpuesto arriba a la derecha: noche y hora como en FNAF 3, las 4 barras y la señal.
 import { CONFIG } from '../data';
 import { RES, type Res, type Vec } from '../rules/types';
 import { t } from '../i18n/i18n';
@@ -18,29 +18,26 @@ export interface HudState {
 export class Hud {
   el: HTMLElement;
   private rows = {} as Record<Res, { row: HTMLElement; cap: HTMLElement; fill: HTMLElement; goal: HTMLElement; val: HTMLElement }>;
+  private night: HTMLElement;
   private clockEl: HTMLElement;
-  private hourBar: HTMLElement;
-  private yanaSt: HTMLElement;
+  private sig: HTMLElement;
 
   constructor() {
-    const bars = h('div', { class: 'bars', role: 'group', 'aria-label': 'Resources' });
+    const bars = h('div', { class: 'hbars', role: 'group', 'aria-label': 'Resources' });
     for (const r of RES) {
-      const cap = h('div', { class: 'cap' });
-      const fill = h('div', { class: 'fill', style: `background:${RES_COLOR[r]}` });
-      const goal = h('div', { class: 'goal', title: 'goal' });
-      const spill = h('span', { html: spillIcon(r) });
-      const val = h('div', { class: 'val' });
-      const row = h('div', { class: 'bar', 'data-res': r, role: 'meter', 'aria-label': t(`res.${r}`) },
-        h('div', { class: 'name', html: `${resIcon(r)}<span>${t(`res.${r}`)}</span>` }),
-        h('div', { class: 'track' }, cap, fill, goal, spill), val);
+      const cap = h('i', { class: 'cap' });
+      const fill = h('i', { class: 'fill', style: `background:${RES_COLOR[r]}` });
+      const goal = h('i', { class: 'goal' });
+      const val = h('b', { class: 'val' });
+      const row = h('div', { class: 'hrow', 'data-res': r, role: 'meter', 'aria-label': t(`res.${r}`) },
+        h('span', { html: resIcon(r) }), h('div', { class: 'htrack' }, cap, fill, goal, h('span', { html: spillIcon(r) })), val);
       this.rows[r] = { row, cap, fill, goal, val };
       bars.append(row);
     }
-    this.clockEl = h('div', { class: 'clock' });
-    this.hourBar = h('div', { class: 'hourbar' }, h('i'));
-    this.yanaSt = h('span', { class: 'yana-st' }, h('i'), h('span'));
-    this.el = h('div', { class: 'hud' }, bars,
-      h('div', { class: 'side' }, this.clockEl, this.hourBar, h('div', { class: 'meta' }, h('span', { 'aria-label': `crew ${CONFIG.crew}` }, `👥 ${CONFIG.crew}`), this.yanaSt)));
+    this.night = h('span', { class: 'hnight' });
+    this.clockEl = h('span', { class: 'hclock' });
+    this.sig = h('div', { class: 'hsig' });
+    this.el = h('div', { class: 'hud' }, h('div', { class: 'htime' }, this.night, this.clockEl), bars, this.sig);
   }
 
   update(s: HudState) {
@@ -50,8 +47,7 @@ export class Hud {
       const v = Math.max(0, s.values[r]);
       const capW = (s.caps[r] / max) * 100;
       o.cap.style.width = `${capW}%`;
-      o.fill.style.width = `calc(${Math.min(v, s.caps[r]) / max * 100}% - 8 * var(--u))`;
-      o.fill.style.minWidth = '0';
+      o.fill.style.width = `${(Math.min(v, s.caps[r]) / max) * 100}%`;
       const spill = o.row.querySelector('.spill') as HTMLElement | null;
       if (spill) spill.style.left = `${capW}%`;
       if (s.goal) { o.goal.style.display = ''; o.goal.style.left = `${(s.goal[r] / max) * 100}%`; } else o.goal.style.display = 'none';
@@ -59,22 +55,19 @@ export class Hud {
       o.row.classList.toggle('ok', !!s.goal && ok);
       o.row.classList.toggle('low', !!s.goal && !ok);
       o.row.classList.toggle('over', !!s.over?.[r]);
-      o.val.innerHTML = `${fmt(v)}<small>/${s.caps[r]}</small>${s.goal ? `<em>${ok ? '✓' : '▲'}${s.goal[r]}</em>` : ''}`;
+      o.val.textContent = fmt(v);
       o.row.setAttribute('aria-valuenow', String(Math.round(v)));
       o.row.setAttribute('aria-valuemax', String(s.caps[r]));
       o.row.setAttribute('aria-valuetext', `${t(`res.${r}`)} ${fmt(v)} of ${s.caps[r]}${s.goal ? `, goal ${s.goal[r]}` : ''}`);
     }
+    this.night.textContent = s.label.toLowerCase();
     if (s.clock !== null && s.clock !== undefined) {
-      const hh = Math.floor(s.clock), mm = Math.floor((s.clock - hh) * 60);
-      this.clockEl.innerHTML = `<span class="lbl">${s.label}</span><span>${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}</span>`;
-      (this.hourBar.firstChild as HTMLElement).style.width = `${(s.clock / CONFIG.hours) * 100}%`;
-      this.hourBar.style.display = '';
-    } else {
-      this.clockEl.innerHTML = `<span class="lbl">${s.label}</span>`;
-      this.hourBar.style.display = 'none';
-    }
-    this.yanaSt.classList.toggle('off', !s.signal);
-    (this.yanaSt.lastChild as HTMLElement).textContent = s.signal ? t('hud.ok') : t('hud.off');
+      // Como en FNAF 3: solo la hora en punto. 12 AM, 1 AM … 6 AM.
+      const hh = Math.min(6, Math.floor(s.clock + 1e-9));
+      this.clockEl.textContent = `${hh === 0 ? 12 : hh} am`;
+    } else this.clockEl.textContent = '';
+    this.sig.textContent = s.signal ? t('hud.ok').toLowerCase() : t('hud.off').toLowerCase();
+    this.sig.classList.toggle('off', !s.signal);
   }
 
   highlight(what: 'hud' | 'clock' | null) {

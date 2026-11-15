@@ -2,6 +2,7 @@
 // Si el vídeo aún no existe, se muestra un marco con un icono y continúa solo.
 import { t } from '../../i18n/i18n';
 import { h } from '../dom';
+import { px } from '../pixelIcons';
 import type { Screen } from '../app';
 
 export interface VideoDef { video: string; label: string; icon: string }
@@ -13,7 +14,7 @@ export class StoryScreen implements Screen {
 
   constructor(def: VideoDef, private onDone: () => void) {
     const base = import.meta.env.BASE_URL;
-    const skip = h('button', { class: 'btn skip', onclick: () => this.finish() }, `${t('story.skip')} ⏭`);
+    const skip = h('button', { class: 'btn skip', onclick: () => this.finish() }, t('story.skip').toLowerCase());
     this.el = h('div', { class: 'screen story' }, skip);
     const v = h('video', { playsinline: true, preload: 'auto', 'aria-label': def.label }) as HTMLVideoElement;
     v.append(
@@ -26,7 +27,7 @@ export class StoryScreen implements Screen {
       fellBack = true;
       v.remove();
       this.el.prepend(h('div', { class: 'video-slot', role: 'img', 'aria-label': def.label },
-        h('div', { class: 'slot-icon' }, def.icon), h('div', { class: 'slot-label' }, def.label), h('div', { class: 'slot-bar' }, h('i'))));
+        h('div', { class: 'slot-icon', html: px(def.icon) }), h('div', { class: 'slot-label' }, def.label), h('div', { class: 'slot-bar' }, h('i'))));
       this.timers.push(window.setTimeout(() => this.finish(), 4000));
     };
     v.addEventListener('error', placeholder, true);

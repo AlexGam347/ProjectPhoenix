@@ -1,6 +1,7 @@
 // Miniatura de cada mejora: render de Blender (UPG_{id}) si existe en el manifiesto; si no, icono SVG.
 import type { Res, Upgrade } from '../../rules/types';
 import { RES_COLOR, resIcon } from '../icons';
+import { px } from '../pixelIcons';
 import type { Manifest } from '../room/roomView';
 
 const TYPE_SHAPE: Record<Upgrade['type'], (c: string) => string> = {
@@ -33,4 +34,4 @@ export function upgradeArt(u: Upgrade, manifest: Manifest | null, size = 'md'): 
   return `<span class="thumb ${size} svg"><svg viewBox="0 0 64 64" aria-hidden="true">${TYPE_SHAPE[u.type](c)}</svg>${r ? `<span class="badge">${resIcon(r)}</span>` : ''}</span>`;
 }
 
-export const TYPE_ICON: Record<Upgrade['type'], string> = { C: '▣', P: '⚙', Pr: '🛡' };
+export const TYPE_ICON: Record<Upgrade['type'], string> = { C: px('tank'), P: px('gear'), Pr: px('shield') };

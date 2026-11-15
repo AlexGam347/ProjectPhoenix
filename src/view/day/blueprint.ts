@@ -5,6 +5,7 @@ import { h } from '../dom';
 import { RES_COLOR } from '../icons';
 import type { Manifest } from '../room/roomView';
 import { upgradeArt } from './upgradeArt';
+import { px } from '../pixelIcons';
 
 const VB = { x: -46, y: -22, w: 112, h: 63 };
 
@@ -68,7 +69,7 @@ export function blueprint(opts: {
     const st = opts.state(u);
     const inner = st === 'owned'
       ? upgradeArt(u, opts.manifest, 'sm')
-      : `<svg viewBox="0 0 40 48" class="marker"><path d="M20 2l10 14-10 14-10-14z"/><ellipse cx="20" cy="40" rx="13" ry="5" fill="none" stroke-width="3"/><ellipse cx="20" cy="40" rx="5" ry="2"/></svg>${st === 'locked' ? '<span class="lock">🔒</span>' : ''}`;
+      : `<svg viewBox="0 0 40 48" class="marker"><path d="M20 2l10 14-10 14-10-14z"/><ellipse cx="20" cy="40" rx="13" ry="5" fill="none" stroke-width="3"/><ellipse cx="20" cy="40" rx="5" ry="2"/></svg>${st === 'locked' ? `<span class="lock">${px('lock')}</span>` : ''}`;
     map.append(h('button', {
       class: `slot ${st}${u.id === opts.fresh ? ' fresh' : ''}`, style: pct(pos[0], pos[1]), 'aria-label': u.name, title: u.name,
       onclick: () => opts.onSlot(u), html: inner,

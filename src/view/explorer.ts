@@ -1,20 +1,18 @@
-// Explorador de la base: sala actual, navegación en estrella con compuertas, HUD, YANA y barra inferior.
-// Lo comparten la noche y el día.
-import type { ProdRoom, RoomId } from '../rules/types';
-import { PROD_ROOMS } from '../rules/types';
+// Turno de noche: sala actual con compuertas, HUD arriba a la derecha, tablet abajo a la izquierda
+// y YANA abajo a la derecha. En las salas, una flecha abajo vuelve a Control (como en FNAF 6).
+import type { RoomId } from '../rules/types';
 import { sfx } from '../audio/audio';
 import { h, sleep } from './dom';
 import { Hud } from './hud';
-import { resIcon } from './icons';
+import { px } from './pixelIcons';
 import { ROOMS, RoomView, type Manifest, type RoomVisual, type ZoneDef } from './room/roomView';
+import { Tablet } from './tablet';
 import { Yana } from './yana';
 
 export interface ExplorerOpts {
   manifest: Manifest | null;
   onZone: (z: ZoneDef, room: RoomId) => void;
   visual: (room: RoomId) => RoomVisual;
-  navBadge?: (room: ProdRoom) => boolean;
-  navExtras?: () => HTMLElement[];
   onEnterRoom?: (room: RoomId) => void;
 }
 
@@ -22,21 +20,25 @@ export class Explorer {
   el: HTMLElement;
   hud = new Hud();
   yana = new Yana();
+  tablet = new Tablet();
   room: RoomId = 'control';
   view: RoomView;
   private roomLayer: HTMLElement;
-  private navbar: HTMLElement;
+  private label: HTMLElement;
+  private back: HTMLElement;
   private doors: HTMLElement;
   private moving = false;
   private hlId: string | null = null;
 
   constructor(private opts: ExplorerOpts) {
     this.roomLayer = h('div', { class: 'layer' });
-    this.navbar = h('nav', { class: 'navbar', 'aria-label': 'Navigation' });
+    this.label = h('div', { class: 'cam-label' });
+    this.back = h('button', { class: 'edge-arrow down', 'aria-label': 'Back to Control', html: px('down'), onclick: () => this.go('control') });
     this.doors = h('div', { class: 'doors' }, h('i', { class: 'l' }), h('i', { class: 'r' }));
     this.view = this.makeView('control');
     this.roomLayer.append(this.view.el);
-    this.el = h('div', { class: 'screen' }, this.roomLayer, this.hud.el, this.navbar, this.yana.el, this.doors);
+    this.el = h('div', { class: 'screen night' }, this.roomLayer, h('div', { class: 'crt' }), this.label, this.hud.el, this.back,
+      this.tablet.el, this.yana.el, this.doors);
     this.yana.onHighlight = (id) => this.highlight(id);
     this.refresh();
   }
@@ -64,52 +66,31 @@ export class Explorer {
 
   refresh() {
     this.view.update(this.opts.visual(this.room));
-    this.renderNav();
+    this.label.textContent = ROOMS[this.room].name.toLowerCase();
+    this.back.classList.toggle('hidden', this.room === 'control');
     if (this.hlId) this.highlight(this.hlId);
   }
 
-  private navKey = '';
-
-  renderNav(force = false) {
-    // Solo se repinta si cambia algo: repintar en cada fotograma rompería los clics a medias.
-    const key = [this.room, ...PROD_ROOMS.map((r) => this.opts.navBadge?.(r) ?? false), ...(this.opts.navExtras?.() ?? []).map((e) => e.outerHTML)].join('|');
-    if (!force && key === this.navKey) return;
-    this.navKey = key;
-    const items: HTMLElement[] = [];
-    if (this.room === 'control') {
-      for (const r of PROD_ROOMS) {
-        const warn = this.opts.navBadge?.(r);
-        items.push(h('button', { class: 'btn', 'data-nav': r, onclick: () => this.go(r) },
-          h('span', { html: resIcon(r) }), ROOMS[r].short.toUpperCase(), warn ? h('span', { class: 'warn', 'aria-label': 'fault' }, '⚠') : null));
-      }
-    } else {
-      items.push(h('button', { class: 'btn', 'data-nav': 'control', onclick: () => this.go('control') }, `◀ ${ROOMS.control.short.toUpperCase()}`));
-    }
-    const extras = this.opts.navExtras?.() ?? [];
-    this.navbar.replaceChildren(
-      h('div', { class: 'room-name' }, ROOMS[this.room].name.toUpperCase()),
-      h('div', { class: 'center' }, ...items),
-      h('div', { class: 'right' }, ...extras),
-    );
-  }
-
-  /** Resalta una zona, una puerta o una parte del HUD (pistas y tutorial de YANA). */
+  /** Resalta una zona, una puerta, la tablet o una parte del HUD (pistas y tutorial de YANA). */
   highlight(id: string | null) {
     this.hlId = id;
     this.hud.highlight(id === 'hud' || id === 'clock' ? id : null);
-    this.navbar.querySelectorAll('.btn').forEach((b) => b.classList.remove('hl'));
+    this.back.classList.remove('hl');
     let zone: string | null = null;
+    let entry: string | null = null;
     if (id && id !== 'hud' && id !== 'clock') {
-      if (id.startsWith('door.') && this.room !== 'control') {
-        this.navbar.querySelector('[data-nav="control"]')?.classList.add('hl');
-      } else if (id.startsWith('nav.')) {
-        this.navbar.querySelector(`[data-nav="${id.slice(4)}"]`)?.classList.add('hl');
-      } else if (this.view.zone(id)) {
+      if (id === 'tablet') entry = 'bar';
+      else if (id.startsWith('door.') && this.room !== 'control') { this.back.classList.add('hl'); entry = 'nav.control'; }
+      else if (id.startsWith('nav.')) { entry = id; if (id === 'nav.control') this.back.classList.add('hl'); }
+      else if (this.view.zone(id)) {
         zone = id;
-        if (id.startsWith('door.')) this.navbar.querySelector(`[data-nav="${id.slice(5)}"]`)?.classList.add('hl');
+        entry = id.startsWith('door.') ? `nav.${id.slice(5)}` : `zone.${id}`;
       }
     }
     this.view.highlight(zone);
+    // La entrada de la tablet se ilumina si está abierta; si no, se ilumina la barra para invitar a subirla.
+    if (entry && entry !== 'bar' && !this.tablet.open) this.tablet.highlight('bar');
+    else this.tablet.highlight(entry);
   }
 
   destroy() { this.yana.clear(); this.view.destroy(); this.el.remove(); }

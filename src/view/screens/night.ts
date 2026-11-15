@@ -8,9 +8,8 @@ import { PROD_ROOMS, RES, type ProdRoom, type RoomId, type Step, type Vec } from
 import { finishNight, learn, nightSeed } from '../../state/game';
 import { t } from '../../i18n/i18n';
 import { sfx, storm } from '../../audio/audio';
-import { h } from '../dom';
 import { Explorer } from '../explorer';
-import { ActionPanel, type ActionOption } from '../minigames';
+import type { TabletEntry } from '../tablet';
 import { ROOMS, type RoomVisual, type ZoneDef } from '../room/roomView';
 import { YANA, scripted, type Line } from '../yana';
 import type { AppApi, Screen } from '../app';
@@ -24,16 +23,19 @@ export class NightScreen implements Screen {
   private ctx: NightCtx;
   private s: NightState;
   private ex: Explorer;
-  private panel: ActionPanel;
   private raf = 0;
   private last = 0;
   private lastInput = performance.now();
   private anim: { from: Vec; fromT: number; start: number } | null = null;
-  private busyEl: HTMLElement | null = null;
+  private onKey = (e: KeyboardEvent) => {
+    if (this.ended || this.ex.yana.busy && (e.key === 'Enter' || e.key === ' ') && !this.ex.tablet.open) return;
+    if (this.ex.tablet.key(e)) { e.preventDefault(); this.lastInput = performance.now(); }
+  };
   private visualKey = '';
   private taskCount: Record<string, number> = {};
   private ended = false;
   private tutorial: boolean;
+  private currentHl: string | null = null;
 
   constructor(private app: AppApi) {
     const g = app.game;
@@ -45,15 +47,15 @@ export class NightScreen implements Screen {
       manifest: app.manifest,
       onZone: (z, room) => this.onZone(z, room),
       visual: (room) => this.visual(room),
-      navBadge: (r) => this.s.signal && this.s.rooms[r].down,
-      navExtras: () => [h('button', { class: 'btn small ghost', onclick: () => this.wait(), 'aria-label': 'Wait one hour' }, `⏩ ${t('nav.wait')}`)],
       onEnterRoom: (room) => this.enterRoom(room),
     });
-    this.panel = new ActionPanel(this.ex.el);
+    this.ex.tablet.onToggle = () => { this.refreshTablet(); this.ex.highlight(this.currentHl); };
+    window.addEventListener('keydown', this.onKey);
+    this.refreshTablet();
     this.el = this.ex.el;
     this.el.addEventListener('pointerdown', () => (this.lastInput = performance.now()), true);
     this.el.addEventListener('keydown', () => (this.lastInput = performance.now()), true);
-    this.ex.yana.onHighlight = (id) => this.ex.highlight(id === 'fault' ? this.faultTarget() : id);
+    this.ex.yana.onHighlight = (id) => { this.currentHl = id === 'fault' ? this.faultTarget() : id; this.ex.highlight(this.currentHl); };
     const lines = scripted('nightStart', { night: g.n, flags: g.base.flags }, g.yanaSeen);
     this.say(lines);
     if (def.storm === 'sand') storm(true);
@@ -64,7 +66,7 @@ export class NightScreen implements Screen {
 
   // ---------- bucle ----------
   private paused() {
-    return this.ex.yana.blocking || !!this.anim || this.app.modalOpen || document.hidden || (this.tutorial && this.panel.open);
+    return this.ex.yana.blocking || !!this.anim || this.app.modalOpen || document.hidden;
   }
 
   private frame(now: number) {
@@ -77,8 +79,8 @@ export class NightScreen implements Screen {
     if (this.anim && now - this.anim.start >= ACTION_MS) this.endAnim();
     this.updateHud(now);
     const key = this.computeKey();
-    if (key !== this.visualKey) { this.visualKey = key; this.ex.refresh(); }
-    if (!this.ended && !this.paused() && !this.panel.open && !this.ex.yana.busy && now - this.lastInput > 15000) {
+    if (key !== this.visualKey) { this.visualKey = key; this.ex.refresh(); this.refreshTablet(); }
+    if (!this.ended && !this.paused() && !this.ex.tablet.open && !this.ex.yana.busy && now - this.lastInput > 15000) {
       this.lastInput = now;
       this.hint();
     }
@@ -135,7 +137,8 @@ export class NightScreen implements Screen {
   private dawn() {
     if (this.ended) return;
     this.ended = true;
-    this.panel.close(false);
+    this.ex.tablet.done();
+    this.ex.tablet.hide();
     storm(false);
     this.ex.yana.noSignal = false;
     this.say(scripted('dawn', {}, []), true);
@@ -196,6 +199,7 @@ export class NightScreen implements Screen {
 
   private enterRoom(room: RoomId) {
     this.lastInput = performance.now();
+    this.refreshTablet();
     const lines = scripted('enterRoom', { room }, this.app.game.yanaSeen);
     if (lines.length) this.say(lines);
   }
@@ -229,43 +233,53 @@ export class NightScreen implements Screen {
     return v;
   }
 
+  /** Entradas de la tablet para la sala actual (en Control, las salas). */
+  private entries(room: RoomId): TabletEntry[] {
+    const out: TabletEntry[] = [];
+    const wait: TabletEntry = { id: 'wait', label: 'wait 1 hour', kind: 'wait', run: () => this.wait() };
+    if (room === 'control') {
+      for (const r of PROD_ROOMS) out.push({ id: `nav.${r}`, label: ROOMS[r].name.toLowerCase(), kind: 'nav', alert: this.s.signal && this.s.rooms[r].down, run: () => void this.ex.go(r) });
+      return [...out, wait];
+    }
+    const r = room as ProdRoom, st = this.s.rooms[r];
+    const zone = this.problemZone(r) ?? undefined;
+    const fix = (label: string, steps: Step[], minus: Partial<Vec> | undefined, what: Parameters<NightScreen['act']>[1]): TabletEntry =>
+      ({ id: `fix.${r}`, label, kind: 'repair', alert: true, minus, steps, zone, run: () => this.act(() => repair(this.ctx, this.s, r), what) });
+    if (st.down && st.cause === 'fault') { const f = FAULT_BY_ID[st.faultId!]; out.push(fix(`fix ${f.name.toLowerCase()}`, f.steps, f.cost, { repair: f.id })); }
+    else if (st.down && st.cause === 'clog') out.push(fix('clean the dusty filter', CLOG_STEPS, this.ctx.def.clogCost, { clog: true }));
+    else if (st.down) out.push(fix('restart the room', SOLAR_STEPS, undefined, { solar: true }));
+    for (const task of TASKS.filter((x) => x.room === r)) {
+      out.push({
+        id: `task.${task.id}`, label: task.name.toLowerCase(), kind: 'task', plus: task.plus, minus: task.minus, steps: task.steps, zone: task.zone,
+        disabled: !canTask(this.ctx, this.s, task.id).ok, run: () => this.act(() => doTask(this.ctx, this.s, task.id), { task: task.id }),
+      });
+    }
+    return [...out, wait, { id: 'nav.control', label: 'back to control', kind: 'nav', run: () => void this.ex.go('control') }];
+  }
+
+  private refreshTablet() {
+    this.ex.tablet.set(ROOMS[this.ex.room].name.toLowerCase(), this.entries(this.ex.room));
+  }
+
   private onZone(z: ZoneDef, room: RoomId) {
     sfx.click();
     this.lastInput = performance.now();
-    if (z.nav) { this.ex.go(z.nav); return; }
-    if (z.special === 'kiosk') { this.panel.show(z.label, [], '🔒 ☀️'); return; }
+    if (z.nav) { void this.ex.go(z.nav); return; }
+    if (z.special === 'kiosk') { this.say([{ text: 'The catalog opens during the day.', state: 'hint' }]); return; }
     if (z.special === 'earth') {
-      const txt = this.ctx.def.storm === 'solar'
+      this.say([{ text: this.ctx.def.storm === 'solar'
         ? 'Solar flares throw particles that damage electronics. NASA records them in DONKI.'
-        : 'A signal takes 3 to 22 minutes to travel between Earth and Mars.';
-      this.panel.show(z.label, [], txt);
+        : 'A signal takes 3 to 22 minutes to travel between Earth and Mars.', state: 'normal' }]);
       return;
     }
     if (z.special === 'yana') { this.hint(); return; }
     if (room === 'control') return;
+    if (z.id === 'baterias') { this.say([{ text: 'Batteries store energy for the night and for storms.', state: 'normal' }]); return; }
+    // El objeto abre la tablet con su tarea (o su reparación) seleccionada.
+    this.refreshTablet();
     const r = room as ProdRoom;
-    const opts: ActionOption[] = [];
-    const st = this.s.rooms[r];
-    if (st.down && this.problemZone(r) === z.id) {
-      if (st.cause === 'fault') {
-        const f = FAULT_BY_ID[st.faultId!];
-        opts.push({ kind: 'repair', title: `${t('action.repair')}: ${f.name}`, minus: f.cost, steps: f.steps, run: () => this.act(() => repair(this.ctx, this.s, r), { repair: f.id }) });
-      } else if (st.cause === 'clog') {
-        opts.push({ kind: 'repair', title: t('action.clean'), minus: this.ctx.def.clogCost, steps: CLOG_STEPS, run: () => this.act(() => repair(this.ctx, this.s, r), { clog: true }) });
-      } else {
-        opts.push({ kind: 'repair', title: t('action.restart'), steps: SOLAR_STEPS, run: () => this.act(() => repair(this.ctx, this.s, r), { solar: true }) });
-      }
-    }
-    for (const task of TASKS.filter((x) => x.room === r && x.zone === z.id)) {
-      const ok = canTask(this.ctx, this.s, task.id).ok;
-      opts.push({
-        kind: 'task', title: task.name, plus: task.plus, minus: task.minus, steps: task.steps,
-        disabled: ok ? undefined : t('action.roomDown'),
-        run: () => this.act(() => doTask(this.ctx, this.s, task.id), { task: task.id }),
-      });
-    }
-    const info = z.id === 'baterias' ? 'Batteries store energy for the night and for storms.' : undefined;
-    this.panel.show(z.label, opts, info);
+    const sel = this.s.rooms[r].down && this.problemZone(r) === z.id ? `fix.${r}` : `zone.${z.id}`;
+    this.ex.tablet.show(sel);
   }
 
   /** Ejecuta una acción: ocupa la hora en curso y anima el salto del reloj. */
@@ -275,17 +289,17 @@ export class NightScreen implements Screen {
     fn();
     sfx.work();
     this.anim = { from, fromT, start: performance.now() };
-    const hh = String(Math.floor(this.s.t)).padStart(2, '0');
-    this.busyEl = h('div', { class: 'busy' }, h('div', {}, `⏩ ${hh}:00`));
-    this.el.append(this.busyEl);
+    const hh = Math.floor(this.s.t);
+    if (!this.ex.tablet.open) this.ex.tablet.show();
+    this.ex.tablet.working(`${hh === 0 ? 12 : hh} am`);
     this.pendingAfter = what;
   }
   private pendingAfter: { task?: string; repair?: string; clog?: boolean; solar?: boolean } | null = null;
 
   private endAnim() {
     this.anim = null;
-    this.busyEl?.remove();
-    this.busyEl = null;
+    this.ex.tablet.done();
+    this.refreshTablet();
     const what = this.pendingAfter;
     this.pendingAfter = null;
     const emits = takeEmits(this.s);
@@ -301,7 +315,7 @@ export class NightScreen implements Screen {
       const i = this.taskCount[what.task] ?? 0;
       this.taskCount[what.task] = i + 1;
       const fact = facts[i % Math.max(1, facts.length)];
-      if (fact) { this.say([{ text: fact, state: 'normal' }]); g = learn(g, fact); }
+      if (fact) { this.say([{ text: fact, state: 'happy' }]); g = learn(g, fact); }
     } else if (what.repair) {
       const f = FAULT_BY_ID[what.repair];
       const repeated = g.seenFaults.includes(f.id);
@@ -316,14 +330,14 @@ export class NightScreen implements Screen {
           onChoice: (i) => {
             const ok = i === q.answer;
             ok ? sfx.ok() : sfx.bad();
-            this.ex.yana.resolveChoice(ok ? `Correct! ${f.fact}` : `Not quite. ${f.fact}`, ok ? 'normal' : 'hint');
+            this.ex.yana.resolveChoice(ok ? `Correct! ${f.fact}` : `Not quite. ${f.fact}`, ok ? 'happy' : 'hint');
           },
         }]);
-      } else this.say([{ text: f.fact, state: 'normal' }]);
+      } else this.say([{ text: f.fact, state: 'happy' }]);
       if (this.tutorial) this.say(scripted('firstRepair', { night: this.s.n }, this.app.game.yanaSeen));
       return;
     } else if (what.clog) {
-      this.say([{ text: YANA.clogRepair, state: 'normal' }]);
+      this.say([{ text: YANA.clogRepair, state: 'happy' }]);
       g = learn(g, YANA.clogRepair);
     } else if (what.solar) {
       this.say([{ text: YANA.solarRepair, state: 'nosignal' }]);
@@ -338,6 +352,7 @@ export class NightScreen implements Screen {
   }
 
   destroy() {
+    window.removeEventListener('keydown', this.onKey);
     cancelAnimationFrame(this.raf);
     storm(false);
     this.ex.destroy();

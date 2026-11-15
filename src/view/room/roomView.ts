@@ -9,6 +9,7 @@ import { UPGRADES } from '../../data';
 import type { ProdRoom, RoomId } from '../../rules/types';
 import { bbox, centroid, h, polyToClip } from '../dom';
 import { FX_ICONS } from '../icons';
+import { px } from '../pixelIcons';
 import { t } from '../../i18n/i18n';
 
 export interface ZoneDef { id: string; label: string; poly: number[][]; nav?: ProdRoom; special?: 'kiosk' | 'earth' | 'yana'; icon?: string }
@@ -191,8 +192,8 @@ export class RoomView {
         if (v.problem.off) fx.push(h('div', { class: 'poly off', style: `clip-path:${clip}` }));
         if (v.problem.fx) fx.push(h('div', { class: `poly ${v.problem.fx}`, style: `clip-path:${clip};--cx:${cx * 100}%;--cy:${cy * 100}%` }));
         if (v.storm !== 'solar') fx.push(h('div', { class: 'glow', style: `left:${cx * 100}%;top:${cy * 100}%` }));
-        fx.push(h('div', { class: `tag${v.problem.off ? '' : ' warn'}`, style: `left:${cx * 100}%;top:${Math.max(0.12, bbox(z.poly).y0 - 0.03) * 100}%` },
-          v.problem.off ? `⚠ ${t('down.off')}` : '⚠'));
+        fx.push(h('div', { class: `tag${v.problem.off ? '' : ' warn'}`, style: `left:${cx * 100}%;top:${Math.max(0.12, bbox(z.poly).y0 - 0.03) * 100}%`,
+          html: `${px('warn')}${v.problem.off ? ` ${t('down.off').toLowerCase()}` : ''}` }));
       }
     }
     if (v.doors) {
@@ -226,7 +227,7 @@ export class RoomView {
       const d = new Date(v.flare.peakTime.replace('Z', ':00Z'));
       const date = isNaN(+d) ? v.flare.peakTime.slice(0, 10) : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
       el.style.background = '#03060b';
-      el.append(h('div', { class: 'flare' }, h('b', {}, `☀ ${v.flare.classType}`), t('flare.title'), h('br'), date, h('br'), h('small', {}, t('flare.src'))));
+      el.append(h('div', { class: 'flare' }, h('b', {}, v.flare.classType), t('flare.title'), h('br'), date, h('br'), h('small', {}, t('flare.src'))));
     } else {
       const c = h('canvas', { width: 160, height: 90 }) as HTMLCanvasElement;
       el.append(c, h('div', { class: 'nosig' }, t('nosignal')));

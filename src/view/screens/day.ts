@@ -9,12 +9,13 @@ import { sfx } from '../../audio/audio';
 import { fmt, h } from '../dom';
 import { RES_COLOR, resIcon } from '../icons';
 import { blueprint, type SlotState } from '../day/blueprint';
+import { px } from '../pixelIcons';
 import { TYPE_ICON, level, upgradeArt } from '../day/upgradeArt';
 import { Yana, scripted } from '../yana';
 import type { AppApi, Screen } from '../app';
 
 const CATS: RoomId[] = ['agua', 'oxi', 'com', 'ene', 'control'];
-const CAT_ICON = (c: RoomId) => (c === 'control' ? '🛡' : resIcon(c as Res));
+const CAT_ICON = (c: RoomId) => (c === 'control' ? px('shield') : resIcon(c as Res));
 
 export class DayScreen implements Screen {
   el: HTMLElement;
@@ -114,28 +115,28 @@ export class DayScreen implements Screen {
     const lv = h('div', { class: 'levels', 'aria-label': `level ${level(u)}` },
       ...line.map((x) => h('i', { class: `${g.base.owned.includes(x.id) ? 'own' : ''}${x.id === u.id ? ' cur' : ''}` }, ['I', 'II', 'III'][level(x) - 1])));
 
-    const why = owned ? `✓ ${t('day.owned')}`
+    const why = owned ? `${px('check')} ${t('day.owned').toLowerCase()}`
       : chk.ok ? ''
-        : chk.reason === 'req' ? `🔒 ${UPG_BY_ID[u.req!].name}`
-          : chk.reason === 'effort' ? `⚙ ${t('day.noWork')}`
+        : chk.reason === 'req' ? `${px('lock')} ${UPG_BY_ID[u.req!].name.toLowerCase()}`
+          : chk.reason === 'effort' ? `${px('gear')} ${t('day.noWork').toLowerCase()}`
             : `${resIcon(chk.res as Res)} ${t('day.noRes', { res: t(`res.${chk.res}`) })}`;
 
     const card = h('div', { class: 'ucard term' },
-      h('button', { class: 'arrow', 'aria-label': 'Previous', disabled: idx <= 0, onclick: () => { this.sel = list[idx - 1].id; this.renderCatalog(); } }, '◀'),
+      h('button', { class: 'arrow', 'aria-label': 'Previous', disabled: idx <= 0, onclick: () => { this.sel = list[idx - 1].id; this.renderCatalog(); }, html: px('left') }),
       h('div', { class: 'ucard-body' },
         h('div', { class: 'ucard-art', html: upgradeArt(u, this.app.manifest, 'lg') }),
         h('div', { class: 'ucard-info' },
-          h('div', { class: 'ucard-name' }, h('span', { class: 'type', 'aria-label': u.type }, TYPE_ICON[u.type]), u.name),
+          h('div', { class: 'ucard-name' }, h('span', { class: 'type', 'aria-label': u.type, html: TYPE_ICON[u.type] }), u.name),
           line.length > 1 ? lv : null,
           this.effectBars(u),
-          u.fact ? h('p', { class: 'fact' }, `💡 ${u.fact}`) : null)),
-      h('button', { class: 'arrow', 'aria-label': 'Next', disabled: idx >= list.length - 1, onclick: () => { this.sel = list[idx + 1].id; this.renderCatalog(); } }, '▶'));
+          u.fact ? h('p', { class: 'fact', html: `${px('bulb')} ` }, u.fact) : null)),
+      h('button', { class: 'arrow', 'aria-label': 'Next', disabled: idx >= list.length - 1, onclick: () => { this.sel = list[idx + 1].id; this.renderCatalog(); }, html: px('right') }));
 
     const actions = h('div', { class: 'cat-actions' },
       this.workPips(owned || !chk.ok ? 0 : u.effort),
       why ? h('div', { class: `why${owned ? ' ok' : ''}`, html: why }) : null,
-      h('button', { class: 'btn', disabled: !g.dayBought.length, onclick: () => { sfx.click(); this.app.patch(undo(this.g)); this.render(); } }, `↶ ${t('day.undo')}`),
-      h('button', { class: 'btn primary buy', disabled: owned || !chk.ok, onclick: () => this.buy(u) }, `${t('day.buy')}  ⚙${u.effort}`));
+      h('button', { class: 'btn', disabled: !g.dayBought.length, onclick: () => { sfx.click(); this.app.patch(undo(this.g)); this.render(); } }, t('day.undo').toLowerCase()),
+      h('button', { class: 'btn primary buy', disabled: owned || !chk.ok, onclick: () => this.buy(u), html: `${t('day.buy').toLowerCase()} <span class="cost">${px('gear')}${u.effort}</span>` }));
 
     this.catLayer.replaceChildren(
       h('div', { class: 'cat-head' }, h('h2', {}, t('day.catalog')), h('span', { class: 'chip' }, `${g.dayBought.length}/${MIN_PER_DAY}`)),
@@ -151,9 +152,9 @@ export class DayScreen implements Screen {
       const after = b.R[r] - cost;
       const tags: HTMLElement[] = [];
       if (cost) tags.push(h('span', { class: 'chip minus', 'aria-label': `costs ${cost} now` }, `−${cost}`));
-      if (cap) tags.push(h('span', { class: 'chip cap', 'aria-label': `storage plus ${cap}` }, `▣ +${cap}`));
+      if (cap) tags.push(h('span', { class: 'chip cap', 'aria-label': `storage plus ${cap}`, html: `${px('tank')}+${cap}` }));
       if (prod) tags.push(h('span', { class: 'chip plus', 'aria-label': `plus ${prod} per night` }, `+${prod}${t('day.perNight')}`));
-      if (up) tags.push(h('span', { class: 'chip warn', 'aria-label': `uses ${up} every night` }, `⚠ −${up}${t('day.perNight')}`));
+      if (up) tags.push(h('span', { class: 'chip warn', 'aria-label': `uses ${up} every night`, html: `${px('warn')}−${up}${t('day.perNight')}` }));
       return h('div', { class: `fx-row${tags.length ? '' : ' idle'}` },
         h('span', { html: resIcon(r) }),
         h('div', { class: 'fx-track' },
@@ -172,7 +173,7 @@ export class DayScreen implements Screen {
     g = learn(g, u.fact);
     this.app.patch(g);
     this.fresh = u.id;
-    this.yana.say({ text: `${u.name} ✓`, state: 'normal' }, { interrupt: true });
+    this.yana.say({ text: `${u.name} installed.`, state: 'happy' }, { interrupt: true });
     this.renderCatalog();
     this.catLayer.querySelector('.ucard-art')?.classList.add('bought');
   }

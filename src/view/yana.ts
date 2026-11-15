@@ -1,11 +1,11 @@
 // YANA: cuadro de diálogo con texto letra a letra y guion por disparadores (no es una IA).
 import yanaJson from '../data/yana.en.json';
-import { SB } from './room/placeholder/engine.js';
+import { px } from './pixelIcons';
 import { fill } from '../i18n/i18n';
 import { sfx } from '../audio/audio';
 import { h } from './dom';
 
-export type YanaState = 'normal' | 'hint' | 'alarm' | 'nosignal';
+export type YanaState = 'normal' | 'hint' | 'alarm' | 'nosignal' | 'happy';
 export interface Line {
   id?: string;
   text: string;
@@ -27,14 +27,22 @@ export const YANA = yanaJson as unknown as {
   result: Record<string, string>;
 };
 
-const PORTRAIT_STATE: Record<YanaState, string> = { normal: 'ok', hint: 'hint', alarm: 'alarm', nosignal: 'alarm' };
+/** Cara de la hoja de sprites del equipo (celdas de 64×64): ojos, >_ y ^^. Alarma y sin señal se derivan en CSS. */
+const FACE: Record<YanaState, string> = { normal: 'eyes', hint: 'term', happy: 'joy', alarm: 'eyes', nosignal: 'eyes' };
+
+/** Sprite de YANA para cualquier pantalla. */
+export const yanaSprite = (state: YanaState = 'normal', size: 'sm' | 'md' | 'lg' = 'md') =>
+  `<span class="ysprite ${size} face-${FACE[state]} st-${state}" role="img" aria-label="YANA"></span>`;
 
 /** Corta el texto como una transmisión con interferencias. */
-export const glitch = (s: string) => s.replace(/([aeiouáéíóú])(\S)/gi, (m, a, b) => (Math.random() < 0.18 ? `${a}… ${b}` : m));
+export const glitch = (s: string) => s.replace(/([aeiou])(\S)/gi, (m, a, b) => (Math.random() < 0.18 ? `${a}… ${b}` : m));
+
+const CHAR_MS = 32;
+const SILENT = /[\s.,!?;:'"()…*-]/;
 
 export class Yana {
   el: HTMLElement;
-  private portrait: HTMLElement;
+  private sprite: HTMLElement;
   private txt: HTMLElement;
   private more: HTMLElement;
   private choicesEl: HTMLElement;
@@ -50,15 +58,14 @@ export class Yana {
   onIdle: () => void = () => {};
 
   constructor() {
-    this.portrait = h('div', { class: 'portrait' });
+    this.sprite = h('div', { class: 'ysprite lg face-eyes st-normal', role: 'img', 'aria-label': 'YANA' });
     this.txt = h('div', { class: 'txt', 'aria-live': 'polite' });
-    this.more = h('div', { class: 'more' }, '▶');
+    this.more = h('div', { class: 'more', html: px('down') });
     this.choicesEl = h('div', { class: 'choices' });
-    const bubble = h('div', { class: 'bubble', role: 'button', tabindex: '0', 'aria-label': 'Continue' },
-      h('b', {}, 'YANA'), this.txt, this.choicesEl, this.more);
-    bubble.addEventListener('click', () => this.advance());
-    bubble.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.advance(); } });
-    this.el = h('div', { class: 'yana hidden' }, this.portrait, bubble);
+    const box = h('div', { class: 'ubox', role: 'button', tabindex: '0', 'aria-label': 'Continue' }, this.txt, this.choicesEl, this.more);
+    box.addEventListener('click', () => this.advance());
+    box.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.advance(); } });
+    this.el = h('div', { class: 'yana hidden' }, box, h('div', { class: 'yfloat' }, this.sprite));
     this.setState('normal');
   }
 
@@ -66,9 +73,8 @@ export class Yana {
   get busy() { return !!this.current; }
 
   setState(s: YanaState) {
-    this.el.classList.remove('normal', 'hint', 'alarm', 'nosignal');
-    this.el.classList.add(s);
-    this.portrait.innerHTML = `<svg viewBox="-70 -125 190 200">${SB.ari(PORTRAIT_STATE[s])}</svg>`;
+    this.el.dataset.state = s;
+    this.sprite.className = `ysprite lg face-${FACE[s]} st-${s}`;
   }
 
   say(lines: Line | Line[], opts: { interrupt?: boolean } = {}) {
@@ -88,6 +94,7 @@ export class Yana {
     if (!line) {
       this.onHighlight(null);
       this.onBlockChange(false);
+      this.setState(this.noSignal ? 'nosignal' : 'normal');
       this.hideTimer = window.setTimeout(() => { if (!this.current) this.el.classList.add('hidden'); }, 2500);
       this.onIdle();
       return;
@@ -97,31 +104,34 @@ export class Yana {
     this.el.classList.remove('hidden');
     this.full = state === 'nosignal' && !line.text.includes('…') ? glitch(line.text) : line.text;
     this.shown = 0;
-    this.txt.textContent = '';
-    this.more.style.display = 'none';
+    this.txt.textContent = '* ';
+    this.more.style.visibility = 'hidden';
     this.onHighlight(line.highlight ?? null);
+    // Como en Undertale: una letra cada vez y el mismo sonido corto por cada letra (no en espacios ni signos).
     this.typing = window.setInterval(() => {
-      this.shown += 2;
-      this.txt.textContent = this.full.slice(0, this.shown);
-      if (this.shown % 6 === 0) sfx.beep();
+      const ch = this.full[this.shown];
+      this.shown++;
+      this.txt.textContent = `* ${this.full.slice(0, this.shown)}`;
+      if (ch && !SILENT.test(ch)) sfx.blip();
       if (this.shown >= this.full.length) this.finishTyping();
-    }, 28);
+    }, CHAR_MS);
     this.onBlockChange(this.blocking);
   }
 
   private finishTyping() {
     clearInterval(this.typing);
     this.typing = 0;
-    this.txt.textContent = this.full;
+    this.txt.textContent = `* ${this.full}`;
     const line = this.current;
     if (!line) return;
     if (line.choices) {
       this.choicesEl.replaceChildren(...line.choices.map((c, i) => h('button', {
-        class: 'btn small', onclick: (e: Event) => { e.stopPropagation(); line.onChoice?.(i); },
+        class: 'menu-item', onclick: (e: Event) => { e.stopPropagation(); line.onChoice?.(i); },
       }, c.label)));
+      (this.choicesEl.firstChild as HTMLElement | null)?.focus();
       return;
     }
-    this.more.style.display = '';
+    this.more.style.visibility = 'visible';
     if (!line.block) this.hideTimer = window.setTimeout(() => { if (this.current === line) this.next(); }, Math.max(4000, this.full.length * 70));
   }
 
@@ -138,10 +148,10 @@ export class Yana {
     if (!this.current) return;
     this.current = { text, state };
     this.full = text;
-    this.txt.textContent = text;
+    this.txt.textContent = `* ${text}`;
     this.choicesEl.replaceChildren();
     this.setState(state);
-    this.more.style.display = '';
+    this.more.style.visibility = 'visible';
     const line = this.current;
     this.hideTimer = window.setTimeout(() => { if (this.current === line) this.next(); }, 4500);
   }

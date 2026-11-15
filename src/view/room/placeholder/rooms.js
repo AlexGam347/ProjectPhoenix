@@ -56,14 +56,11 @@ SB.scenes.control=function(){
   s+=MX.map(([a,b])=>box(a,b,.8,1.36,5.35,5.42,'#2A3139',{front:'#0D1E2D'})).join('');
   const monFronts=MX.map(([a,b])=>bars(a+.06,b-.06,.86,1.3,5.349,[.8,.7,.45,.6]));
   s+=monFronts.join('');
-  // YANA en su base de carga
-  const g=P(4.3,0,4.9), sc=.55; s+=`<ellipse cx="${r1(g[0])}" cy="${r1(g[1])}" rx="60" ry="9" fill="#2C333B" opacity=".55"/>`;
-  s+=`<g transform="translate(${r1(g[0])},${r1(g[1]-81*sc)}) scale(${sc})">${ari('ok')}</g>`;
   // mejoras
   s+=`<g class="base-only">${fz(4.5,6.4,3.15,4.05,d-.035,'none',DASH)}${TXT(P(5.45,3.5,d),'Shield',11)}</g>`;
   s+=`<g class="up">${fz(4.5,6.4,3.15,4.05,d-.035,'#0B1622')}<ellipse cx="${r1(P(5.45,3.6,d)[0])}" cy="${r1(P(5.45,3.6,d)[1])}" rx="16" ry="11" fill="none" stroke="#F0A040" stroke-width="3"/><ellipse cx="${r1(P(5.45,3.6,d)[0])}" cy="${r1(P(5.45,3.6,d)[1])}" rx="7" ry="5" fill="#F0A040"/>${TXT(P(5.45,3.27,d),'SHIELD ON',5.5,'#9FE0A0','middle',500)}
     ${marker(P(5.45,4.35,d),'Shield','u')}</g>`;
-  s+=marker(P(0,4.5,d),'1','b')+marker(P(0,1.75,5.3),'2','b')+marker(P(-4.95,1.5,6.9),'3','b')+marker([g[0],g[1]-125],'4','b')+marker(P(-7,3.35,10.3),'5','b');
+  s+=marker(P(0,4.5,d),'1','b')+marker(P(0,1.75,5.3),'2','b')+marker(P(-4.95,1.5,6.9),'3','b')+marker(P(-7,3.35,10.3),'5','b');
   { // Noche 4: tormenta solar (clímax). Luces rojas de emergencia, pantalla sin señal, barras bajando.
     const sp=SB.pts([[-3.8,1.3,d-.04],[3.8,1.3,d-.04],[3.8,4.2,d-.04],[-3.8,4.2,d-.04]]);
     let noise=''; for(let i=0;i<46;i++){const y=1.35+i*0.062; noise+=SB.line([-3.75,y,d-.05],[3.75,y,d-.05],i%3?'#3A4048':'#8A929B',2.2);}

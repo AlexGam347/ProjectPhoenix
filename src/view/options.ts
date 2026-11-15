@@ -25,7 +25,7 @@ export function openOptions(host: HTMLElement, s: Settings, onClose: () => void)
   const close = () => { el.remove(); backdrop.remove(); onClose(); };
   const el = h('div', { class: 'options panel', role: 'dialog', 'aria-label': t('options.title') },
     h('h2', {}, t('options.title')),
-    h('label', {}, `🔊 ${t('options.volume')}`, vol),
+    h('label', {}, t('options.volume').toLowerCase(), vol),
     h('label', {}, flash, t('options.reduceFlash')),
     h('label', {}, big, t('options.bigText')),
     h('button', { class: 'btn primary', onclick: close }, t('options.close')));
