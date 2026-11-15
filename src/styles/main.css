@@ -134,7 +134,10 @@ svg.px { width: 1em; height: 1em; display: inline-block; vertical-align: -.12em;
 .hclock { font-size: 1.7em; }
 .hclock.hl { color: var(--amber); animation: blink .8s steps(2) infinite; }
 .hbars { display: grid; gap: calc(6 * var(--u)); margin-top: calc(6 * var(--u)); }
-.hrow { display: grid; grid-template-columns: calc(36 * var(--u)) 1fr calc(64 * var(--u)); align-items: center; gap: calc(8 * var(--u)); }
+.hrow { display: grid; grid-template-columns: calc(36 * var(--u)) 1fr calc(20 * var(--u)) calc(64 * var(--u)); align-items: center; gap: calc(8 * var(--u)); }
+.hrow .trend { font-size: calc(20 * var(--u)); display: grid; place-items: center; }
+.hrow .trend.up { color: var(--g); }
+.hrow .trend.down { color: var(--red); }
 .hrow .val { font-weight: 400; text-align: right; color: var(--white); font-variant-numeric: tabular-nums; }
 .hrow.low .val { color: var(--red); }
 .htrack { position: relative; height: calc(18 * var(--u)); background: #07120c; }

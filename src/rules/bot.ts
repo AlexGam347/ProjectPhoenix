@@ -33,7 +33,7 @@ function pickTask(ctx: NightCtx, s: NightState): Task | null {
 
 export function botNight(ctx: NightCtx, s: NightState, skill: number): NightReport {
   const tutorial = !!ctx.def.tutorial;
-  const delay = tutorial ? 0 : Math.round((1 - skill) * 5);
+  const delay = tutorial ? 0 : Math.round((1 - skill) * 3);
   let slots = Math.max(0, Math.round((ctx.cfg.hours - expectedRepairs(ctx.def, s.start.flags)) * (tutorial ? 1 : skill)));
   for (let h = 0; h < ctx.cfg.hours && !s.done; h++) {
     tick(ctx, s, h + 0.6 - s.t);

@@ -28,11 +28,16 @@ npm run build
 | `src/data/` | **All editable content as JSON**: numbers, upgrades, tasks, faults, nights, rooms and zones, YANA lines, questions, story, credits |
 | `scripts/` | `convert-images.mjs` (PNG to WebP), `fetch-donki.mjs` (real solar flare at build time), `placeholder-zones.mjs` |
 
-**One formula.** Bars animate with `display(t)` and dawn uses `display(6)`, which is exactly
-`max(0, min(cap, reserve + production·uptime + tasks(+)) − crew − upkeep − tasks(−) − storm)`. A test checks it.
+**Continuous storage.** The night engine keeps a live reserve: production and consumption run at the same time and only
+what really does not fit (full bar) is lost. Bars and dawn are the same number. The simulator uses the nightly equivalent
+`max(0, min(cap, reserve + production·uptime + tasks(+) − crew − upkeep − tasks(−) − storm))`.
+The dossier capped storage *before* subtracting the night's consumption; with the 30 water tank that limited dawn water
+to 30 − 8 = 22 (exactly the Night 2 goal) and wasted water with a half-empty bar, so it was changed on purpose.
 
-**Balance.** `tests/simulate.test.ts` reproduces the dossier table. `tests/bot.test.ts` plays the real engine with a bot
-and checks it gives the same endings. **Run `npm test` after changing numbers in `src/data/`.**
+**Balance.** `tests/simulate.test.ts` holds the balance table (balanced plan good at every skill, machines only bad,
+storage only good only when playing very well, no upgrades bad). `tests/bot.test.ts` plays the real engine with a bot and
+checks the endings and the design lessons; `tests/storage.test.ts` checks every night that nothing is lost while a bar is
+not full. **Run `npm test` after changing numbers in `src/data/`.**
 
 **Text rule.** `tests/text.test.ts` fails if any player-facing text contains long dashes or separator dots.
 

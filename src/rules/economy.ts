@@ -17,12 +17,14 @@ export const cloneBase = (b: Base): Base => ({
 });
 
 /**
- * Fórmula del amanecer (prompt §3):
- * reserva = max(0, min(tope, reserva + ganado) − perdido)
+ * Reserva al amanecer, equivalente por noche del almacén continuo del motor:
+ * reserva = max(0, min(tope, reserva + ganado − perdido))
  * ganado = producción·funcionamiento + tareas(+); perdido = tripulación + mantenimiento + tareas(−) + tormenta.
+ * Primero se consume y luego se recorta al tope. (El dossier recortaba antes de consumir, lo que tiraba
+ * producción con el almacén a medias; se cambió a propósito tras las pruebas del equipo.)
  */
 export const dawnValue = (R: number, C: number, gained: number, lost: number) =>
-  Math.max(0, Math.min(C, R + gained) - lost);
+  Math.max(0, Math.min(C, R + gained - lost));
 
 export type BuyCheck = { ok: true } | { ok: false; reason: 'owned' | 'req' | 'effort' | 'resource'; res?: string };
 

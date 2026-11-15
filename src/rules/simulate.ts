@@ -1,7 +1,7 @@
 // Port literal de simulate(plan, skill) del dossier (sección 10, app.js).
 // Es la referencia de equilibrio: si se cambian cifras, tests/simulate.test.ts debe seguir en verde.
 import { RES, type Config, type Res, type Task, type Upgrade, type Vec } from './types';
-import { endingFor, type Ending } from './economy';
+import { dawnValue, endingFor, type Ending } from './economy';
 
 export type Plan = Record<string, number>; // id de mejora → día de compra (1..3)
 
@@ -82,7 +82,8 @@ export function simulate(cfg: Config, upgrades: Upgrade[], taskDefs: Task[], pla
         est[q as Res] += v!;
       });
     }
-    RES.forEach((r) => (R[r] = Math.max(0, Math.min(C[r], R[r] + gain[r]) - loss[r])));
+    // Almacén continuo: primero se consume, luego se recorta al tope (ver dawnValue en economy.ts).
+    RES.forEach((r) => (R[r] = dawnValue(R[r], C[r], gain[r], loss[r])));
     const miss = RES.filter((r) => R[r] < M[r]);
     nights.push({ n, R: { ...R }, C: { ...C }, miss, slots, repairs, tasksDone });
     if (n === 4) break;

@@ -1,7 +1,7 @@
 // Pantalla de la noche: reloj en tiempo real, tareas, averías, tormentas y pistas de YANA.
 import { CONFIG, FAULTS, FAULT_BY_ID, TASKS, nightDef } from '../../data';
 import {
-  canTask, dawnBase, display, doTask, estimateEnd, overflowing, repair, report, startNight, takeEmits, tick,
+  canTask, dawnBase, display, doTask, estimateEnd, netRate, overflowing, repair, report, startNight, takeEmits, tick,
   type NightCtx, type NightEmit, type NightState,
 } from '../../rules/night';
 import { PROD_ROOMS, RES, type ProdRoom, type RoomId, type Step, type Vec } from '../../rules/types';
@@ -103,7 +103,7 @@ export class NightScreen implements Screen {
       clock = this.anim.fromT + (this.s.t - this.anim.fromT) * e;
     }
     this.ex.hud.update({
-      values, caps: this.s.start.C, goal: CONFIG.goals[String(this.s.n)], over: overflowing(this.s),
+      values, caps: this.s.start.C, goal: CONFIG.goals[String(this.s.n)], over: overflowing(this.ctx, this.s), trend: this.anim ? null : netRate(this.ctx, this.s),
       label: t('hud.night', { n: this.s.n }), clock, signal: this.s.signal,
     });
   }

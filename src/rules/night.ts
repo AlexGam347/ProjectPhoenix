@@ -1,10 +1,11 @@
 // Motor de la noche en tiempo de juego (horas 0..6). Puro y determinista (semilla).
 // La vista llama a tick() con el tiempo real convertido a horas de juego y a doTask()/repair() con los clics.
 //
-// Una sola fórmula para la animación y el amanecer:
-//   display(t) = max(0, min(tope, R + producido(t) + tareas+) − consumo·t/6 − tareas− − tormenta)
-// En t = 6, display() es exactamente la fórmula del amanecer del prompt.
-import { addInto, dawnValue, vec, zero } from './economy';
+// Almacén continuo: la reserva R se actualiza en directo. Producción y consumo corren a la vez, y solo se pierde
+// lo que de verdad no cabe en ese momento (barra llena). Las barras y el amanecer son la misma cifra (display()).
+// Nota: la fórmula del dossier recortaba al tope ANTES de restar el consumo de toda la noche; con el tanque de
+// agua de 30 eso limitaba el agua del amanecer a 22 (la meta de la Noche 2) y hacía perder agua con la barra a medias.
+import { addInto, vec, zero } from './economy';
 import {
   PROD_ROOMS, RES, type Base, type Config, type Fault, type NightDef, type NightEvent,
   type ProdRoom, type Res, type Task, type Vec,
@@ -44,7 +45,14 @@ export interface NightState {
   n: number;
   t: number;
   start: Base;
+  /** Reserva en directo (lo que muestran las barras). */
+  R: Vec;
   produced: Vec;
+  consumed: Vec;
+  /** Lo que se perdió por no caber (barra llena). */
+  wasted: Vec;
+  /** Lo que faltó porque la reserva llegó a 0. */
+  short: Vec;
   plus: Vec;
   minus: Vec;
   storm: Vec;
@@ -85,7 +93,11 @@ export function startNight(ctx: NightCtx, base: Base, seed: number): NightState 
     n: ctx.def.n,
     t: 0,
     start: structuredClone(base),
+    R: { ...base.R },
     produced: zero(),
+    consumed: zero(),
+    wasted: zero(),
+    short: zero(),
     plus: zero(),
     minus: zero(),
     storm: zero(),
@@ -119,11 +131,41 @@ function roomFactor(room: RoomState, t: number): number {
   return room.efficiency;
 }
 
+/** Suma o resta a la reserva en directo: lo que no cabe se pierde y nunca baja de 0. */
+function applyRes(s: NightState, r: Res, delta: number) {
+  s.R[r] += delta;
+  if (s.R[r] > s.start.C[r]) { s.wasted[r] += s.R[r] - s.start.C[r]; s.R[r] = s.start.C[r]; }
+  if (s.R[r] < 0) { s.short[r] += -s.R[r]; s.R[r] = 0; }
+}
+
+/** Producción por hora de juego de cada recurso en este momento (salas paradas, eficiencia y reactor incluidos). */
+function prodRate(ctx: NightCtx, s: NightState): Vec {
+  const rate = fullRate(ctx, s);
+  const out = vec();
+  for (const r of RES) out[r] = rate[r] * roomFactor(s.rooms[r], s.t);
+  out.ene += s.start.nuc / ctx.cfg.hours; // el reactor no depende de ninguna sala
+  return out;
+}
+
+const consRate = (ctx: NightCtx, s: NightState, r: Res) => (ctx.cfg.crewUse[r] + s.start.U[r]) / ctx.cfg.hours;
+
+/** Ritmo neto por hora de cada recurso ahora mismo (para la flecha de tendencia del HUD). */
+export function netRate(ctx: NightCtx, s: NightState): Vec {
+  const p = prodRate(ctx, s), out = vec();
+  for (const r of RES) out[r] = p[r] - consRate(ctx, s, r);
+  return out;
+}
+
 function integrate(ctx: NightCtx, s: NightState, dt: number) {
   if (dt <= 0) return;
-  const rate = fullRate(ctx, s);
-  for (const r of RES) s.produced[r] += rate[r] * roomFactor(s.rooms[r], s.t) * dt;
-  s.produced.ene += (s.start.nuc / ctx.cfg.hours) * dt; // el reactor no depende de ninguna sala
+  // El ritmo es constante dentro del tramo (tick() parte en cada cambio), así que el recorte es exacto.
+  const p = prodRate(ctx, s);
+  for (const r of RES) {
+    const c = consRate(ctx, s, r);
+    s.produced[r] += p[r] * dt;
+    s.consumed[r] += c * dt;
+    applyRes(s, r, (p[r] - c) * dt);
+  }
   for (const r of PROD_ROOMS) {
     const room = s.rooms[r];
     if (room.down && s.t >= room.graceUntil - EPS) room.lostHours += dt;
@@ -230,6 +272,7 @@ export function doTask(ctx: NightCtx, s: NightState, taskId: string): NightState
   const task = ctx.tasks.find((t) => t.id === taskId)!;
   addInto(s.plus, task.plus);
   addInto(s.minus, task.minus);
+  for (const r of RES) { if (task.plus[r]) applyRes(s, r, task.plus[r]!); if (task.minus[r]) applyRes(s, r, -task.minus[r]!); }
   s.actions.push({ t: s.t, kind: 'task', id: task.id, room: task.room });
   spendHour(ctx, s);
   return s;
@@ -241,8 +284,10 @@ export function repair(ctx: NightCtx, s: NightState, room: ProdRoom): NightState
   if (st.cause === 'fault') {
     const f = ctx.faults.find((x) => x.id === st.faultId);
     addInto(s.minus, f?.cost);
+    for (const r of RES) if (f?.cost[r]) applyRes(s, r, -f.cost[r]!);
   } else if (st.cause === 'clog') {
     addInto(s.storm, ctx.def.clogCost);
+    for (const r of RES) if (ctx.def.clogCost?.[r]) applyRes(s, r, -ctx.def.clogCost[r]!);
   }
   s.actions.push({ t: s.t, kind: 'repair', id: st.faultId ?? st.cause ?? 'repair', room });
   const solar = st.cause === 'solar';
@@ -268,28 +313,16 @@ export function takeEmits(s: NightState): NightEmit[] {
   return e;
 }
 
-export const gained = (s: NightState): Vec => addInto({ ...s.produced }, s.plus);
-
-/** Lo perdido hasta ahora: consumo de la tripulación y mantenimiento proporcionales al tiempo, más gastos puntuales. */
-export function lostSoFar(ctx: NightCtx, s: NightState): Vec {
-  const out = vec();
-  const f = s.t / ctx.cfg.hours;
-  for (const r of RES) out[r] = (ctx.cfg.crewUse[r] + s.start.U[r]) * f + s.minus[r] + s.storm[r];
-  return out;
+/** Valor que muestran las barras ahora: la reserva en directo. En t = 6 es la reserva del amanecer. */
+export function display(_ctx: NightCtx, s: NightState): Vec {
+  return { ...s.R };
 }
 
-/** Valor que muestran las barras ahora. En t = 6 es exactamente la fórmula del amanecer. */
-export function display(ctx: NightCtx, s: NightState): Vec {
-  const g = gained(s), l = lostSoFar(ctx, s), out = vec();
-  for (const r of RES) out[r] = dawnValue(s.start.R[r], s.start.C[r], g[r], l[r]);
-  return out;
-}
-
-/** ¿Se está tirando producción porque el almacén está lleno? */
-export function overflowing(s: NightState): Record<Res, boolean> {
-  const g = gained(s);
+/** ¿Se está tirando producción ahora? Solo si la barra está llena y entra más de lo que sale. */
+export function overflowing(ctx: NightCtx, s: NightState): Record<Res, boolean> {
+  const net = netRate(ctx, s);
   const o = {} as Record<Res, boolean>;
-  for (const r of RES) o[r] = s.start.R[r] + g[r] > s.start.C[r] + EPS;
+  for (const r of RES) o[r] = s.R[r] >= s.start.C[r] - 1e-6 && net[r] > 1e-9;
   return o;
 }
 
@@ -303,6 +336,7 @@ export interface ReportLine {
   upkeep: number;
   spent: number; // tareas(−) y costes de averías
   storm: number;
+  short: number; // lo que faltó porque la reserva llegó a 0
   final: number;
   goal: number;
   ok: boolean;
@@ -325,16 +359,12 @@ export function report(ctx: NightCtx, s: NightState): NightReport {
   const lines = {} as Record<Res, ReportLine>;
   for (const r of RES) {
     const start = s.start.R[r];
-    const g = s.produced[r] + s.plus[r];
-    const crew = ctx.cfg.crewUse[r];
-    const upkeep = s.start.U[r];
-    const lost = crew + upkeep + s.minus[r] + s.storm[r];
-    const final = dawnValue(start, s.start.C[r], g, lost);
+    const final = s.R[r];
     const maxProd = ideal[r] * ctx.cfg.hours + (r === 'ene' ? s.start.nuc : 0);
     lines[r] = {
-      r, start, produced: s.produced[r], tasks: s.plus[r],
-      wasted: Math.max(0, start + g - s.start.C[r]),
-      crew, upkeep, spent: s.minus[r], storm: s.storm[r], final, goal: goal[r], ok: final >= goal[r] - EPS,
+      r, start, produced: s.produced[r], tasks: s.plus[r], wasted: s.wasted[r],
+      crew: ctx.cfg.crewUse[r], upkeep: s.start.U[r], spent: s.minus[r], storm: s.storm[r], short: s.short[r],
+      final, goal: goal[r], ok: final >= goal[r] - EPS,
       lostProduction: Math.max(0, maxProd - s.produced[r]),
     };
   }
@@ -353,10 +383,10 @@ export function estimateEnd(ctx: NightCtx, s: NightState): Vec {
   const left = ctx.cfg.hours - s.t;
   const est = vec();
   for (const r of RES) {
+    // Una sala parada cuenta como parada el resto de la noche (si no se arregla).
     const factor = s.rooms[r].down ? 0 : s.rooms[r].efficiency;
-    est[r] = s.start.R[r] + s.produced[r] + s.plus[r] + rate[r] * factor * left
-      + (r === 'ene' ? (s.start.nuc / ctx.cfg.hours) * left : 0)
-      - ctx.cfg.crewUse[r] - s.start.U[r] - s.minus[r] - s.storm[r];
+    const prod = rate[r] * factor + (r === 'ene' ? s.start.nuc / ctx.cfg.hours : 0);
+    est[r] = s.R[r] + (prod - consRate(ctx, s, r)) * left;
   }
   return est;
 }
@@ -364,6 +394,7 @@ export function estimateEnd(ctx: NightCtx, s: NightState): Vec {
 /** Reserva de la base al amanecer (lo que pasa a la mañana siguiente). */
 export function dawnBase(ctx: NightCtx, s: NightState): Base {
   const b = structuredClone(s.start);
-  b.R = display(ctx, { ...s, t: ctx.cfg.hours });
+  b.R = { ...s.R };
+  void ctx;
   return b;
 }
