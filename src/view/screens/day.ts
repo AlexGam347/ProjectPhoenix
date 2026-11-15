@@ -9,7 +9,7 @@ import { sfx } from '../../audio/audio';
 import { fmt, h } from '../dom';
 import { RES_COLOR, resIcon } from '../icons';
 import { blueprint, type SlotState } from '../day/blueprint';
-import { baseMap, hasBaseMap, roomCenter, type BaseMap, type MapPos } from '../day/baseMap';
+import { OVERHEAD_ROOMS, hasOverhead, roomOverhead } from '../day/roomOverhead';
 import { px } from '../pixelIcons';
 import { TYPE_ICON, level, upgradeArt } from '../day/upgradeArt';
 import { Yana, scripted } from '../yana';
@@ -26,15 +26,14 @@ export class DayScreen implements Screen {
   private cat: RoomId = 'agua';
   private sel: string = UPGRADES[0].id;
   private fresh: string | null = null;
-  /** Mapa del día y su desplazamiento (se conserva al volver del catálogo). */
-  private map: BaseMap | null = null;
-  private mapPos: MapPos | null = null;
+  /** Sala que se ve en la vista cenital. */
+  private room: RoomId = 'agua';
   private onKey = (e: KeyboardEvent) => {
-    if (this.bpLayer.classList.contains('hidden') || !this.map) return;
-    const d = ({ ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] } as Record<string, number[]>)[e.key];
-    if (!d) return;
+    if (this.bpLayer.classList.contains('hidden') || !hasOverhead(this.app.manifest)) return;
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    if ((e.target as HTMLElement)?.closest?.('.ucard')) return;
     e.preventDefault();
-    this.map.pan(d[0], d[1]);
+    this.step(e.key === 'ArrowLeft' ? -1 : 1);
   };
 
   constructor(private app: AppApi) {
@@ -49,6 +48,18 @@ export class DayScreen implements Screen {
     document.addEventListener('keydown', this.onKey);
   }
 
+  private step(d: number) {
+    const i = OVERHEAD_ROOMS.indexOf(this.room), n = OVERHEAD_ROOMS.length;
+    this.goRoom(OVERHEAD_ROOMS[(i + d + n) % n]);
+  }
+
+  private goRoom(r: RoomId) {
+    if (r === this.room) return;
+    sfx.door();
+    this.room = r;
+    this.renderBlueprint();
+    (this.bpLayer.querySelector(`.ov-tab[data-room="${r}"]`) as HTMLElement)?.focus();
+  }
 
   private get g() { return this.app.game; }
 
@@ -64,11 +75,8 @@ export class DayScreen implements Screen {
     sfx.door();
     this.bpLayer.classList.toggle('hidden', v !== 'blueprint');
     this.catLayer.classList.toggle('hidden', v !== 'catalog');
-    if (v === 'blueprint') {
-      // Al volver del catálogo, el mapa enseña la sala de la categoría que se miraba si estaba fuera de la vista.
-      if (this.map && this.map.roomInView() !== this.cat) this.mapPos = roomCenter(this.cat);
-      this.renderBlueprint(); (this.bpLayer.querySelector('.tab') as HTMLElement)?.focus();
-    } else { this.renderCatalog(); (this.catLayer.querySelector('.buy') as HTMLElement)?.focus(); }
+    if (v === 'blueprint') { if (hasOverhead(this.app.manifest)) this.room = this.cat; this.renderBlueprint(); (this.bpLayer.querySelector('.tab') as HTMLElement)?.focus(); }
+    else { this.renderCatalog(); (this.catLayer.querySelector('.buy') as HTMLElement)?.focus(); }
   }
 
   // ---------- caja de estado (como la de FNAF 6) ----------
@@ -96,9 +104,7 @@ export class DayScreen implements Screen {
 
   private renderBlueprint() {
     const g = this.g;
-    this.map?.destroy();
-    this.map = null;
-    const map = hasBaseMap(this.app.manifest) ? this.mapView() : blueprint({
+    const map = hasOverhead(this.app.manifest) ? this.overhead() : blueprint({
       manifest: this.app.manifest, state: this.slotState, fresh: this.fresh,
       onSlot: (u) => { sfx.click(); this.cat = u.room; this.sel = u.id; this.show('catalog'); },
       onRoom: (r) => { sfx.click(); this.cat = r; this.sel = UPGRADES.find((u) => u.room === r)!.id; this.show('catalog'); },
@@ -106,26 +112,29 @@ export class DayScreen implements Screen {
     const finished = h('button', { class: 'btn primary finished', disabled: !canEndDay(g), onclick: () => this.finish() },
       `${t('day.finished')}`, h('span', { class: 'count' }, `${Math.min(g.dayBought.length, MIN_PER_DAY)}/${MIN_PER_DAY}`));
     this.bpLayer.replaceChildren(map,
-      h('button', { class: 'tab left', onclick: () => { const r = this.map?.roomInView() ?? this.cat; this.cat = r; this.sel = UPGRADES.find((u) => u.room === r)!.id; this.show('catalog'); } }, t('day.catalog')),
+      h('button', { class: 'tab left', onclick: () => { this.cat = this.room; this.sel = UPGRADES.find((u) => u.room === this.room)!.id; this.show('catalog'); } }, t('day.catalog')),
       h('div', { class: 'daytag' }, t('hud.day', { n: g.n })),
       this.statBox(), finished);
     this.fresh = null;
   }
 
-  /** Mapa de la base (las 5 vistas cenitales) que se arrastra; el aviso «arrastra» sale hasta el primer arrastre. */
-  private mapView() {
-    const seen = this.g.yanaSeen.includes('hint.drag');
-    const hint = seen ? null : h('div', { class: 'map-hint', html: `${px('hand')} ${t('day.drag')}` });
-        this.map = baseMap({
-      manifest: this.app.manifest!, owned: this.g.base.owned, state: this.slotState, fresh: this.fresh, start: this.mapPos,
+  /** Vista cenital de la sala actual y la barra de salas (flechas y 5 pestañas). */
+  private overhead() {
+    const view = roomOverhead({
+      manifest: this.app.manifest!, room: this.room, owned: this.g.base.owned, state: this.slotState, fresh: this.fresh,
       onSlot: (u) => { sfx.click(); this.cat = u.room; this.sel = u.id; this.show('catalog'); },
-      onMove: (c) => { this.mapPos = c; },
-      onFirstDrag: () => {
-        hint?.classList.add('gone');
-        if (!this.g.yanaSeen.includes('hint.drag')) this.app.patch({ ...this.g, yanaSeen: [...this.g.yanaSeen, 'hint.drag'] });
-      },
     });
-    return h('div', { class: 'ov' }, this.map.el, hint);
+    const open = (r: RoomId) => UPGRADES.some((u) => u.room === r && this.slotState(u) === 'open');
+    const bar = h('div', { class: 'ov-bar term', role: 'tablist', 'aria-label': 'Rooms' },
+      h('button', { class: 'ov-arrow', 'aria-label': 'Previous room', onclick: () => this.step(-1), html: px('left') }),
+      ...OVERHEAD_ROOMS.map((r) => h('button', {
+        class: `ov-tab${r === this.room ? ' on' : ''}${open(r) ? ' has-open' : ''}`, role: 'tab', 'data-room': r,
+        'aria-selected': String(r === this.room), 'aria-label': t(`cat.${r}`), title: t(`cat.${r}`),
+        onclick: () => this.goRoom(r), html: `<span class="ci">${CAT_ICON(r)}</span>`,
+      })),
+      h('button', { class: 'ov-arrow', 'aria-label': 'Next room', onclick: () => this.step(1), html: px('right') }),
+      h('span', { class: 'ov-name' }, t(`cat.${this.room}`).toLowerCase()));
+    return h('div', { class: 'ov' }, view, bar);
   }
 
   // ---------- catálogo ----------
@@ -218,5 +227,5 @@ export class DayScreen implements Screen {
     this.app.go(endDay(this.g));
   }
 
-  destroy() { this.map?.destroy(); document.removeEventListener('keydown', this.onKey); this.yana.clear(); this.el.remove(); }
+  destroy() { document.removeEventListener('keydown', this.onKey); this.yana.clear(); this.el.remove(); }
 }

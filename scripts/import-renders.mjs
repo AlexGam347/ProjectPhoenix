@@ -10,7 +10,6 @@
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import sharp from 'sharp';
-import { makeMap } from './make-map.mjs';
 
 /** Nombre de la capa del equipo → id de la mejora en el juego. */
 export const LAYER_ID = {
@@ -49,7 +48,7 @@ const manifestPath = join(ROOT, 'manifest.json');
 const manifest = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, 'utf8')) : { images: {} };
 manifest.images ??= {};
 // Se rehacen todas las entradas de salas (también las antiguas sin juego, de antes de separar día y noche).
-for (const k of Object.keys(manifest.images)) if (/^((day|night)\/)?C\d_/.test(k)) delete manifest.images[k];
+for (const k of Object.keys(manifest.images)) if (/^((day|night)\/)?(C\d_|MAP_)/.test(k)) delete manifest.images[k];
 for (const f of readdirSync(ROOT)) if (/^C\d_.*\.webp$/.test(f)) rmSync(join(ROOT, f));
 
 const unknown = [];
@@ -91,15 +90,6 @@ for (const { set, src: SRC, parse } of SETS) {
     n++;
   }
   console.log(`${set}: ${n} imágenes importadas`);
-  if (set === 'day') {
-    // Mapa del día: las 5 vistas unidas con suelo de Marte alrededor (scripts/make-map.mjs).
-    const m = await makeMap(SRC, OUT);
-    manifest.images['day/MAP_base'] = {
-      w: m.w, h: m.h, src: `assets/rooms/day/${m.full}`,
-      srcset: `assets/rooms/day/${m.half} ${Math.round(m.w / 2)}w, assets/rooms/day/${m.full} ${m.w}w`,
-    };
-    console.log(`day: mapa ${m.w}×${m.h}`);
-  }
 }
 manifest.images = Object.fromEntries(Object.entries(manifest.images).sort(([a], [b]) => a.localeCompare(b)));
 writeFileSync(manifestPath, JSON.stringify(manifest, null, 1) + '\n');
