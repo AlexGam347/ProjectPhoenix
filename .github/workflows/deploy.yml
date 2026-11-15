@@ -1,4 +1,4 @@
-name: Desplegar en GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -24,9 +24,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Tests (incluida la tabla de equilibrio)
+      - name: Tests
         run: npm test
-      - name: Llamarada real de NASA DONKI
+      - name: Real NASA DONKI solar flare
         run: npm run donki
         env:
           NASA_API_KEY: ${{ secrets.NASA_API_KEY }}

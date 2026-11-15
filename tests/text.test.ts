@@ -19,7 +19,7 @@ describe('textos sin — – ·', () => {
     }
   });
   it('cadenas de la interfaz', () => {
-    for (const f of walk('src/view').filter((f) => f.endsWith('.ts'))) {
+    for (const f of walk('src/view').filter((f) => /\.(ts|js)$/.test(f))) {
       const bad = strings(readFileSync(f, 'utf8')).filter((s) => BANNED.test(s));
       expect(bad, f).toEqual([]);
     }

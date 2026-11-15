@@ -39,17 +39,17 @@ SB.scenes.control=function(){
   [[-.3,-.4,.5,.12],[.2,.1,.6,.1],[-.1,.5,.45,.1],[.4,-.2,.3,.09]].forEach(([a,b,rx,ry])=>s+=`<ellipse cx="${r1(ex+a*er)}" cy="${r1(ey+b*er)}" rx="${r1(rx*er)}" ry="${r1(ry*er)}" fill="#fff" opacity=".75"/>`);
   s+=`<circle cx="${r1(ex-er*.62)}" cy="${r1(ey)}" r="${r1(er*1.02)}" fill="#03060B" opacity=".9"/></g>`;
   s+=`<circle cx="${r1(ex+er*1.9)}" cy="${r1(ey-er*.7)}" r="${r1(er*.27)}" fill="#A9AFB5"/><circle cx="${r1(ex+er*1.9-er*.17)}" cy="${r1(ey-er*.7)}" r="${r1(er*.27)}" fill="#03060B" opacity=".85"/>`;
-  s+=TXT(P(-3.6,3.95,d),'TIERRA · imagen de hace 12 min',11,'#7FD3FF','start',500);
-  s+=TXT(P(-3.6,1.48,d),'TELESCOPIO · CÚPULA SUPERIOR',9.5,'#5D7D99','start',500);
+  s+=TXT(P(-3.6,3.95,d),'EARTH  12 MIN AGO',11,'#7FD3FF','start',500);
+  s+=TXT(P(-3.6,1.48,d),'TELESCOPE',9.5,'#5D7D99','start',500);
   // monitores laterales con las 4 barras
   const m1=bars(-5.9,-4.35,1.75,2.85,d-.03,[.8,.7,.45,.6]), m2=bars(4.35,5.9,1.75,2.85,d-.03,[.8,.7,.45,.6]);
   s+=m1+m2;
   // puertas: izquierda Energía (cerca) y Agua (lejos); derecha Invernadero y Oxígeno
-  s+=door(-7,7.6,8.7,COL.ene,'ENERGÍA',id)+door(-7,9.8,10.9,COL.agua,'AGUA',id);
-  s+=door(7,7.6,8.7,COL.com,'INVERNADERO',id)+door(7,9.8,10.9,COL.oxi,'OXÍGENO',id);
+  s+=door(-7,7.6,8.7,COL.ene,'ENERGY',id)+door(-7,9.8,10.9,COL.agua,'WATER',id);
+  s+=door(7,7.6,8.7,COL.com,'GREENHOUSE',id)+door(7,9.8,10.9,COL.oxi,'OXYGEN',id);
   // terminal del catálogo
   s+=box(-5.4,-4.5,0,1.15,6.6,7.2,'#66707B',{front:'#4E5862'});
-  const cat=fz(-5.3,-4.6,.66,1.06,6.59,'#0E2A3E'); s+=cat+TXT(P(-4.95,.9,6.59),'CATÁLOGO',7.5,'#9FD6FF');
+  const cat=fz(-5.3,-4.6,.66,1.06,6.59,'#0E2A3E'); s+=cat+TXT(P(-4.95,.9,6.59),'CATALOG',7.5,'#9FD6FF');
   // consola principal
   s+=box(-3.2,3.2,0,.8,4.9,5.7,'#5A6470',{top:'#3B434C'});
   const MX=[[-2.6,-1.5],[-.55,.55],[1.5,2.6]];
@@ -60,10 +60,9 @@ SB.scenes.control=function(){
   const g=P(4.3,0,4.9), sc=.55; s+=`<ellipse cx="${r1(g[0])}" cy="${r1(g[1])}" rx="60" ry="9" fill="#2C333B" opacity=".55"/>`;
   s+=`<g transform="translate(${r1(g[0])},${r1(g[1]-81*sc)}) scale(${sc})">${ari('ok')}</g>`;
   // mejoras
-  s+=`<g class="base-only">${fz(4.5,6.4,3.15,4.05,d-.035,'none',DASH)}${TXT(P(5.45,3.5,d),'Blindaje',11)}</g>`;
-  s+=`<g class="up">${fz(4.5,6.4,3.15,4.05,d-.035,'#0B1622')}<ellipse cx="${r1(P(5.45,3.6,d)[0])}" cy="${r1(P(5.45,3.6,d)[1])}" rx="16" ry="11" fill="none" stroke="#F0A040" stroke-width="3"/><ellipse cx="${r1(P(5.45,3.6,d)[0])}" cy="${r1(P(5.45,3.6,d)[1])}" rx="7" ry="5" fill="#F0A040"/>${TXT(P(5.45,3.27,d),'BLINDAJE ACTIVO',5.5,'#9FE0A0','middle',500)}
-    ${marker(P(5.45,4.35,d),'Blindaje','u')}</g>`;
-  s+=banner('C1 · SALA DE CONTROL','Cámara fija · lo primero que ve el jugador');
+  s+=`<g class="base-only">${fz(4.5,6.4,3.15,4.05,d-.035,'none',DASH)}${TXT(P(5.45,3.5,d),'Shield',11)}</g>`;
+  s+=`<g class="up">${fz(4.5,6.4,3.15,4.05,d-.035,'#0B1622')}<ellipse cx="${r1(P(5.45,3.6,d)[0])}" cy="${r1(P(5.45,3.6,d)[1])}" rx="16" ry="11" fill="none" stroke="#F0A040" stroke-width="3"/><ellipse cx="${r1(P(5.45,3.6,d)[0])}" cy="${r1(P(5.45,3.6,d)[1])}" rx="7" ry="5" fill="#F0A040"/>${TXT(P(5.45,3.27,d),'SHIELD ON',5.5,'#9FE0A0','middle',500)}
+    ${marker(P(5.45,4.35,d),'Shield','u')}</g>`;
   s+=marker(P(0,4.5,d),'1','b')+marker(P(0,1.75,5.3),'2','b')+marker(P(-4.95,1.5,6.9),'3','b')+marker([g[0],g[1]-125],'4','b')+marker(P(-7,3.35,10.3),'5','b');
   { // Noche 4: tormenta solar (clímax). Luces rojas de emergencia, pantalla sin señal, barras bajando.
     const sp=SB.pts([[-3.8,1.3,d-.04],[3.8,1.3,d-.04],[3.8,4.2,d-.04],[-3.8,4.2,d-.04]]);
@@ -71,10 +70,10 @@ SB.scenes.control=function(){
     const lamps=[-2.4,2.4].map(x=>fy(h-.03,x-.22,x+.22,3,d-.6,'#FF2A1F')).join('');
     const beacons=[[-7,2.47,8.15],[-7,2.47,10.35],[7,2.47,8.15],[7,2.47,10.35]].map(p=>alarm(p,46,id)+`<circle cx="${r1(P(...p)[0])}" cy="${r1(P(...p)[1])}" r="4.5" fill="#FF4A3D"/>`).join('');
     const dark=`<g opacity=".75">${MX.map(([a,b])=>fz(a+.06,b-.06,.86,1.3,5.348,'#2A0A08')).join('')}</g>`;
-    s+=night(id,[],`<rect width="960" height="540" fill="#C21E12" opacity=".22"/>${lamps}<polygon points="${sp}" fill="#14181D"/>${noise}`+TXT(P(0,2.75,d),'SIN SEÑAL',22,'#FF6A5E')+TXT(P(0,2.35,d),'tormenta solar · comunicaciones caídas',10,'#C9CFD6','middle',500)+dark+beacons
-      +night2('NOCHE 4 · TORMENTA SOLAR','Todo en rojo: reinicia las salas mientras bajan las barras')+marker(P(-7,1.4,10.35),'!','h')+marker(P(7,1.4,10.35),'!','h'));
+    s+=night(id,[],`<rect width="960" height="540" fill="#C21E12" opacity=".22"/>${lamps}<polygon points="${sp}" fill="#14181D"/>${noise}`+TXT(P(0,2.75,d),'NO SIGNAL',22,'#FF6A5E')+TXT(P(0,2.35,d),'SOLAR STORM',10,'#C9CFD6','middle',500)+dark+beacons
+      +night2('','')+marker(P(-7,1.4,10.35),'!','h')+marker(P(7,1.4,10.35),'!','h'));
   }
-  return svgWrap(id,'Boceto de la Sala de Control',s);
+  return svgWrap(id,'Control Room',s);
 };
 
 /* ---------------- 2 · AGUA ---------------- */
@@ -95,17 +94,16 @@ SB.scenes.agua=function(){
   s+=SB.line([-6,4.05,d-.02],[6,4.05,d-.02],'#5E86A8',6)+SB.line([5.98,3.0,7],[5.98,3.0,d],'#5E86A8',5)+SB.line([5.98,3.4,7],[5.98,3.4,d],'#5E86A8',5);
   // fundidor de hielo
   s+=box(-4.9,-2.3,0,1.7,7.0,8.8,'#7C8792')+box(-4.5,-2.7,1.7,2.35,7.4,8.4,'#68737E');
-  const heat=fz(-4.3,-2.9,.55,1.05,6.99,'#FF8A3C'); s+=heat+fz(-4.3,-2.9,1.25,1.5,6.99,'#D9DEE3')+TXT(P(-3.6,1.33,6.99),'FUNDIDOR',8,'#2A333C');
+  const heat=fz(-4.3,-2.9,.55,1.05,6.99,'#FF8A3C'); s+=heat+fz(-4.3,-2.9,1.25,1.5,6.99,'#D9DEE3')+TXT(P(-3.6,1.33,6.99),'ICE MELTER',8,'#2A333C');
   s+=SB.line([-3.6,2.35,7.9],[-3.6,4.05,d],'#5E86A8',5);
   // filtro
   s+=cyl(1.1,9.2,.4,0,1.9,'#8FA9C0',id)+SB.line([1.1,1.9,9.2],[1.1,4.05,d],'#5E86A8',4);
   s+=`<g class="base-only">${fy(.01,2.5,4.4,6.0,7.0,'none',DASH)}${TXT(P(3.45,.05,6.5),'P2',14)}</g>`;
-  s+=`<g class="up">${box(2.5,4.4,0,1.9,6.0,7.0,'#E3E8EC')}${fz(2.65,4.25,1.3,1.75,5.99,'#C7D0D8')}${fz(2.65,3.4,.25,1.15,5.99,'#B9C4CE')}${fz(3.5,4.25,.25,1.15,5.99,'#B9C4CE')}${TXT(P(3.45,1.47,5.99),'RECICLADOR',8,'#2A333C')}
+  s+=`<g class="up">${box(2.5,4.4,0,1.9,6.0,7.0,'#E3E8EC')}${fz(2.65,4.25,1.3,1.75,5.99,'#C7D0D8')}${fz(2.65,3.4,.25,1.15,5.99,'#B9C4CE')}${fz(3.5,4.25,.25,1.15,5.99,'#B9C4CE')}${TXT(P(3.45,1.47,5.99),'RECYCLER',8,'#2A333C')}
     ${marker(P(-6.5,5.5,22),'P1','u')}${marker(P(3.45,2.3,6.0),'P2','u')}${marker(P(-3.2,4.6,16.5),'C1','u')}</g>`;
-  s+=banner('C2 · PLANTA DE AGUA','Mirando al ventanal de los depósitos');
   s+=marker(P(-3.6,2.75,7.4),'1','b')+marker(P(1.1,2.35,9.2),'2','b')+marker(P(-2.2,3.4,d),'3','b');
-  s+=night(id,[heat],alarm(P(1.1,1.0,9.2),60,id)+`<ellipse cx="${r1(P(1.1,.9,9.1)[0])}" cy="${r1(P(1.1,.9,9.1)[1])}" rx="20" ry="38" fill="#7A4A22" opacity=".6"/>`+night2('NOCHE · Avería: filtro sucio','Clic en el filtro → cartucho nuevo')+marker(P(1.1,2.35,9.2),'!','h'));
-  return svgWrap(id,'Boceto de la Planta de Agua',s);
+  s+=night(id,[heat],alarm(P(1.1,1.0,9.2),60,id)+`<ellipse cx="${r1(P(1.1,.9,9.1)[0])}" cy="${r1(P(1.1,.9,9.1)[1])}" rx="20" ry="38" fill="#7A4A22" opacity=".6"/>`+night2('','')+marker(P(1.1,2.35,9.2),'!','h'));
+  return svgWrap(id,'Water Plant',s);
 };
 
 /* ---------------- 3 · OXÍGENO ---------------- */
@@ -127,15 +125,14 @@ SB.scenes.oxigeno=function(){
   // filtro de CO2 en la pared derecha
   s+=fx(5.98,7.6,9.6,1.0,2.5,'#8E9AA4');
   [7.9,8.45,9.0].forEach(z=>s+=fx(5.96,z,z+.4,1.15,2.35,'#6E7A84'));
-  s+=TXT(P(5.98,2.75,8.6),'FILTRO CO₂',9,'#2A333C');
+  s+=TXT(P(5.98,2.75,8.6),'CO₂ FILTER',9,'#2A333C');
   s+=`<g class="base-only">${fy(.01,1.5,3.8,6.6,7.6,'none',DASH)}${TXT(P(2.65,.05,7.1),'P2',13)}${fy(.01,-4.9,-2.4,9.0,10.0,'none',DASH)}${TXT(P(-3.65,.05,9.5),'P1',12)}</g>`;
   s+=`<g class="up">${box(1.5,3.8,0,1.35,6.6,7.6,'#C9A43A',{front:'#D9B44C'})}${box(2.6,6,1.35,1.75,6.9,7.3,'#9AA4AE')}${TXT(P(2.65,.85,6.59),'MOXIE',11,'#3A2E0A')}
 
     ${marker(P(2.65,1.75,6.6),'P2','u')}${marker(P(-2.2,2.4,9.4),'P1','u')}${marker(P(-4.2,4.2,16),'C1','u')}</g>`;
-  s+=banner('C3 · SALA DE OXÍGENO','Mirando a la nave de tanques');
   s+=marker(P(-3.5,2.95,7.4),'1','b')+marker(P(5.98,1.75,8.6),'2','b')+marker(P(0,4.25,d),'3','b');
-  s+=night(id,[led],alarm(P(-2.35,1.95,6.79),75,id)+`<circle cx="${r1(P(-2.35,1.95,6.79)[0])}" cy="${r1(P(-2.35,1.95,6.79)[1])}" r="6" fill="#FF4A3D"/>`+night2('NOCHE · Avería: electrolizador parado','Botón de reinicio → bajar la palanca')+marker(P(-3.5,1.1,6.8),'!','h'));
-  return svgWrap(id,'Boceto de la Sala de Oxígeno',s);
+  s+=night(id,[led],alarm(P(-2.35,1.95,6.79),75,id)+`<circle cx="${r1(P(-2.35,1.95,6.79)[0])}" cy="${r1(P(-2.35,1.95,6.79)[1])}" r="6" fill="#FF4A3D"/>`+night2('','')+marker(P(-3.5,1.1,6.8),'!','h'));
+  return svgWrap(id,'Oxygen Room',s);
 };
 
 /* ---------------- 4 · INVERNADERO ---------------- */
@@ -168,14 +165,13 @@ SB.scenes.invernadero=function(){
   shelves.forEach(y=>up+=fy(y+.55,-3.2,-2.85,5.7,9.5,'#F57BD6')+fy(y+.55,2.85,3.2,5.7,9.5,'#F57BD6'));
   up+=`<polygon points="${SB.pts([[-2.7,0,5.6],[-2.7,0,9.6],[-2.7,2.2,9.6],[-2.7,2.2,5.6]])}" fill="#FF4FC8" opacity=".16"/><polygon points="${SB.pts([[2.7,0,5.6],[2.7,0,9.6],[2.7,2.2,9.6],[2.7,2.2,5.6]])}" fill="#FF4FC8" opacity=".16"/>`;
   shelves.forEach(y=>up+=SB.line([-2.68,y+.42,5.6],[-2.68,y+.42,9.6],'#3D8FE0',2.5)+SB.line([2.68,y+.42,5.6],[2.68,y+.42,9.6],'#3D8FE0',2.5));
-  up+=box(1.0,2.3,0,2.1,10.4,11.0,'#E6EBEF')+fz(1.1,2.2,1.55,1.95,10.39,'#C9D3DB')+TXT(P(1.65,1.68,10.39),'DESPENSA',7,'#2A333C');
+  up+=box(1.0,2.3,0,2.1,10.4,11.0,'#E6EBEF')+fz(1.1,2.2,1.55,1.95,10.39,'#C9D3DB')+TXT(P(1.65,1.68,10.39),'PANTRY',7,'#2A333C');
   up+=marker(P(3.8,2.5,7.6),'P1','u')+marker(P(-3.85,2.75,7.6),'P2','u')+marker(P(1.65,2.55,10.7),'C1','u');
   s+=`<g class="up">${up}</g>`;
-  s+=banner('C4 · INVERNADERO','Mirando a la nave de cultivo (88 × 54 m)');
   s+=marker(P(-3.8,2.45,7.6),'1','b')+marker(P(0,3.4,d),'2','b');
   let wilt=''; shelves.forEach(y=>{for(let z=5.9;z<9.4;z+=.84){const [px,py]=P(-2.75,y+.13,z);wilt+=`<ellipse cx="${r1(px)}" cy="${r1(py)}" rx="${r1(560*.2/z)}" ry="${r1(560*.12/z)}" fill="#9C7A35" opacity=".85"/>`;}});
-  s+=night(id,[],wilt+alarm(P(-2.8,1.1,7.4),80,id)+night2('NOCHE · Plantas mustias','Clic en la bandeja → abrir el agua')+marker(P(-2.6,2.45,6.4),'!','h'));
-  return svgWrap(id,'Boceto del Invernadero',s);
+  s+=night(id,[],wilt+alarm(P(-2.8,1.1,7.4),80,id)+night2('','')+marker(P(-2.6,2.45,6.4),'!','h'));
+  return svgWrap(id,'Greenhouse',s);
 };
 
 /* ---------------- 5 · ENERGÍA ---------------- */
@@ -203,16 +199,15 @@ SB.scenes.energia=function(){
   // cuadro eléctrico (pared derecha) con un interruptor por sala
   s+=fx(5.98,8.0,10.6,1.0,2.7,'#D3D8DD');
   [[COL.agua,8.25],[COL.oxi,8.8],[COL.com,9.35],['#8A96A3',9.9]].forEach(([c,z])=>s+=fx(5.96,z,z+.38,1.5,2.25,c));
-  s+=TXT(P(5.98,2.95,9.3),'CUADRO',9,'#2A333C');
+  s+=TXT(P(5.98,2.95,9.3),'POWER',9,'#2A333C');
   s+=`<g class="base-only">${fz(4.6,5.8,2.4,3.25,d-.03,'none',DASH)}${TXT(P(5.2,2.75,d),'P2',12)}</g>`;
   s+=`<g class="up">${fz(4.6,5.8,2.4,3.25,d-.03,'#0B1622')}${TXT(P(5.2,2.95,d),'REACTOR',8,'#F0C060')}${TXT(P(5.2,2.6,d),'+12',9,'#9FE0A0')}
     ${marker(P(-1.5,2.6,d),'P1','u')}${marker(P(-1.6,.55,d),'Robot','u')}${marker(P(5.2,3.6,d),'P2','u')}${marker(P(-3.75,2.5,11),'C1','u')}</g>`;
-  s+=banner('C5 · SALA DE ENERGÍA','Mirando al exterior: campo solar');
   s+=marker(P(-3.75,2.45,8.1),'1','b')+marker(P(5.98,3.35,9.3),'2','b')+marker(P(2.4,3.45,d),'3','b');
   const haze=`<clipPath id="c5-hz"><polygon points="${SB.pts([[-4.6,.9,d],[4.6,.9,d],[4.6,3.9,d],[-4.6,3.9,d]])}"/></clipPath><rect width="960" height="540" fill="#9C5A2E" opacity=".72" clip-path="url(#c5-hz)"/>`;
   let red=''; for(let z=6.9;z<9.6;z+=.6) red+=`<circle cx="${r1(P(-2.6,1.9,z)[0])}" cy="${r1(P(-2.6,1.9,z)[1])}" r="3.4" fill="#FF4A3D"/>`;
-  s+=night(id,[],haze+red+alarm(P(5.98,1.9,9.3),75,id)+night2('NOCHE 3 · Tormenta de arena','Filtros obstruidos y paneles a la mitad')+marker(P(5.98,1.2,9.3),'!','h'));
-  return svgWrap(id,'Boceto de la Sala de Energía',s);
+  s+=night(id,[],haze+red+alarm(P(5.98,1.9,9.3),75,id)+night2('','')+marker(P(5.98,1.2,9.3),'!','h'));
+  return svgWrap(id,'Energy Room',s);
 };
 
 })();

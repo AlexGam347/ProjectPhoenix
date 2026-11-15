@@ -1,61 +1,55 @@
-# Project Phoenix · Superbase Central
+# Project Phoenix
 
-Juego educativo para el navegador (7–14 años, ~30 min) del NASA Space Apps Challenge.
-Eres el comandante de una base en Marte: de noche mantienes el agua, el oxígeno, la comida y la energía;
-de día mejoras la base. Cuatro noches, tres días, una tormenta de arena y una tormenta solar final.
+Educational browser game for ages 7 to 14 (about 30 minutes), made for the NASA Space Apps Challenge.
+You are the commander of a base on Mars. At night you keep water, oxygen, food and energy up.
+During the day you build upgrades. Four nights, a dust storm and a final solar storm.
 
-## Arrancar
+**Flow:** Dream 1 → Night 1 (tutorial) → Question → Result → Day → Night → Question → Dream → Result … → Night 4 → Ending video → Result → Final.
+
+## Run
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
-npm test           # reglas, equilibrio, datos y máquina de estados
-npm run build      # sitio estático en dist/
+npm run dev
+npm test
+npm run build
 ```
 
-- `?debug=1` abre el panel de depuración: saltar a cualquier noche o día, reloj ×10, ver zonas, ir al final.
-- `?zones=edit` abre el editor de zonas clicables (para dibujar las zonas sobre los renders reales).
+- `?debug=1` debug panel: jump to any night or day, clock x10, show zones, go to the ending.
+- `?zones=edit` click zone editor, to draw zones over the real renders.
 
-## Cómo está hecho
+## Structure
 
-| Carpeta | Qué hay |
+| Folder | Contents |
 |---|---|
-| `src/rules/` | Reglas puras sin DOM: `economy.ts` (fórmula del amanecer, compras), `night.ts` (motor de la noche), `simulate.ts` (port literal del simulador del dossier), `bot.ts` (jugador automático para calibrar) |
-| `src/state/` | Máquina de estados de la partida (`game.ts`) y guardado en `localStorage` (`save.ts`) |
-| `src/view/` | Pantallas, sala por capas, HUD, YANA, minijuegos, depuración |
-| `src/data/` | **Todo el contenido editable en JSON**: cifras, mejoras, tareas, averías, noches, salas y zonas, textos de YANA, preguntas, historia, créditos |
-| `scripts/` | `convert-images.mjs` (PNG → WebP), `fetch-donki.mjs` (llamarada real en el build), `placeholder-zones.mjs` |
+| `src/rules/` | Pure rules with no DOM: `economy.ts` (dawn formula, purchases), `night.ts` (night engine), `simulate.ts` (literal port of the dossier balance simulator), `bot.ts` (automatic player used for calibration) |
+| `src/state/` | Game state machine (`game.ts`) and `localStorage` saves (`save.ts`) |
+| `src/view/` | Screens, layered rooms, HUD, YANA, mini games, day blueprint and catalog, debug tools |
+| `src/data/` | **All editable content as JSON**: numbers, upgrades, tasks, faults, nights, rooms and zones, YANA lines, questions, story, credits |
+| `scripts/` | `convert-images.mjs` (PNG to WebP), `fetch-donki.mjs` (real solar flare at build time), `placeholder-zones.mjs` |
 
-**Una sola fórmula.** Las barras se animan con `display(t)` y el amanecer usa `display(6)`, que es exactamente
-`max(0, min(tope, reserva + producción·funcionamiento + tareas(+)) − consumo − mantenimiento − tareas(−) − tormenta)`.
-Un test lo comprueba.
+**One formula.** Bars animate with `display(t)` and dawn uses `display(6)`, which is exactly
+`max(0, min(cap, reserve + production·uptime + tasks(+)) − crew − upkeep − tasks(−) − storm)`. A test checks it.
 
-**Equilibrio.** `tests/simulate.test.ts` reproduce la tabla del dossier (Equilibrado: bueno/bueno/justo; Solo máquinas:
-malo×3; Solo almacén: justo/malo/malo). `tests/bot.test.ts` juega el motor real con un bot y comprueba que da los mismos
-finales. **Si cambiáis cifras en `src/data/`, ejecutad `npm test`.**
+**Balance.** `tests/simulate.test.ts` reproduces the dossier table. `tests/bot.test.ts` plays the real engine with a bot
+and checks it gives the same endings. **Run `npm test` after changing numbers in `src/data/`.**
 
-## Arte: cómo añadir los renders de Blender
+**Text rule.** `tests/text.test.ts` fails if any player-facing text contains long dashes or separator dots.
 
-Mientras no haya renders, el juego usa los bocetos del dossier. Para sustituirlos:
+## Art
 
-1. Deja los PNG en `art-src/` con los nombres del contrato (`docs/CONTRATO_ARTE.md`).
-2. `npm run images` → crea los WebP y `public/assets/rooms/manifest.json`.
-3. Abre `?zones=edit`, redibuja las zonas de esa sala y pega el JSON en `src/data/rooms/<sala>.json`.
+Until renders arrive, the game uses the dossier sketches. Drop PNGs in `art-src/` with the names in
+`docs/ART_CONTRACT.md`, run `npm run images`, then redraw the zones with `?zones=edit`.
 
-Se puede hacer sala a sala: lo que no tenga render sigue con el boceto.
+## NASA data
 
-Vídeos: `public/assets/video/prologo.mp4`, `sueno1..3.mp4`, `final_bueno|justo|malo.mp4` (H.264) y sus subtítulos
-`*.es.vtt`. Si falta uno, se muestra una tarjeta con texto.
+- **DONKI** (NASA Open APIs / CCMC): Night 4 shows a real solar flare, downloaded at build time
+  (`npm run donki`, key in the `NASA_API_KEY` repository secret). The client never sees the key.
+  If the API fails, `src/data/donki-fallback.json` is used.
+- Credits list the sources and the notice: "NASA does not endorse any non-U.S. Government entity and is not responsible
+  for information contained on non-U.S. Government websites." No NASA logos or insignia.
 
-## NASA
+## Deploy
 
-- **DONKI** (vía NASA Open APIs / CCMC): la Noche 4 muestra una llamarada solar real. Se descarga en el build
-  (`npm run donki`, clave en el secreto `NASA_API_KEY` del repositorio); el cliente nunca ve la clave.
-  Si la API falla, se usa `src/data/donki-fallback.json` (X9.0 del 3 de octubre de 2024).
-- Créditos con las fuentes y el aviso: «NASA does not endorse any non-U.S. Government entity and is not responsible
-  for information contained on non-U.S. Government websites.» Sin logotipos ni insignias de la NASA.
-
-## Despliegue
-
-`.github/workflows/deploy.yml` publica en GitHub Pages en cada push a `main` (tests → DONKI → build).
-En el repositorio: *Settings → Pages → Source: GitHub Actions*.
+`.github/workflows/deploy.yml` publishes to GitHub Pages on every push to `main` (tests, DONKI, build).
+Repository settings: *Settings → Pages → Source: GitHub Actions*.

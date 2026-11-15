@@ -10,7 +10,8 @@ const OUT = new URL('../public/assets/rooms/', import.meta.url);
 const WIDTHS = [1920, 1280];
 mkdirSync(OUT, { recursive: true });
 
-const files = readdirSync(SRC).filter((f) => /^C\d_[A-Z]+_.+\.png$/i.test(f));
+// Salas (C1..C5), miniaturas del catálogo (UPG_{id}) y fondo del plano (BLUEPRINT_base).
+const files = readdirSync(SRC).filter((f) => /^(C\d_[A-Z]+_.+|UPG_[a-z0-9]+|BLUEPRINT_base)\.png$/i.test(f));
 const images = {};
 for (const f of files) {
   const name = f.replace(/\.png$/i, '');
@@ -19,7 +20,8 @@ for (const f of files) {
   const srcset = [];
   for (const w of WIDTHS) {
     // Los renders panorámicos conservan su proporción: el ancho escala con la altura.
-    const tw = Math.round((w / 1920) * (width * (1080 / height)));
+    const thumb = name.startsWith('UPG_');
+    const tw = thumb ? Math.min(width, w === 1920 ? 512 : 256) : Math.round((w / 1920) * (width * (1080 / height)));
     const file = `${name}-${w}.webp`;
     await sharp(new URL(f, SRC)).resize({ width: tw }).webp({ quality: 80, alphaQuality: 90, effort: 5 }).toFile(new URL(file, OUT).pathname);
     srcset.push(`assets/rooms/${file} ${tw}w`);
@@ -29,4 +31,4 @@ for (const f of files) {
 }
 writeFileSync(new URL('manifest.json', OUT), JSON.stringify({ images }, null, 1));
 console.log(`${files.length} imágenes → public/assets/rooms/manifest.json`);
-if (!files.length) console.log('No hay PNG en art-src/. Nombres esperados: C2_AGUA_base.png, C2_AGUA_upg_rec1.png…');
+if (!files.length) console.log('No PNG files in art-src/. Expected names: C2_AGUA_base.png, C2_AGUA_upg_rec1.png, UPG_dep1.png, BLUEPRINT_base.png');
