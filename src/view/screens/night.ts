@@ -15,8 +15,8 @@ import { ROOMS, type RoomVisual, type ZoneDef } from '../room/roomView';
 import { YANA, scripted, type Line } from '../yana';
 import type { AppApi, Screen } from '../app';
 
-const CLOG_STEPS: Step[] = [{ kind: 'click', label: 'Sacar el filtro lleno de polvo' }, { kind: 'click', label: 'Sacudirlo y volver a ponerlo' }];
-const SOLAR_STEPS: Step[] = [{ kind: 'click', label: 'Pulsar el botón de reinicio' }, { kind: 'hold', label: 'Mantén la palanca arriba', ms: 1000 }];
+const CLOG_STEPS: Step[] = [{ kind: 'click', label: 'Pull out the dusty filter' }, { kind: 'click', label: 'Shake it and put it back' }];
+const SOLAR_STEPS: Step[] = [{ kind: 'click', label: 'Press reset' }, { kind: 'hold', label: 'Hold the lever up', ms: 1000 }];
 const ACTION_MS = 1100;
 
 export class NightScreen implements Screen {
@@ -46,7 +46,7 @@ export class NightScreen implements Screen {
       onZone: (z, room) => this.onZone(z, room),
       visual: (room) => this.visual(room),
       navBadge: (r) => this.s.signal && this.s.rooms[r].down,
-      navExtras: () => [h('button', { class: 'btn small ghost', onclick: () => this.wait() }, `⏩ ${t('nav.wait')}`)],
+      navExtras: () => [h('button', { class: 'btn small ghost', onclick: () => this.wait(), 'aria-label': 'Wait one hour' }, `⏩ ${t('nav.wait')}`)],
       onEnterRoom: (room) => this.enterRoom(room),
     });
     this.panel = new ActionPanel(this.ex.el);
@@ -177,7 +177,7 @@ export class NightScreen implements Screen {
       else {
         const r = PROD_ROOMS.reduce((a, b) => (need(b) > need(a) ? b : a));
         line = need(r) > -0.05
-          ? { text: fillT(H.door, { res: t(`res.${r}.low`), room: ROOMS[r].name }), state: 'hint', highlight: `door.${r}` }
+          ? { text: fillT(H.door, { res: cap(t(`res.${r}.low`)), room: ROOMS[r].name }), state: 'hint', highlight: `door.${r}` }
           : { text: H.wait, state: 'hint' };
       }
     } else {
@@ -188,7 +188,7 @@ export class NightScreen implements Screen {
         line = { text: fillT(H.zoneFault, { zone: ROOMS[r].zones.find((q) => q.id === z)?.label.toLowerCase() ?? z }), state: 'hint', highlight: z };
       } else if (need(r) > -0.05) {
         const zl = ROOMS[r].zones.find((q) => q.id === task.zone)?.label.toLowerCase() ?? task.zone;
-        line = { text: fillT(H.zone, { zone: `el ${zl}`, action: task.name.toLowerCase() }), state: 'hint', highlight: task.zone };
+        line = { text: fillT(H.zone, { zone: zl }), state: 'hint', highlight: task.zone };
       } else line = { text: H.back, state: 'hint', highlight: 'nav.control' };
     }
     this.say([line]);
@@ -233,11 +233,11 @@ export class NightScreen implements Screen {
     sfx.click();
     this.lastInput = performance.now();
     if (z.nav) { this.ex.go(z.nav); return; }
-    if (z.special === 'kiosk') { this.panel.show(z.label, [], 'El catálogo de mejoras se usa de día.'); return; }
+    if (z.special === 'kiosk') { this.panel.show(z.label, [], '🔒 ☀️'); return; }
     if (z.special === 'earth') {
       const txt = this.ctx.def.storm === 'solar'
-        ? 'Las llamaradas del Sol lanzan partículas que dañan la electrónica y cortan la radio. La NASA las registra en DONKI.'
-        : 'La señal tarda entre 3 y 22 minutos en llegar de la Tierra a Marte, según dónde estén los dos planetas.';
+        ? 'Solar flares throw particles that damage electronics. NASA records them in DONKI.'
+        : 'A signal takes 3 to 22 minutes to travel between Earth and Mars.';
       this.panel.show(z.label, [], txt);
       return;
     }
@@ -264,7 +264,7 @@ export class NightScreen implements Screen {
         run: () => this.act(() => doTask(this.ctx, this.s, task.id), { task: task.id }),
       });
     }
-    const info = z.id === 'baterias' ? 'Las baterías guardan energía para la noche y las tormentas.' : undefined;
+    const info = z.id === 'baterias' ? 'Batteries store energy for the night and for storms.' : undefined;
     this.panel.show(z.label, opts, info);
   }
 
@@ -316,7 +316,7 @@ export class NightScreen implements Screen {
           onChoice: (i) => {
             const ok = i === q.answer;
             ok ? sfx.ok() : sfx.bad();
-            this.ex.yana.resolveChoice(ok ? `¡Exacto! ${f.fact}` : `Casi. ${f.fact}`, ok ? 'normal' : 'hint');
+            this.ex.yana.resolveChoice(ok ? `Correct! ${f.fact}` : `Not quite. ${f.fact}`, ok ? 'normal' : 'hint');
           },
         }]);
       } else this.say([{ text: f.fact, state: 'normal' }]);
@@ -345,3 +345,4 @@ export class NightScreen implements Screen {
 }
 
 const fillT = (s: string, vars: Record<string, string>) => s.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);

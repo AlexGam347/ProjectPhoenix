@@ -9,16 +9,14 @@ export class CreditsScreen implements Screen {
   constructor(onBack: () => void, flare: { classType: string; peakTime: string; source?: string }) {
     const back = h('button', { class: 'btn primary', style: 'justify-self:start', onclick: onBack }, `◀ ${t('credits.back')}`);
     this.el = h('div', { class: 'screen' }, h('div', { class: 'mars-bg' }), h('div', { class: 'backdrop' }),
-      h('div', { class: 'credits panel', role: 'dialog', 'aria-label': t('credits.title') },
+      h('div', { class: 'credits term', role: 'dialog', 'aria-label': t('credits.title') },
         h('h2', {}, t('credits.title')),
-        h('p', { style: 'margin:0' }, credits.team),
-        h('h3', {}, 'Datos y recursos de NASA Space Apps'),
-        h('ul', {}, ...credits.sources.map((s) => h('li', {}, h('a', { href: s.url, target: '_blank', rel: 'noopener' }, s.name), ` — ${s.use}`))),
-        h('p', { style: 'margin:0' }, `Llamarada mostrada en la Noche 4: clase ${flare.classType}, ${flare.peakTime.slice(0, 10)} (NASA DONKI${flare.source === 'fallback' ? ', copia de respaldo' : ''}).`),
-        h('h3', {}, 'Diseño propio'),
-        h('p', { style: 'margin:0' }, credits.own),
-        h('p', { style: 'margin:0' }, credits.ai),
-        h('p', { class: 'disclaimer', lang: 'en' }, credits.disclaimer),
+        h('p', {}, credits.team),
+        h('ul', {}, ...credits.sources.map((s) => h('li', {}, h('a', { href: s.url, target: '_blank', rel: 'noopener' }, s.name), h('br'), h('span', { class: 'muted' }, s.use)))),
+        h('p', {}, `☀ ${flare.classType}  ${flare.peakTime.slice(0, 10)}  NASA DONKI${flare.source === 'fallback' ? ' (backup copy)' : ''}`),
+        h('p', {}, credits.own),
+        h('p', {}, credits.ai),
+        h('p', { class: 'disclaimer' }, credits.disclaimer),
         back));
     setTimeout(() => back.focus(), 50);
   }

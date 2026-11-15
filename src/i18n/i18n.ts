@@ -1,7 +1,7 @@
-// Textos de la interfaz. Para añadir inglés: strings.en.json y cambiar el idioma en Opciones.
-import es from '../data/strings.es.json';
+// Textos de la interfaz (inglés).
+import en from '../data/strings.en.json';
 
-const dict: Record<string, string> = es as Record<string, string>;
+const dict: Record<string, string> = en as Record<string, string>;
 
 export function t(key: string, vars: Record<string, string | number> = {}): string {
   const s = dict[key] ?? key;

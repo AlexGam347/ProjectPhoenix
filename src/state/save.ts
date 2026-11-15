@@ -7,8 +7,7 @@ const SETTINGS = 'phoenix.settings.v1';
 export function save(g: Game) {
   try {
     // Una noche a medias se retoma desde su inicio.
-    const phase = g.phase === 'report' ? 'night' : g.phase;
-    const snap: Game = phase === 'night' ? { ...g, phase, base: g.preNight } : { ...g, phase };
+    const snap: Game = g.phase === 'night' ? { ...g, base: g.preNight } : g;
     localStorage.setItem(KEY, JSON.stringify(snap));
   } catch { /* sin guardado */ }
 }
@@ -18,7 +17,7 @@ export function load(): Game | null {
     const raw = localStorage.getItem(KEY);
     if (!raw) return null;
     const g = JSON.parse(raw) as Game;
-    if (g.version !== 1 || ['menu', 'ending', 'credits'].includes(g.phase)) return null;
+    if (g.version !== 1 || ['menu', 'final', 'credits'].includes(g.phase)) return null;
     return g;
   } catch { return null; }
 }
@@ -27,8 +26,8 @@ export function clearSave() {
   try { localStorage.removeItem(KEY); } catch { /* nada */ }
 }
 
-export interface Settings { volume: number; reduceFlash: boolean; bigText: boolean; lang: 'es' }
-export const DEFAULT_SETTINGS: Settings = { volume: 0.7, reduceFlash: false, bigText: false, lang: 'es' };
+export interface Settings { volume: number; reduceFlash: boolean; bigText: boolean; lang: 'en' }
+export const DEFAULT_SETTINGS: Settings = { volume: 0.7, reduceFlash: false, bigText: false, lang: 'en' };
 
 export function loadSettings(): Settings {
   try {

@@ -1,5 +1,5 @@
 // YANA: cuadro de diálogo con texto letra a letra y guion por disparadores (no es una IA).
-import yanaJson from '../data/yana.es.json';
+import yanaJson from '../data/yana.en.json';
 import { SB } from './room/placeholder/engine.js';
 import { fill } from '../i18n/i18n';
 import { sfx } from '../audio/audio';
@@ -24,8 +24,7 @@ export const YANA = yanaJson as unknown as {
   solarRepair: string;
   clogRepair: string;
   hint: Record<string, string>;
-  report: Record<string, string>;
-  buy: Record<string, string>;
+  result: Record<string, string>;
 };
 
 const PORTRAIT_STATE: Record<YanaState, string> = { normal: 'ok', hint: 'hint', alarm: 'alarm', nosignal: 'alarm' };
@@ -55,7 +54,7 @@ export class Yana {
     this.txt = h('div', { class: 'txt', 'aria-live': 'polite' });
     this.more = h('div', { class: 'more' }, '▶');
     this.choicesEl = h('div', { class: 'choices' });
-    const bubble = h('div', { class: 'bubble', role: 'button', tabindex: '0', 'aria-label': 'Continuar' },
+    const bubble = h('div', { class: 'bubble', role: 'button', tabindex: '0', 'aria-label': 'Continue' },
       h('b', {}, 'YANA'), this.txt, this.choicesEl, this.more);
     bubble.addEventListener('click', () => this.advance());
     bubble.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.advance(); } });

@@ -1,28 +1,444 @@
 [
- {"id": "dep1", "room": "agua", "type": "C", "name": "Depósito de agua I", "effort": 2, "cost": { "agua": 3 }, "cap": { "agua": 15 }, "up": { "ene": 1 }, "fact": "El agua guardada hay que calentarla para que no se congele.", "layer": "C2_AGUA_upg_dep1" },
- {"id": "dep2", "room": "agua", "type": "C", "name": "Depósito de agua II", "effort": 3, "cost": { "agua": 4 }, "cap": { "agua": 15 }, "up": { "ene": 1 }, "req": "dep1", "fact": "El agua guardada hay que calentarla para que no se congele.", "layer": "C2_AGUA_upg_dep2" },
- {"id": "dep3", "room": "agua", "type": "C", "name": "Depósito de agua III", "effort": 3, "cost": { "agua": 5 }, "cap": { "agua": 15 }, "up": { "ene": 1 }, "req": "dep2", "fact": "El agua guardada hay que calentarla para que no se congele.", "layer": "C2_AGUA_upg_dep3" },
- {"id": "tal1", "room": "agua", "type": "P", "name": "Taladro de hielo I", "effort": 3, "cost": { "ene": 5 }, "prod": { "agua": 5 }, "up": { "ene": 2 }, "fact": "Bajo el polvo de Marte hay hielo: hay que perforar para llegar a él.", "layer": "C2_AGUA_upg_tal1" },
- {"id": "tal2", "room": "agua", "type": "P", "name": "Taladro de hielo II", "effort": 3, "cost": { "ene": 6 }, "prod": { "agua": 5 }, "up": { "ene": 2 }, "req": "tal1", "fact": "Bajo el polvo de Marte hay hielo: hay que perforar para llegar a él.", "layer": "C2_AGUA_upg_tal2" },
- {"id": "rec1", "room": "agua", "type": "P", "name": "Reciclador de agua", "effort": 2, "cost": { "ene": 4 }, "prod": { "agua": 4 }, "up": { "ene": 1 }, "fact": "En la Estación Espacial casi toda el agua se recicla.", "layer": "C2_AGUA_upg_rec1" },
- {"id": "tan1", "room": "oxi", "type": "C", "name": "Tanque de oxígeno I", "effort": 2, "cost": { "agua": 3 }, "cap": { "oxi": 15 }, "fact": "El oxígeno se guarda comprimido en tanques.", "layer": "C3_OXIGENO_upg_tan1" },
- {"id": "tan2", "room": "oxi", "type": "C", "name": "Tanque de oxígeno II", "effort": 3, "cost": { "agua": 4 }, "cap": { "oxi": 15 }, "req": "tan1", "fact": "El oxígeno se guarda comprimido en tanques.", "layer": "C3_OXIGENO_upg_tan2" },
- {"id": "tan3", "room": "oxi", "type": "C", "name": "Tanque de oxígeno III", "effort": 3, "cost": { "agua": 5 }, "cap": { "oxi": 15 }, "req": "tan2", "fact": "El oxígeno se guarda comprimido en tanques.", "layer": "C3_OXIGENO_upg_tan3" },
- {"id": "ele1", "room": "oxi", "type": "P", "name": "Electrolizador extra I", "effort": 3, "cost": { "ene": 4 }, "prod": { "oxi": 5 }, "up": { "agua": 2, "ene": 1 }, "fact": "Separa el agua en oxígeno e hidrógeno.", "layer": "C3_OXIGENO_upg_ele1" },
- {"id": "ele2", "room": "oxi", "type": "P", "name": "Electrolizador extra II", "effort": 3, "cost": { "ene": 5 }, "prod": { "oxi": 5 }, "up": { "agua": 2, "ene": 1 }, "req": "ele1", "fact": "Separa el agua en oxígeno e hidrógeno.", "layer": "C3_OXIGENO_upg_ele2" },
- {"id": "mox1", "room": "oxi", "type": "P", "name": "MOXIE", "effort": 3, "cost": { "ene": 5 }, "prod": { "oxi": 4 }, "up": { "ene": 3 }, "fact": "Saca oxígeno del CO₂ que forma casi todo el aire de Marte.", "layer": "C3_OXIGENO_upg_mox1" },
- {"id": "des1", "room": "com", "type": "C", "name": "Despensa fría I", "effort": 2, "cost": { "agua": 3 }, "cap": { "com": 15 }, "up": { "ene": 1 }, "fact": "La comida fresca necesita frío para durar.", "layer": "C4_INVERNADERO_upg_des1" },
- {"id": "des2", "room": "com", "type": "C", "name": "Despensa fría II", "effort": 3, "cost": { "agua": 4 }, "cap": { "com": 15 }, "up": { "ene": 1 }, "req": "des1", "fact": "La comida fresca necesita frío para durar.", "layer": "C4_INVERNADERO_upg_des2" },
- {"id": "est1", "room": "com", "type": "P", "name": "Estantes hidropónicos I", "effort": 2, "cost": { "agua": 3 }, "prod": { "com": 4 }, "up": { "agua": 2 }, "fact": "Hidroponía: plantas sin tierra, con agua y nutrientes.", "layer": "C4_INVERNADERO_upg_est1" },
- {"id": "est2", "room": "com", "type": "P", "name": "Estantes hidropónicos II", "effort": 3, "cost": { "agua": 4 }, "prod": { "com": 4 }, "up": { "agua": 2 }, "req": "est1", "fact": "Hidroponía: plantas sin tierra, con agua y nutrientes.", "layer": "C4_INVERNADERO_upg_est2" },
- {"id": "led1", "room": "com", "type": "P", "name": "Luces LED de cultivo I", "effort": 2, "cost": { "ene": 4 }, "prod": { "com": 3, "oxi": 1 }, "up": { "ene": 2 }, "fact": "Las plantas usan sobre todo luz roja y azul para crecer.", "layer": "C4_INVERNADERO_upg_led1" },
- {"id": "led2", "room": "com", "type": "P", "name": "Luces LED de cultivo II", "effort": 2, "cost": { "ene": 5 }, "prod": { "com": 3, "oxi": 1 }, "up": { "ene": 2 }, "req": "led1", "fact": "Las plantas usan sobre todo luz roja y azul para crecer.", "layer": "C4_INVERNADERO_upg_led2" },
- {"id": "bat1", "room": "ene", "type": "C", "name": "Baterías I", "effort": 2, "cost": { "ene": 3 }, "cap": { "ene": 15 }, "fact": "Guardan energía para la noche y las tormentas.", "layer": "C5_ENERGIA_upg_bat1" },
- {"id": "bat2", "room": "ene", "type": "C", "name": "Baterías II", "effort": 3, "cost": { "ene": 4 }, "cap": { "ene": 15 }, "req": "bat1", "fact": "Guardan energía para la noche y las tormentas.", "layer": "C5_ENERGIA_upg_bat2" },
- {"id": "pan1", "room": "ene", "type": "P", "name": "Paneles solares I", "effort": 3, "cost": { "ene": 4 }, "prod": { "ene": 6 }, "fact": "En Marte llega menos de la mitad de luz que a la Tierra.", "layer": "C5_ENERGIA_upg_pan1" },
- {"id": "pan2", "room": "ene", "type": "P", "name": "Paneles solares II", "effort": 3, "cost": { "ene": 5 }, "prod": { "ene": 6 }, "req": "pan1", "fact": "En Marte llega menos de la mitad de luz que a la Tierra.", "layer": "C5_ENERGIA_upg_pan2" },
- {"id": "rea1", "room": "ene", "type": "P", "name": "Mini-reactor", "effort": 5, "cost": { "ene": 12 }, "nuc": 12, "fact": "Da energía de día, de noche y con tormenta, porque no depende del Sol.", "layer": "C5_ENERGIA_upg_rea1" },
- {"id": "rob1", "room": "ene", "type": "Pr", "name": "Robot limpiador", "effort": 2, "cost": { "ene": 4 }, "flag": "robot", "fact": "El polvo tapa los paneles y les quita energía.", "layer": "C5_ENERGIA_upg_rob1" },
- {"id": "bli1", "room": "control", "type": "Pr", "name": "Blindaje de equipos", "effort": 3, "cost": { "ene": 4 }, "flag": "blindaje", "fact": "Las llamaradas solares lanzan partículas que dañan la electrónica (registro real en DONKI).", "layer": "C1_CONTROL_upg_bli1" },
- {"id": "pre1", "room": "control", "type": "Pr", "name": "Prefiltros", "effort": 2, "cost": { "ene": 4 }, "flag": "prefiltros", "fact": "El polvo de Marte es tan fino como el talco.", "layer": "C1_CONTROL_upg_pre1" }
+ {
+  "id": "dep1",
+  "room": "agua",
+  "type": "C",
+  "name": "Water Tank I",
+  "effort": 2,
+  "cost": {
+   "agua": 3
+  },
+  "cap": {
+   "agua": 15
+  },
+  "up": {
+   "ene": 1
+  },
+  "fact": "Stored water must be kept warm so it does not freeze.",
+  "layer": "C2_AGUA_upg_dep1"
+ },
+ {
+  "id": "dep2",
+  "room": "agua",
+  "type": "C",
+  "name": "Water Tank II",
+  "effort": 3,
+  "cost": {
+   "agua": 4
+  },
+  "cap": {
+   "agua": 15
+  },
+  "up": {
+   "ene": 1
+  },
+  "req": "dep1",
+  "fact": "Stored water must be kept warm so it does not freeze.",
+  "layer": "C2_AGUA_upg_dep2"
+ },
+ {
+  "id": "dep3",
+  "room": "agua",
+  "type": "C",
+  "name": "Water Tank III",
+  "effort": 3,
+  "cost": {
+   "agua": 5
+  },
+  "cap": {
+   "agua": 15
+  },
+  "up": {
+   "ene": 1
+  },
+  "req": "dep2",
+  "fact": "Stored water must be kept warm so it does not freeze.",
+  "layer": "C2_AGUA_upg_dep3"
+ },
+ {
+  "id": "tal1",
+  "room": "agua",
+  "type": "P",
+  "name": "Ice Drill I",
+  "effort": 3,
+  "cost": {
+   "ene": 5
+  },
+  "prod": {
+   "agua": 5
+  },
+  "up": {
+   "ene": 2
+  },
+  "fact": "There is ice under the Martian dust: you have to drill to reach it.",
+  "layer": "C2_AGUA_upg_tal1"
+ },
+ {
+  "id": "tal2",
+  "room": "agua",
+  "type": "P",
+  "name": "Ice Drill II",
+  "effort": 3,
+  "cost": {
+   "ene": 6
+  },
+  "prod": {
+   "agua": 5
+  },
+  "up": {
+   "ene": 2
+  },
+  "req": "tal1",
+  "fact": "There is ice under the Martian dust: you have to drill to reach it.",
+  "layer": "C2_AGUA_upg_tal2"
+ },
+ {
+  "id": "rec1",
+  "room": "agua",
+  "type": "P",
+  "name": "Water Recycler",
+  "effort": 2,
+  "cost": {
+   "ene": 4
+  },
+  "prod": {
+   "agua": 4
+  },
+  "up": {
+   "ene": 1
+  },
+  "fact": "On the Space Station almost all water is recycled.",
+  "layer": "C2_AGUA_upg_rec1"
+ },
+ {
+  "id": "tan1",
+  "room": "oxi",
+  "type": "C",
+  "name": "Oxygen Tank I",
+  "effort": 2,
+  "cost": {
+   "agua": 3
+  },
+  "cap": {
+   "oxi": 15
+  },
+  "fact": "Oxygen is stored compressed in tanks.",
+  "layer": "C3_OXIGENO_upg_tan1"
+ },
+ {
+  "id": "tan2",
+  "room": "oxi",
+  "type": "C",
+  "name": "Oxygen Tank II",
+  "effort": 3,
+  "cost": {
+   "agua": 4
+  },
+  "cap": {
+   "oxi": 15
+  },
+  "req": "tan1",
+  "fact": "Oxygen is stored compressed in tanks.",
+  "layer": "C3_OXIGENO_upg_tan2"
+ },
+ {
+  "id": "tan3",
+  "room": "oxi",
+  "type": "C",
+  "name": "Oxygen Tank III",
+  "effort": 3,
+  "cost": {
+   "agua": 5
+  },
+  "cap": {
+   "oxi": 15
+  },
+  "req": "tan2",
+  "fact": "Oxygen is stored compressed in tanks.",
+  "layer": "C3_OXIGENO_upg_tan3"
+ },
+ {
+  "id": "ele1",
+  "room": "oxi",
+  "type": "P",
+  "name": "Extra Electrolyzer I",
+  "effort": 3,
+  "cost": {
+   "ene": 4
+  },
+  "prod": {
+   "oxi": 5
+  },
+  "up": {
+   "agua": 2,
+   "ene": 1
+  },
+  "fact": "It splits water into oxygen and hydrogen.",
+  "layer": "C3_OXIGENO_upg_ele1"
+ },
+ {
+  "id": "ele2",
+  "room": "oxi",
+  "type": "P",
+  "name": "Extra Electrolyzer II",
+  "effort": 3,
+  "cost": {
+   "ene": 5
+  },
+  "prod": {
+   "oxi": 5
+  },
+  "up": {
+   "agua": 2,
+   "ene": 1
+  },
+  "req": "ele1",
+  "fact": "It splits water into oxygen and hydrogen.",
+  "layer": "C3_OXIGENO_upg_ele2"
+ },
+ {
+  "id": "mox1",
+  "room": "oxi",
+  "type": "P",
+  "name": "MOXIE",
+  "effort": 3,
+  "cost": {
+   "ene": 5
+  },
+  "prod": {
+   "oxi": 4
+  },
+  "up": {
+   "ene": 3
+  },
+  "fact": "It makes oxygen from the CO₂ that fills the Martian air.",
+  "layer": "C3_OXIGENO_upg_mox1"
+ },
+ {
+  "id": "des1",
+  "room": "com",
+  "type": "C",
+  "name": "Cold Pantry I",
+  "effort": 2,
+  "cost": {
+   "agua": 3
+  },
+  "cap": {
+   "com": 15
+  },
+  "up": {
+   "ene": 1
+  },
+  "fact": "Fresh food needs cold to last.",
+  "layer": "C4_INVERNADERO_upg_des1"
+ },
+ {
+  "id": "des2",
+  "room": "com",
+  "type": "C",
+  "name": "Cold Pantry II",
+  "effort": 3,
+  "cost": {
+   "agua": 4
+  },
+  "cap": {
+   "com": 15
+  },
+  "up": {
+   "ene": 1
+  },
+  "req": "des1",
+  "fact": "Fresh food needs cold to last.",
+  "layer": "C4_INVERNADERO_upg_des2"
+ },
+ {
+  "id": "est1",
+  "room": "com",
+  "type": "P",
+  "name": "Hydroponic Shelves I",
+  "effort": 2,
+  "cost": {
+   "agua": 3
+  },
+  "prod": {
+   "com": 4
+  },
+  "up": {
+   "agua": 2
+  },
+  "fact": "Hydroponics: plants grow without soil, using water and nutrients.",
+  "layer": "C4_INVERNADERO_upg_est1"
+ },
+ {
+  "id": "est2",
+  "room": "com",
+  "type": "P",
+  "name": "Hydroponic Shelves II",
+  "effort": 3,
+  "cost": {
+   "agua": 4
+  },
+  "prod": {
+   "com": 4
+  },
+  "up": {
+   "agua": 2
+  },
+  "req": "est1",
+  "fact": "Hydroponics: plants grow without soil, using water and nutrients.",
+  "layer": "C4_INVERNADERO_upg_est2"
+ },
+ {
+  "id": "led1",
+  "room": "com",
+  "type": "P",
+  "name": "LED Grow Lights I",
+  "effort": 2,
+  "cost": {
+   "ene": 4
+  },
+  "prod": {
+   "com": 3,
+   "oxi": 1
+  },
+  "up": {
+   "ene": 2
+  },
+  "fact": "Plants mostly use red and blue light to grow.",
+  "layer": "C4_INVERNADERO_upg_led1"
+ },
+ {
+  "id": "led2",
+  "room": "com",
+  "type": "P",
+  "name": "LED Grow Lights II",
+  "effort": 2,
+  "cost": {
+   "ene": 5
+  },
+  "prod": {
+   "com": 3,
+   "oxi": 1
+  },
+  "up": {
+   "ene": 2
+  },
+  "req": "led1",
+  "fact": "Plants mostly use red and blue light to grow.",
+  "layer": "C4_INVERNADERO_upg_led2"
+ },
+ {
+  "id": "bat1",
+  "room": "ene",
+  "type": "C",
+  "name": "Batteries I",
+  "effort": 2,
+  "cost": {
+   "ene": 3
+  },
+  "cap": {
+   "ene": 15
+  },
+  "fact": "They store energy for the night and for storms.",
+  "layer": "C5_ENERGIA_upg_bat1"
+ },
+ {
+  "id": "bat2",
+  "room": "ene",
+  "type": "C",
+  "name": "Batteries II",
+  "effort": 3,
+  "cost": {
+   "ene": 4
+  },
+  "cap": {
+   "ene": 15
+  },
+  "req": "bat1",
+  "fact": "They store energy for the night and for storms.",
+  "layer": "C5_ENERGIA_upg_bat2"
+ },
+ {
+  "id": "pan1",
+  "room": "ene",
+  "type": "P",
+  "name": "Solar Panels I",
+  "effort": 3,
+  "cost": {
+   "ene": 4
+  },
+  "prod": {
+   "ene": 6
+  },
+  "fact": "Mars gets less than half the sunlight Earth gets.",
+  "layer": "C5_ENERGIA_upg_pan1"
+ },
+ {
+  "id": "pan2",
+  "room": "ene",
+  "type": "P",
+  "name": "Solar Panels II",
+  "effort": 3,
+  "cost": {
+   "ene": 5
+  },
+  "prod": {
+   "ene": 6
+  },
+  "req": "pan1",
+  "fact": "Mars gets less than half the sunlight Earth gets.",
+  "layer": "C5_ENERGIA_upg_pan2"
+ },
+ {
+  "id": "rea1",
+  "room": "ene",
+  "type": "P",
+  "name": "Mini Reactor",
+  "effort": 5,
+  "cost": {
+   "ene": 12
+  },
+  "nuc": 12,
+  "fact": "It gives energy day and night, even in storms, because it does not need the Sun.",
+  "layer": "C5_ENERGIA_upg_rea1"
+ },
+ {
+  "id": "rob1",
+  "room": "ene",
+  "type": "Pr",
+  "name": "Cleaning Robot",
+  "effort": 2,
+  "cost": {
+   "ene": 4
+  },
+  "flag": "robot",
+  "fact": "Dust covers the panels and steals their energy.",
+  "layer": "C5_ENERGIA_upg_rob1"
+ },
+ {
+  "id": "bli1",
+  "room": "control",
+  "type": "Pr",
+  "name": "Equipment Shielding",
+  "effort": 3,
+  "cost": {
+   "ene": 4
+  },
+  "flag": "blindaje",
+  "fact": "Solar flares throw particles that damage electronics (real records in DONKI).",
+  "layer": "C1_CONTROL_upg_bli1"
+ },
+ {
+  "id": "pre1",
+  "room": "control",
+  "type": "Pr",
+  "name": "Pre-filters",
+  "effort": 2,
+  "cost": {
+   "ene": 4
+  },
+  "flag": "prefiltros",
+  "fact": "Martian dust is as fine as talcum powder.",
+  "layer": "C1_CONTROL_upg_pre1"
+ }
 ]

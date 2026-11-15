@@ -166,10 +166,7 @@ export class RoomView {
         this.art.classList.add('flash-up');
       }
     }
-    this.chips.replaceChildren(
-      ...(mine.length ? [h('span', {}, t('day.installed'))] : []),
-      ...mine.map((u) => h('span', { class: u.id === v.newUpgrade ? 'new' : '' }, u.name)),
-    );
+    this.chips.replaceChildren(...mine.map((u) => h('span', { class: u.id === v.newUpgrade ? 'new' : '' }, u.name)));
   }
 
   private img(e: ImageEntry, cls: string) {
@@ -227,12 +224,12 @@ export class RoomView {
     const el = h('div', { class: 'screen-earth', 'data-mode': mode, style: `left:${b.x0 * 100}%;top:${b.y0 * 100}%;width:${(b.x1 - b.x0) * 100}%;height:${(b.y1 - b.y0) * 100}%` });
     if (mode === 'flare' && v.flare) {
       const d = new Date(v.flare.peakTime.replace('Z', ':00Z'));
-      const date = isNaN(+d) ? v.flare.peakTime.slice(0, 10) : d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+      const date = isNaN(+d) ? v.flare.peakTime.slice(0, 10) : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
       el.style.background = '#03060b';
-      el.append(h('div', { class: 'flare' }, h('b', {}, t('flare.title')), t('flare.class', { c: v.flare.classType }), ' · ', date, h('br'), t('flare.src')));
+      el.append(h('div', { class: 'flare' }, h('b', {}, `☀ ${v.flare.classType}`), t('flare.title'), h('br'), date, h('br'), h('small', {}, t('flare.src'))));
     } else {
       const c = h('canvas', { width: 160, height: 90 }) as HTMLCanvasElement;
-      el.append(c, h('div', { class: 'nosig' }, t('nosignal'), h('small', {}, t('nosignal.sub'))));
+      el.append(c, h('div', { class: 'nosig' }, t('nosignal')));
       const g = c.getContext('2d');
       const still = document.documentElement.classList.contains('reduce-flash');
       const draw = () => {

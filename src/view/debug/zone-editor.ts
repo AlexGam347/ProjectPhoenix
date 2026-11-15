@@ -6,7 +6,7 @@ export function mountZoneEditor(stage: HTMLElement) {
   stage.classList.add('show-zones');
   let pts: number[][] = [];
   const out = h('textarea', { readonly: true }) as HTMLTextAreaElement;
-  const id = h('input', { value: 'nueva_zona', style: 'width:100%' }) as HTMLInputElement;
+  const id = h('input', { value: 'new_zone', style: 'width:100%' }) as HTMLInputElement;
   const NS = 'http://www.w3.org/2000/svg';
   const draw = document.createElementNS(NS, 'svg');
   draw.setAttribute('viewBox', '0 0 1 1');
@@ -32,15 +32,15 @@ export function mountZoneEditor(stage: HTMLElement) {
     render();
   }, true);
   let editing = false;
-  const toggle = h('button', { class: '', onclick: () => { editing = !editing; toggle.textContent = editing ? 'Dibujando (clic añade punto)' : 'Empezar a dibujar'; } }, 'Empezar a dibujar');
+  const toggle = h('button', { class: '', onclick: () => { editing = !editing; toggle.textContent = editing ? 'Drawing (click adds a point)' : 'Start drawing'; } }, 'Start drawing');
   const el = h('div', { class: 'zone-editor' },
-    h('b', {}, 'Editor de zonas'),
-    h('div', {}, 'Ve a la sala, pulsa «Empezar a dibujar» y haz clic en el contorno del objeto (o Alt+clic).'),
+    h('b', {}, 'Zone editor'),
+    h('div', {}, 'Go to the room, press Start drawing and click around the object (or Alt+click).'),
     id, toggle,
     h('div', { style: 'display:flex;gap:4px' },
-      h('button', { onclick: () => { pts.pop(); render(); } }, 'Quitar punto'),
-      h('button', { onclick: () => { pts = []; render(); } }, 'Nueva zona'),
-      h('button', { onclick: () => { void navigator.clipboard?.writeText(out.value); } }, 'Copiar JSON')),
+      h('button', { onclick: () => { pts.pop(); render(); } }, 'Undo point'),
+      h('button', { onclick: () => { pts = []; render(); } }, 'New zone'),
+      h('button', { onclick: () => { void navigator.clipboard?.writeText(out.value); } }, 'Copy JSON')),
     out);
   id.addEventListener('input', render);
   document.body.append(el);

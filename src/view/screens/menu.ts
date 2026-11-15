@@ -1,4 +1,4 @@
-// Menú principal: Nueva partida, Continuar, Opciones y Créditos.
+// Menú principal.
 import { t } from '../../i18n/i18n';
 import { sfx } from '../../audio/audio';
 import { h } from '../dom';
@@ -16,10 +16,9 @@ export class MenuScreen implements Screen {
       b(`⚙ ${t('menu.options')}`, a.options),
       b(`ⓘ ${t('menu.credits')}`, a.credits));
     this.el = h('div', { class: 'screen menu' }, h('div', { class: 'mars-bg' }),
-      h('h1', { class: 'title', style: 'position:relative' }, t('title'), h('small', {}, t('subtitle'))),
-      h('p', { class: 'muted', style: 'position:relative;margin:0;max-width:calc(1100 * var(--u))' },
-        'La Tierra se ha vuelto inhabitable. Eres el comandante de la Superbase Central y tienes cuatro noches para dejarla lista antes de que lleguen los colonos.'),
-      h('div', { style: 'position:relative' }, buttons));
+      h('div', { class: 'logo', 'aria-hidden': 'true' }, '🔥'),
+      h('h1', { class: 'title' }, t('title')),
+      h('div', { class: 'term menu-box' }, buttons));
     setTimeout(() => (buttons.querySelector('.btn') as HTMLElement | null)?.focus(), 50);
   }
   destroy() { this.el.remove(); }

@@ -2,7 +2,6 @@
 // Lo comparten la noche y el día.
 import type { ProdRoom, RoomId } from '../rules/types';
 import { PROD_ROOMS } from '../rules/types';
-import { t } from '../i18n/i18n';
 import { sfx } from '../audio/audio';
 import { h, sleep } from './dom';
 import { Hud } from './hud';
@@ -33,7 +32,7 @@ export class Explorer {
 
   constructor(private opts: ExplorerOpts) {
     this.roomLayer = h('div', { class: 'layer' });
-    this.navbar = h('nav', { class: 'navbar', 'aria-label': 'Navegación' });
+    this.navbar = h('nav', { class: 'navbar', 'aria-label': 'Navigation' });
     this.doors = h('div', { class: 'doors' }, h('i', { class: 'l' }), h('i', { class: 'r' }));
     this.view = this.makeView('control');
     this.roomLayer.append(this.view.el);
@@ -81,14 +80,14 @@ export class Explorer {
       for (const r of PROD_ROOMS) {
         const warn = this.opts.navBadge?.(r);
         items.push(h('button', { class: 'btn', 'data-nav': r, onclick: () => this.go(r) },
-          h('span', { html: resIcon(r) }), ROOMS[r].short, warn ? h('span', { class: 'warn', 'aria-label': 'avería' }, '⚠') : null));
+          h('span', { html: resIcon(r) }), ROOMS[r].short.toUpperCase(), warn ? h('span', { class: 'warn', 'aria-label': 'fault' }, '⚠') : null));
       }
     } else {
-      items.push(h('button', { class: 'btn', 'data-nav': 'control', onclick: () => this.go('control') }, `◀ ${t('nav.back')}`));
+      items.push(h('button', { class: 'btn', 'data-nav': 'control', onclick: () => this.go('control') }, `◀ ${ROOMS.control.short.toUpperCase()}`));
     }
     const extras = this.opts.navExtras?.() ?? [];
     this.navbar.replaceChildren(
-      h('div', { class: 'room-name' }, `${ROOMS[this.room].cam} · ${ROOMS[this.room].name}`),
+      h('div', { class: 'room-name' }, ROOMS[this.room].name.toUpperCase()),
       h('div', { class: 'center' }, ...items),
       h('div', { class: 'right' }, ...extras),
     );

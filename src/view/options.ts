@@ -28,7 +28,6 @@ export function openOptions(host: HTMLElement, s: Settings, onClose: () => void)
     h('label', {}, `🔊 ${t('options.volume')}`, vol),
     h('label', {}, flash, t('options.reduceFlash')),
     h('label', {}, big, t('options.bigText')),
-    h('label', {}, `🌐 ${t('options.lang')}: `, h('select', { 'aria-label': t('options.lang') }, h('option', { value: 'es' }, 'Español'), h('option', { value: 'en', disabled: true }, 'English (próximamente)'))),
     h('button', { class: 'btn primary', onclick: close }, t('options.close')));
   el.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
   host.append(backdrop, el);

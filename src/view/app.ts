@@ -1,6 +1,6 @@
 // Controlador de la aplicación: escala el escenario 16:9, guarda y pinta la pantalla de cada fase.
-import story from '../data/story.es.json';
-import { newGame, toDay, toNight, type Game } from '../state/game';
+import story from '../data/story.en.json';
+import { afterVideo, newGame, type Game } from '../state/game';
 import { clearSave, load, loadSettings, save, type Settings } from '../state/save';
 import { loadFlare, type Flare } from '../nasa/donki';
 import { t } from '../i18n/i18n';
@@ -10,11 +10,11 @@ import { applySettings, openOptions } from './options';
 import type { Manifest } from './room/roomView';
 import { CreditsScreen } from './screens/credits';
 import { DayScreen } from './screens/day';
-import { EndingScreen } from './screens/ending';
+import { FinalScreen } from './screens/final';
 import { MenuScreen } from './screens/menu';
 import { NightScreen } from './screens/night';
 import { QuizScreen } from './screens/quiz';
-import { ReportScreen } from './screens/report';
+import { ResultScreen } from './screens/result';
 import { StoryScreen } from './screens/story';
 
 export interface Screen { el: HTMLElement; destroy(): void }
@@ -99,21 +99,23 @@ export class App implements AppApi {
 
   go(g: Game) {
     this.game = g;
-    if (g.phase === 'ending') clearSave(); else save(g);
+    if (g.phase === 'final') clearSave(); else save(g);
     switch (g.phase) {
-      case 'prologue':
-        this.show(new StoryScreen(story.prologue, () => this.go(toNight(this.game))), 'prologue');
-        break;
-      case 'night': this.show(new NightScreen(this), `night${g.n}`); break;
-      case 'report': this.show(new ReportScreen(this), 'report'); break;
-      case 'quiz': this.show(new QuizScreen(this), 'quiz'); break;
       case 'dream': {
-        const d = (story.dreams as Record<string, { title: string; video: string; lines: string[] }>)[String(g.n)];
-        this.show(new StoryScreen({ ...d, dream: true }, () => this.go(toDay(this.game))), 'dream');
+        const d = (story.dreams as Record<string, { video: string }>)[String(g.n)];
+        this.show(new StoryScreen({ video: d.video, label: t('dream', { n: g.n }), icon: '🌙' }, () => this.go(afterVideo(this.game))), `dream${g.n}`);
         break;
       }
+      case 'night': this.show(new NightScreen(this), `night${g.n}`); break;
+      case 'quiz': this.show(new QuizScreen(this), 'quiz'); break;
+      case 'ending': {
+        const e = story.endings[g.ending!];
+        this.show(new StoryScreen({ video: e.video, label: t(`result.${g.ending}`), icon: g.ending === 'good' ? '🚀' : g.ending === 'mid' ? '🛰' : '🌑' }, () => this.go(afterVideo(this.game))), 'ending');
+        break;
+      }
+      case 'result': this.show(new ResultScreen(this), 'result'); break;
       case 'day': this.show(new DayScreen(this), `day${g.n}`); break;
-      case 'ending': this.show(new EndingScreen(this), 'ending'); break;
+      case 'final': this.show(new FinalScreen(this), 'final'); break;
       default: this.menu();
     }
   }

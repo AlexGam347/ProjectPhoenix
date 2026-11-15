@@ -23,11 +23,11 @@ export class Hud {
   private yanaSt: HTMLElement;
 
   constructor() {
-    const bars = h('div', { class: 'bars', role: 'group', 'aria-label': 'Recursos' });
+    const bars = h('div', { class: 'bars', role: 'group', 'aria-label': 'Resources' });
     for (const r of RES) {
       const cap = h('div', { class: 'cap' });
       const fill = h('div', { class: 'fill', style: `background:${RES_COLOR[r]}` });
-      const goal = h('div', { class: 'goal', title: 'meta de la noche' });
+      const goal = h('div', { class: 'goal', title: 'goal' });
       const spill = h('span', { html: spillIcon(r) });
       const val = h('div', { class: 'val' });
       const row = h('div', { class: 'bar', 'data-res': r, role: 'meter', 'aria-label': t(`res.${r}`) },
@@ -40,7 +40,7 @@ export class Hud {
     this.hourBar = h('div', { class: 'hourbar' }, h('i'));
     this.yanaSt = h('span', { class: 'yana-st' }, h('i'), h('span'));
     this.el = h('div', { class: 'hud' }, bars,
-      h('div', { class: 'side' }, this.clockEl, this.hourBar, h('div', { class: 'meta' }, h('span', {}, `👥 ${t('hud.crew')}: ${CONFIG.crew}`), this.yanaSt)));
+      h('div', { class: 'side' }, this.clockEl, this.hourBar, h('div', { class: 'meta' }, h('span', { 'aria-label': `crew ${CONFIG.crew}` }, `👥 ${CONFIG.crew}`), this.yanaSt)));
   }
 
   update(s: HudState) {
@@ -59,22 +59,22 @@ export class Hud {
       o.row.classList.toggle('ok', !!s.goal && ok);
       o.row.classList.toggle('low', !!s.goal && !ok);
       o.row.classList.toggle('over', !!s.over?.[r]);
-      o.val.innerHTML = `${fmt(v)} / ${s.caps[r]}${s.goal ? `<small>${ok ? '✓ ' : ''}${t('hud.goal', { v: s.goal[r] })}</small>` : ''}`;
+      o.val.innerHTML = `${fmt(v)}<small>/${s.caps[r]}</small>${s.goal ? `<em>${ok ? '✓' : '▲'}${s.goal[r]}</em>` : ''}`;
       o.row.setAttribute('aria-valuenow', String(Math.round(v)));
       o.row.setAttribute('aria-valuemax', String(s.caps[r]));
-      o.row.setAttribute('aria-valuetext', `${t(`res.${r}`)}: ${fmt(v)} de ${s.caps[r]}${s.goal ? `, meta ${s.goal[r]}` : ''}`);
+      o.row.setAttribute('aria-valuetext', `${t(`res.${r}`)} ${fmt(v)} of ${s.caps[r]}${s.goal ? `, goal ${s.goal[r]}` : ''}`);
     }
     if (s.clock !== null && s.clock !== undefined) {
       const hh = Math.floor(s.clock), mm = Math.floor((s.clock - hh) * 60);
-      this.clockEl.innerHTML = `<small>${s.label}</small>${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+      this.clockEl.innerHTML = `<span class="lbl">${s.label}</span><span>${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}</span>`;
       (this.hourBar.firstChild as HTMLElement).style.width = `${(s.clock / CONFIG.hours) * 100}%`;
       this.hourBar.style.display = '';
     } else {
-      this.clockEl.innerHTML = `<small></small>${s.label}`;
+      this.clockEl.innerHTML = `<span class="lbl">${s.label}</span>`;
       this.hourBar.style.display = 'none';
     }
     this.yanaSt.classList.toggle('off', !s.signal);
-    (this.yanaSt.lastChild as HTMLElement).textContent = s.signal ? t('hud.yana.ok') : t('hud.yana.off');
+    (this.yanaSt.lastChild as HTMLElement).textContent = s.signal ? t('hud.ok') : t('hud.off');
   }
 
   highlight(what: 'hud' | 'clock' | null) {

@@ -1,9 +1,9 @@
 // Integridad de los JSON que edita el equipo de diseño.
 import { describe, expect, it } from 'vitest';
 import { FAULTS, NIGHTS, TASKS, UPGRADES, UPG_BY_ID } from '../src/data';
-import questions from '../src/data/questions.es.json';
-import yana from '../src/data/yana.es.json';
-import story from '../src/data/story.es.json';
+import questions from '../src/data/questions.en.json';
+import yana from '../src/data/yana.en.json';
+import story from '../src/data/story.en.json';
 import credits from '../src/data/credits.json';
 import control from '../src/data/rooms/control.json';
 import agua from '../src/data/rooms/agua.json';
@@ -49,6 +49,13 @@ describe('salas y zonas', () => {
   });
 });
 
+describe('plano del día', () => {
+  it('cada mejora tiene su marcador en el plano', async () => {
+    const { SLOTS } = await import('../src/view/day/blueprint');
+    for (const u of UPGRADES) expect(SLOTS[u.id], u.id).toBeDefined();
+  });
+});
+
 describe('textos', () => {
   it('hay pregunta antes de dormir para las noches 1, 2 y 3, con respuesta válida', () => {
     for (const n of ['1', '2', '3']) {
@@ -58,7 +65,7 @@ describe('textos', () => {
     }
     for (const f of FAULTS) expect(f.question.options[f.question.answer], f.id).toBeDefined();
   });
-  it('cada tarea tiene datos reales de YANA y hay 3 sueños y 3 finales', () => {
+  it('cada tarea tiene datos reales de YANA y hay 3 sueños y 3 finales en vídeo', () => {
     for (const t of TASKS) expect((yana.taskFacts as Record<string, string[]>)[t.id]?.length, t.id).toBeGreaterThan(0);
     expect(Object.keys(story.dreams)).toEqual(['1', '2', '3']);
     expect(Object.keys(story.endings).sort()).toEqual(['bad', 'good', 'mid']);

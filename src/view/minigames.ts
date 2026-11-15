@@ -18,9 +18,10 @@ export interface ActionOption {
 
 export function effectChips(plus: Partial<Vec> = {}, minus: Partial<Vec> = {}, withTime = true): HTMLElement[] {
   const out: HTMLElement[] = [];
-  for (const r of RES) if (plus[r]) out.push(h('span', { class: 'chip plus', html: `+${plus[r]} ${resIcon(r as Res)} ${t(`res.${r}.low`)}` }));
-  for (const r of RES) if (minus[r]) out.push(h('span', { class: 'chip minus', html: `−${minus[r]} ${resIcon(r as Res)} ${t(`res.${r}.low`)}` }));
-  if (withTime) out.push(h('span', { class: 'chip time' }, `⏱ ${t('action.hour')}`));
+  // Solo icono y número; el nombre del recurso va en aria-label para lectores de pantalla.
+  for (const r of RES) if (plus[r]) out.push(h('span', { class: 'chip plus', 'aria-label': `plus ${plus[r]} ${t(`res.${r}.low`)}`, html: `+${plus[r]} ${resIcon(r as Res)}` }));
+  for (const r of RES) if (minus[r]) out.push(h('span', { class: 'chip minus', 'aria-label': `minus ${minus[r]} ${t(`res.${r}.low`)}`, html: `−${minus[r]} ${resIcon(r as Res)}` }));
+  if (withTime) out.push(h('span', { class: 'chip time', 'aria-label': 'one hour' }, '⏱ 1h'));
   return out;
 }
 
@@ -35,9 +36,9 @@ export class ActionPanel {
   show(title: string, options: ActionOption[], emptyText?: string) {
     this.close(false);
     const body = h('div');
-    const close = h('button', { class: 'btn small ghost', onclick: () => this.close(), 'aria-label': t('action.close') }, '✕');
+    const close = h('button', { class: 'btn small ghost', onclick: () => this.close(), 'aria-label': 'Close' }, '✕');
     const el = h('div', { class: 'action panel', role: 'dialog', 'aria-label': title }, h('header', {}, h('h3', {}, title), close), body);
-    if (!options.length) body.append(h('p', { class: 'why' }, emptyText ?? t('action.allGood')));
+    if (!options.length) body.append(h('p', { class: 'why' }, emptyText ?? '✓'));
     for (const o of options) {
       const btn = h('button', { class: `btn ${o.kind === 'repair' ? 'danger' : 'primary'}`, disabled: !!o.disabled, onclick: () => this.play(o, body) },
         o.kind === 'repair' ? t('action.repair') : t('action.do'));
@@ -57,14 +58,13 @@ export class ActionPanel {
       if (i >= o.steps.length) { this.close(false); o.run(); return; }
       const st = o.steps[i];
       const n = o.steps.length;
-      const lbl = h('div', { class: 'lbl' }, st.label);
-      const head = h('div', { class: 'muted' }, t('action.step', { i: i + 1, n }));
+      const head = h('div', { class: 'pips', 'aria-label': `step ${i + 1} of ${n}` }, ...o.steps.map((_, k) => h('i', { class: k <= i ? 'on' : '' })));
       i++;
       if (st.kind === 'hold') {
         const prog = h('i', { class: 'prog' });
-        const btn = h('button', { class: 'btn primary hold' }, prog, h('span', {}, `✋ ${t('action.hold')}`));
+        const btn = h('button', { class: 'btn primary hold' }, prog, h('span', {}, `✋ ${st.label}`));
         holdButton(btn, prog, st.ms ?? 1200, () => { sfx.ok(); next(); });
-        body.replaceChildren(h('div', { class: 'step' }, head, lbl, btn));
+        body.replaceChildren(h('div', { class: 'step' }, head, btn));
         btn.focus();
       } else {
         const btn = h('button', { class: 'btn primary', onclick: () => { sfx.click(); next(); } }, `👆 ${st.label}`);

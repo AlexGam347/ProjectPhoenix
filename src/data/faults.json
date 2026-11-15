@@ -1,32 +1,167 @@
 [
-  { "id": "filtro", "room": "agua", "zone": "filtro", "name": "Filtro sucio", "fx": "dirt",
-    "steps": [ { "kind": "click", "label": "Sacar el cartucho sucio" }, { "kind": "click", "label": "Poner un cartucho nuevo" } ],
-    "cost": {},
-    "fact": "El polvo de Marte es tan fino como el talco y se mete por todas partes.",
-    "question": { "q": "¿Por qué se ensucia tanto el filtro?", "options": ["Por el polvo finísimo de Marte", "Porque el agua está sucia de peces", "Porque nadie lo usa"], "answer": 0 } },
-  { "id": "tuberia", "room": "agua", "zone": "valvula", "name": "Tubería congelada", "fx": "frost",
-    "steps": [ { "kind": "hold", "label": "Mantén pulsada la válvula de calor", "ms": 1500 } ],
-    "cost": { "ene": 1 },
-    "fact": "De noche en Marte se baja de −60 °C.",
-    "question": { "q": "¿Recuerdas por qué se congela la tubería?", "options": ["Porque de noche hace muchísimo frío", "Porque el agua está muy caliente", "Porque hay mucha luz"], "answer": 0 } },
-  { "id": "electrolizador", "room": "oxi", "zone": "electrolizador", "name": "Electrolizador parado", "fx": "smoke",
-    "steps": [ { "kind": "click", "label": "Pulsar el botón de reinicio" }, { "kind": "click", "label": "Bajar la palanca" } ],
-    "cost": {},
-    "fact": "Sin electricidad, el agua no se separa en oxígeno.",
-    "question": { "q": "¿Qué necesita el electrolizador para sacar oxígeno del agua?", "options": ["Electricidad", "Arena", "Música"], "answer": 0 } },
-  { "id": "co2", "room": "oxi", "zone": "filtroco2", "name": "Filtro de CO₂ lleno", "fx": "smoke",
-    "steps": [ { "kind": "click", "label": "Sacar el filtro lleno" }, { "kind": "click", "label": "Meter el filtro nuevo" } ],
-    "cost": {},
-    "fact": "Cada vez que respiras sueltas CO₂. Hay que quitarlo del aire.",
-    "question": { "q": "¿Qué gas soltamos al respirar y hay que quitar del aire?", "options": ["CO₂ (dióxido de carbono)", "Oxígeno", "Helio"], "answer": 0 } },
-  { "id": "mustias", "room": "com", "zone": "estante", "name": "Plantas mustias", "fx": "wilt",
-    "steps": [ { "kind": "click", "label": "Abrir el riego" } ],
-    "cost": { "agua": 1 },
-    "fact": "Las plantas necesitan luz, agua y CO₂.",
-    "question": { "q": "¿Qué tres cosas necesitan las plantas?", "options": ["Luz, agua y CO₂", "Arena, frío y ruido", "Solo música"], "answer": 0 } },
-  { "id": "polvo", "room": "ene", "zone": "ventanal", "name": "Paneles con polvo", "fx": "dust",
-    "steps": [ { "kind": "click", "label": "Limpiar la fila de arriba" }, { "kind": "click", "label": "Limpiar la fila de abajo" } ],
-    "cost": {},
-    "fact": "El viento a veces limpia los paneles de los rovers, pero no se puede contar con él.",
-    "question": { "q": "¿Por qué hay que limpiar los paneles solares en Marte?", "options": ["El polvo tapa la luz del Sol", "Para que brillen bonitos", "Porque se mojan con la lluvia"], "answer": 0 } }
+ {
+  "id": "filtro",
+  "room": "agua",
+  "zone": "filtro",
+  "name": "Dirty filter",
+  "fx": "dirt",
+  "steps": [
+   {
+    "kind": "click",
+    "label": "Pull out the dirty cartridge"
+   },
+   {
+    "kind": "click",
+    "label": "Insert a new cartridge"
+   }
+  ],
+  "cost": {},
+  "fact": "Martian dust is as fine as talcum powder and gets everywhere.",
+  "question": {
+   "q": "Why does the filter get so dirty?",
+   "options": [
+    "Super fine Martian dust",
+    "Fish in the water",
+    "Nobody uses it"
+   ],
+   "answer": 0
+  }
+ },
+ {
+  "id": "tuberia",
+  "room": "agua",
+  "zone": "valvula",
+  "name": "Frozen pipe",
+  "fx": "frost",
+  "steps": [
+   {
+    "kind": "hold",
+    "label": "Hold the heat valve",
+    "ms": 1500
+   }
+  ],
+  "cost": {
+   "ene": 1
+  },
+  "fact": "At night on Mars it drops below −60 °C.",
+  "question": {
+   "q": "Why does the pipe freeze?",
+   "options": [
+    "Nights are freezing cold",
+    "The water is too hot",
+    "There is too much light"
+   ],
+   "answer": 0
+  }
+ },
+ {
+  "id": "electrolizador",
+  "room": "oxi",
+  "zone": "electrolizador",
+  "name": "Electrolyzer stopped",
+  "fx": "smoke",
+  "steps": [
+   {
+    "kind": "click",
+    "label": "Press the reset button"
+   },
+   {
+    "kind": "click",
+    "label": "Pull the lever down"
+   }
+  ],
+  "cost": {},
+  "fact": "Without electricity, water cannot be split into oxygen.",
+  "question": {
+   "q": "What does the electrolyzer need to make oxygen?",
+   "options": [
+    "Electricity",
+    "Sand",
+    "Music"
+   ],
+   "answer": 0
+  }
+ },
+ {
+  "id": "co2",
+  "room": "oxi",
+  "zone": "filtroco2",
+  "name": "CO₂ filter full",
+  "fx": "smoke",
+  "steps": [
+   {
+    "kind": "click",
+    "label": "Take out the full filter"
+   },
+   {
+    "kind": "click",
+    "label": "Put in a new filter"
+   }
+  ],
+  "cost": {},
+  "fact": "Every breath you take releases CO₂. It has to be removed from the air.",
+  "question": {
+   "q": "Which gas do we breathe out?",
+   "options": [
+    "CO₂",
+    "Oxygen",
+    "Helium"
+   ],
+   "answer": 0
+  }
+ },
+ {
+  "id": "mustias",
+  "room": "com",
+  "zone": "estante",
+  "name": "Wilted plants",
+  "fx": "wilt",
+  "steps": [
+   {
+    "kind": "click",
+    "label": "Open the watering"
+   }
+  ],
+  "cost": {
+   "agua": 1
+  },
+  "fact": "Plants need light, water and CO₂.",
+  "question": {
+   "q": "What do plants need?",
+   "options": [
+    "Light, water and CO₂",
+    "Sand, cold and noise",
+    "Only music"
+   ],
+   "answer": 0
+  }
+ },
+ {
+  "id": "polvo",
+  "room": "ene",
+  "zone": "ventanal",
+  "name": "Dusty panels",
+  "fx": "dust",
+  "steps": [
+   {
+    "kind": "click",
+    "label": "Clean the top row"
+   },
+   {
+    "kind": "click",
+    "label": "Clean the bottom row"
+   }
+  ],
+  "cost": {},
+  "fact": "Wind sometimes cleans rover panels, but you cannot count on it.",
+  "question": {
+   "q": "Why clean solar panels on Mars?",
+   "options": [
+    "Dust blocks the sunlight",
+    "To make them shiny",
+    "Rain gets them wet"
+   ],
+   "answer": 0
+  }
+ }
 ]

@@ -1,0 +1,54 @@
+{
+  "lines": [
+    { "id": "tut.01", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "text": "Commander, I am YANA. The robots built the base. Now we keep it alive." },
+    { "id": "tut.02", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "highlight": "hud", "text": "Water, oxygen, food and energy. The white mark is tonight's goal." },
+    { "id": "tut.03", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "text": "The crew uses water, oxygen and food. If we do nothing, the bars drop." },
+    { "id": "tut.03b", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "highlight": "clock", "text": "Six hours. Each action takes one hour. The clock never stops." },
+    { "id": "tut.04", "trigger": "nightStart", "when": { "night": 1 }, "state": "hint", "block": true, "highlight": "door.agua", "text": "Tap the blue door. Let's melt some ice." },
+    { "id": "tut.05", "trigger": "fault", "when": { "night": 1 }, "state": "alarm", "block": true, "highlight": "fault", "text": "Red light! The filter is dirty. Fix it before the plant stops." },
+    { "id": "tut.06", "trigger": "firstRepair", "when": { "night": 1 }, "state": "normal", "block": true, "text": "Well done. Now refill the bar that is furthest from its mark." },
+    { "id": "n2.start", "trigger": "nightStart", "when": { "night": 2 }, "state": "normal", "text": "A red door light means a broken room." },
+    { "id": "n3.start", "trigger": "nightStart", "when": { "night": 3 }, "state": "alarm", "text": "Dust storm coming. Filters will clog and panels give half." },
+    { "id": "n3.pre", "trigger": "nightStart", "when": { "night": 3, "flag": "prefiltros" }, "state": "normal", "text": "Pre-filters ready. Only one filter will clog." },
+    { "id": "n3.rob", "trigger": "nightStart", "when": { "night": 3, "flag": "robot" }, "state": "normal", "text": "The cleaning robot keeps the panels at full power." },
+    { "id": "n4.start", "trigger": "nightStart", "when": { "night": 4 }, "state": "alarm", "highlight": "earth", "text": "Last night. The colonists land at dawn. Look: a huge solar flare." },
+    { "id": "n4.bli", "trigger": "nightStart", "when": { "night": 4, "flag": "blindaje" }, "state": "normal", "text": "The shielding will protect half the machines." },
+    { "id": "room.agua", "trigger": "enterRoom", "when": { "room": "agua" }, "state": "normal", "highlight": "fundidor", "text": "Water Plant. Tap the ice melter." },
+    { "id": "room.oxi", "trigger": "enterRoom", "when": { "room": "oxi" }, "state": "normal", "highlight": "electrolizador", "text": "Oxygen Room. Tap the electrolyzer." },
+    { "id": "room.com", "trigger": "enterRoom", "when": { "room": "com" }, "state": "normal", "highlight": "estante", "text": "Greenhouse. Tap the shelf to harvest." },
+    { "id": "room.ene", "trigger": "enterRoom", "when": { "room": "ene" }, "state": "normal", "highlight": "ventanal", "text": "Energy Room. Tap the window to aim the panels." },
+    { "id": "fault", "trigger": "fault", "state": "alarm", "text": "{fault} in the {room}! One hour before it stops." },
+    { "id": "graceOver", "trigger": "graceOver", "state": "alarm", "text": "The {room} has stopped." },
+    { "id": "clog", "trigger": "clog", "state": "alarm", "text": "Dust clogged the {room} filter!" },
+    { "id": "solar", "trigger": "solar", "state": "nosignal", "text": "Sol... ar storm! No sig... nal. Res... tart the rooms." },
+    { "id": "dawn", "trigger": "dawn", "state": "normal", "text": "Dawn. Shift over." },
+    { "id": "day.1", "trigger": "dayStart", "when": { "night": 1 }, "state": "normal", "text": "Build at least 3 upgrades. You need storage and machines." },
+    { "id": "day.2", "trigger": "dayStart", "when": { "night": 2 }, "state": "normal", "text": "Dust storm tonight. Pre-filters and the robot help." },
+    { "id": "day.3", "trigger": "dayStart", "when": { "night": 3 }, "state": "alarm", "text": "Solar storm on the last night. Shield the machines." },
+    { "id": "day.bonus", "trigger": "dayStart", "when": { "bonus": true }, "state": "normal", "text": "Right answer: +1 work today." }
+  ],
+  "taskFacts": {
+    "hielo": ["Mars has no rivers: its water is frozen under the ground.", "Melting ice needs heat, so it costs energy.", "There are whole layers of ice under the Martian dust."],
+    "electro": ["The electrolyzer splits water into oxygen and hydrogen, like on the Space Station.", "Every water molecule, H₂O, has one oxygen atom."],
+    "cosecha": ["A lettuce is almost all water.", "Astronauts have grown and eaten lettuce on the Space Station.", "Plants take in CO₂ and give out oxygen."],
+    "paneles": ["Clean panels give much more energy.", "Mars gets less than half the sunlight Earth gets.", "The Spirit and Opportunity rovers ran on solar panels."]
+  },
+  "solarRepair": "Room back online. Machines are weak after the storm.",
+  "clogRepair": "Filter clean. Martian dust storms can cover the whole planet for weeks.",
+  "hint": {
+    "door": "{res} is low. Go to the {room}.",
+    "doorFault": "Red light! The {room} needs you.",
+    "zone": "Tap the {zone}.",
+    "zoneFault": "Fix the {zone} now.",
+    "back": "All good here. Go back to Control.",
+    "blind": "No sig... nal. Check every room.",
+    "wait": "Bars look good. You can wait."
+  },
+  "result": {
+    "pass": "All four goals reached.",
+    "wasted": "We lost {n} {res}: storage was full.",
+    "down": "The {room} was stopped for {h} hours.",
+    "upkeep": "Machines eat {n} {res} every night.",
+    "tasks": "Not enough {res}. Work in the {room}."
+  }
+}

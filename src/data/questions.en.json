@@ -1,0 +1,7 @@
+{
+  "sleep": {
+    "1": { "q": "Where is the water on Mars?", "options": ["In rivers", "Frozen under the ground", "In the clouds"], "icons": ["🏞️", "🧊", "☁️"], "answer": 1, "why": "Mars water is frozen under the dust." },
+    "2": { "q": "What happens if we make more than fits in storage?", "options": ["It is kept", "It is lost", "It explodes"], "icons": ["📦", "🗑️", "💥"], "answer": 1, "why": "What does not fit is lost. Build storage." },
+    "3": { "q": "What does a solar storm switch off?", "options": ["The plants", "The machines", "The water"], "icons": ["🌱", "⚙️", "💧"], "answer": 1, "why": "Solar particles damage electronics." }
+  }
+}

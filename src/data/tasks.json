@@ -1,18 +1,93 @@
 [
-  { "id": "hielo", "room": "agua", "zone": "fundidor", "name": "Derretir hielo extra",
-    "plus": { "agua": 6 }, "minus": { "ene": 1 },
-    "steps": [ { "kind": "click", "label": "Abrir la tolva de hielo" }, { "kind": "click", "label": "Encender el calentador" } ],
-    "fact": "En Marte no hay ríos: el agua está congelada bajo el suelo." },
-  { "id": "electro", "room": "oxi", "zone": "electrolizador", "name": "Turno extra del electrolizador",
-    "plus": { "oxi": 5 }, "minus": { "agua": 2 },
-    "steps": [ { "kind": "click", "label": "Abrir la válvula de agua" }, { "kind": "click", "label": "Subir la corriente" } ],
-    "fact": "El electrolizador separa el agua en oxígeno e hidrógeno, igual que en la Estación Espacial." },
-  { "id": "cosecha", "room": "com", "zone": "estante", "name": "Cosechar y replantar",
-    "plus": { "com": 5 }, "minus": { "agua": 1 },
-    "steps": [ { "kind": "click", "label": "Cosechar las lechugas" }, { "kind": "click", "label": "Plantar semillas nuevas" } ],
-    "fact": "Una lechuga es casi toda agua. Sin riego, no hay comida." },
-  { "id": "paneles", "room": "ene", "zone": "ventanal", "name": "Orientar y limpiar paneles",
-    "plus": { "ene": 6 }, "minus": {},
-    "steps": [ { "kind": "click", "label": "Girar los paneles hacia el Sol" }, { "kind": "hold", "label": "Mantén pulsado para limpiar", "ms": 1200 } ],
-    "fact": "El polvo de Marte tapa los paneles: limpios, dan mucha más energía." }
+ {
+  "id": "hielo",
+  "room": "agua",
+  "zone": "fundidor",
+  "name": "Melt extra ice",
+  "plus": {
+   "agua": 6
+  },
+  "minus": {
+   "ene": 1
+  },
+  "steps": [
+   {
+    "kind": "click",
+    "label": "Open the ice hopper"
+   },
+   {
+    "kind": "click",
+    "label": "Turn on the heater"
+   }
+  ],
+  "fact": "Mars has no rivers: its water is frozen under the ground."
+ },
+ {
+  "id": "electro",
+  "room": "oxi",
+  "zone": "electrolizador",
+  "name": "Extra electrolyzer shift",
+  "plus": {
+   "oxi": 5
+  },
+  "minus": {
+   "agua": 2
+  },
+  "steps": [
+   {
+    "kind": "click",
+    "label": "Open the water valve"
+   },
+   {
+    "kind": "click",
+    "label": "Raise the power"
+   }
+  ],
+  "fact": "The electrolyzer splits water into oxygen and hydrogen, just like on the Space Station."
+ },
+ {
+  "id": "cosecha",
+  "room": "com",
+  "zone": "estante",
+  "name": "Harvest and replant",
+  "plus": {
+   "com": 5
+  },
+  "minus": {
+   "agua": 1
+  },
+  "steps": [
+   {
+    "kind": "click",
+    "label": "Harvest the lettuce"
+   },
+   {
+    "kind": "click",
+    "label": "Plant new seeds"
+   }
+  ],
+  "fact": "A lettuce is almost all water. No watering, no food."
+ },
+ {
+  "id": "paneles",
+  "room": "ene",
+  "zone": "ventanal",
+  "name": "Aim and clean panels",
+  "plus": {
+   "ene": 6
+  },
+  "minus": {},
+  "steps": [
+   {
+    "kind": "click",
+    "label": "Turn the panels to the Sun"
+   },
+   {
+    "kind": "hold",
+    "label": "Hold to clean",
+    "ms": 1200
+   }
+  ],
+  "fact": "Martian dust covers the panels: clean ones give much more energy."
+ }
 ]

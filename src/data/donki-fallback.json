@@ -1,8 +1,8 @@
 {
-  "source": "fallback",
-  "note": "Llamarada real de respaldo. Se sustituye en el build por la más fuerte de los últimos 12 meses (scripts/fetch-donki.mjs).",
-  "classType": "X9.0",
-  "peakTime": "2024-10-03T12:18Z",
-  "activeRegionNum": 13842,
-  "link": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/"
+ "source": "fallback",
+ "note": "Real backup flare. Replaced at build time by the strongest flare of the last 12 months (scripts/fetch-donki.mjs).",
+ "classType": "X9.0",
+ "peakTime": "2024-10-03T12:18Z",
+ "activeRegionNum": 13842,
+ "link": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/"
 }
