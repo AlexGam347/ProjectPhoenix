@@ -38,7 +38,7 @@
 
 | Sala | Capas | Base de día + capas frente a «completa_dia» (PSNR) | Píxeles distintos | Capas vacías |
 |---|---|---|---|---|
-| C1_CONTROL | hecho a partir del render de día (make-control-night.mjs) | | | |
+| C1_CONTROL | hecho a partir de la sala de Energía de noche (make-control-night.mjs) | | | |
 | C2_AGUA | 6 | 28.7 dB | 3.44 % | 0 |
 | C3_OXIGENO | 6 | 27.5 dB | 4.01 % | 0 |
 | C4_INVERNADERO | 6 | 28.5 dB | 3.67 % | 0 |

@@ -436,12 +436,6 @@
    "src": "assets/rooms/night/C1_CONTROL_base-1920.webp",
    "srcset": "assets/rooms/night/C1_CONTROL_base-1280.webp 1280w, assets/rooms/night/C1_CONTROL_base-1920.webp 1920w"
   },
-  "night/C1_CONTROL_upg_bli1": {
-   "w": 1920,
-   "h": 1080,
-   "src": "assets/rooms/night/C1_CONTROL_upg_bli1-1920.webp",
-   "srcset": "assets/rooms/night/C1_CONTROL_upg_bli1-1280.webp 1280w, assets/rooms/night/C1_CONTROL_upg_bli1-1920.webp 1920w"
-  },
   "night/C2_AGUA_base": {
    "w": 1920,
    "h": 1080,
