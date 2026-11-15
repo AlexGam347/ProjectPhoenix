@@ -2,7 +2,8 @@
 //   día   (art-src/dia):  vista cenital de cada sala para el panel del día.
 //     C2_AGUA_dia_base.webp · C2_AGUA_dia_upg_C1_DepositoI.webp · C2_AGUA_dia_huecos.json · …_dia_completa.webp
 //   noche (art-src/sala): la sala vista desde dentro, para la noche.
-//     C2_AGUA_noche.webp · C2_AGUA_upg_C1_DepositoI.webp · C5_ENERGIA_tormenta_arena.webp · …_base_dia / …_completa_dia
+//     C2_AGUA_noche.webp · C2_AGUA_upg_C1_DepositoI.webp · C5_ENERGIA_tormenta_arena.webp · C1_CONTROL_tormenta_solar.webp
+//     · …_base_dia / …_completa_dia
 //   node scripts/import-renders.mjs [carpetaDia] [carpetaNoche]
 // Salida: public/assets/rooms/{day,night}/NOMBRE-1920.webp (+ -1280) y las entradas «day/NOMBRE» y «night/NOMBRE» de manifest.json.
 // Las versiones «completa» y «base_dia» no se cargan en el juego: las usa scripts/check-renders.mjs.
@@ -33,10 +34,10 @@ const SETS = [
   {
     set: 'night', src: process.argv[3] ?? 'art-src/sala',
     parse: (f) => {
-      const m = f.match(/^(C\d_[A-Z]+)_(noche|tormenta_arena|base_dia|completa_dia|upg_(.+))\.webp$/);
+      const m = f.match(/^(C\d_[A-Z]+)_(noche|tormenta_arena|tormenta_solar|base_dia|completa_dia|upg_(.+))\.webp$/);
       if (!m) return undefined;
       if (m[2] === 'base_dia' || m[2] === 'completa_dia') return null;
-      return m[2] === 'noche' ? [m[1], 'base'] : m[2] === 'tormenta_arena' ? [m[1], 'sand'] : [m[1], 'upg', m[3]];
+      return m[2] === 'noche' ? [m[1], 'base'] : m[2] === 'tormenta_arena' ? [m[1], 'sand'] : m[2] === 'tormenta_solar' ? [m[1], 'solar'] : [m[1], 'upg', m[3]];
     },
   },
 ];

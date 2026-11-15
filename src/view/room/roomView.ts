@@ -154,10 +154,11 @@ export class RoomView {
     if (this.usingImages) {
       const imgs: HTMLElement[] = [];
       const pick = (name?: string) => (name ? this.manifest!.images[`night/${name}`] : undefined);
-      // Tormenta de arena con render propio (Energía); si no, el fondo de noche con el efecto CSS.
-      const sand = v.storm === 'sand' ? pick(this.def.layers.base.replace(/_base$/, '_sand')) : undefined;
-      this.el.classList.toggle('sand-render', !!sand);
-      imgs.push(this.img(sand ?? pick(this.def.layers.base)!, 'base'));
+      // Tormentas con render propio (arena en Energía, solar en Control); si no, el fondo de noche con el efecto CSS.
+      const storm = v.storm ? pick(this.def.layers.base.replace(/_base$/, `_${v.storm}`)) : undefined;
+      this.el.classList.toggle('sand-render', !!storm && v.storm === 'sand');
+      this.el.classList.toggle('solar-render', !!storm && v.storm === 'solar');
+      imgs.push(this.img(storm ?? pick(this.def.layers.base)!, 'base'));
       for (const u of mine) {
         // Nivel II/III sin capa propia: se usa la del nivel I (la insignia lo indica).
         const e = pick(u.layer) ?? pick(u.layer.replace(/\d$/, '1'));
@@ -213,13 +214,10 @@ export class RoomView {
     if (v.doors) {
       for (const [room, st] of Object.entries(v.doors)) {
         const a = this.anchors[`door.${room}`] as number[] | undefined;
-        if (!a) continue;
-        fx.push(h('div', { class: `doorlight ${st === 'ok' ? '' : st}`, style: `left:${a[0] * 100}%;top:${a[1] * 100}%` }));
-        // En el render no hay carteles en las puertas: una etiqueta corta junto a la luz.
-        if (this.usingImages) fx.push(h('div', { class: 'doortag', style: `left:${a[0] * 100}%;top:${a[1] * 100}%` }, t(`cat.${room}`).toLowerCase()));
+        if (a) fx.push(h('div', { class: `doorlight ${st === 'ok' ? '' : st}`, style: `left:${a[0] * 100}%;top:${a[1] * 100}%` }));
       }
     }
-    if (v.storm === 'solar') fx.push(h('div', { class: 'solar' }), h('div', { class: 'solar-v' }));
+    if (v.storm === 'solar') fx.push(...(this.el.classList.contains('solar-render') ? [] : [h('div', { class: 'solar' })]), h('div', { class: 'solar-v' }));
     this.fx.replaceChildren(...fx);
     this.zonesSvg.querySelectorAll('polygon').forEach((p) => p.classList.toggle('alert', !!v.alertZones?.includes(p.getAttribute('data-zone')!)));
     if (this.hl) this.highlight(this.hl);
