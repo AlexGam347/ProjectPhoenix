@@ -213,7 +213,10 @@ export class RoomView {
     if (v.doors) {
       for (const [room, st] of Object.entries(v.doors)) {
         const a = this.anchors[`door.${room}`] as number[] | undefined;
-        if (a) fx.push(h('div', { class: `doorlight ${st === 'ok' ? '' : st}`, style: `left:${a[0] * 100}%;top:${a[1] * 100}%` }));
+        if (!a) continue;
+        fx.push(h('div', { class: `doorlight ${st === 'ok' ? '' : st}`, style: `left:${a[0] * 100}%;top:${a[1] * 100}%` }));
+        // En el render no hay carteles en las puertas: una etiqueta corta junto a la luz.
+        if (this.usingImages) fx.push(h('div', { class: 'doortag', style: `left:${a[0] * 100}%;top:${a[1] * 100}%` }, t(`cat.${room}`).toLowerCase()));
       }
     }
     if (v.storm === 'solar') fx.push(h('div', { class: 'solar' }), h('div', { class: 'solar-v' }));

@@ -70,6 +70,7 @@ if (existsSync(NIGHT)) {
   console.log('| Sala | Capas | Base de día + capas frente a «completa_dia» (PSNR) | Píxeles distintos | Capas vacías |');
   console.log('|---|---|---|---|---|');
   for (const room of nrooms) {
+    if (!existsSync(join(NIGHT, `${room}_base_dia.webp`))) { console.log(`| ${room} | hecho a partir del render de día (make-control-night.mjs) | | | |`); continue; }
     const layers = nf.filter((f) => f.startsWith(`${room}_upg_`)).sort().map((f) => join(NIGHT, f));
     const composed = await sharp(join(NIGHT, `${room}_base_dia.webp`)).composite(layers.map((input) => ({ input }))).png().toBuffer();
     const s = stats(await gray(composed), await gray(join(NIGHT, `${room}_completa_dia.webp`)));
