@@ -9,7 +9,7 @@ import { sfx } from '../../audio/audio';
 import { fmt, h } from '../dom';
 import { RES_COLOR, resIcon } from '../icons';
 import { blueprint, type SlotState } from '../day/blueprint';
-import { baseMap, hasBaseMap, roomCenter, type BaseMap } from '../day/baseMap';
+import { baseMap, hasBaseMap, roomCenter, type BaseMap, type MapPos } from '../day/baseMap';
 import { px } from '../pixelIcons';
 import { TYPE_ICON, level, upgradeArt } from '../day/upgradeArt';
 import { Yana, scripted } from '../yana';
@@ -28,12 +28,13 @@ export class DayScreen implements Screen {
   private fresh: string | null = null;
   /** Mapa del día y su desplazamiento (se conserva al volver del catálogo). */
   private map: BaseMap | null = null;
-  private mapX: number | null = null;
+  private mapPos: MapPos | null = null;
   private onKey = (e: KeyboardEvent) => {
     if (this.bpLayer.classList.contains('hidden') || !this.map) return;
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    const d = ({ ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] } as Record<string, number[]>)[e.key];
+    if (!d) return;
     e.preventDefault();
-    this.map.pan(e.key === 'ArrowLeft' ? -1 : 1);
+    this.map.pan(d[0], d[1]);
   };
 
   constructor(private app: AppApi) {
@@ -65,7 +66,7 @@ export class DayScreen implements Screen {
     this.catLayer.classList.toggle('hidden', v !== 'catalog');
     if (v === 'blueprint') {
       // Al volver del catálogo, el mapa enseña la sala de la categoría que se miraba si estaba fuera de la vista.
-      if (this.map && this.map.roomInView() !== this.cat) this.mapX = roomCenter(this.cat) - (1044 * 16 / 9) / 2;
+      if (this.map && this.map.roomInView() !== this.cat) this.mapPos = roomCenter(this.cat);
       this.renderBlueprint(); (this.bpLayer.querySelector('.tab') as HTMLElement)?.focus();
     } else { this.renderCatalog(); (this.catLayer.querySelector('.buy') as HTMLElement)?.focus(); }
   }
@@ -116,9 +117,9 @@ export class DayScreen implements Screen {
     const seen = this.g.yanaSeen.includes('hint.drag');
     const hint = seen ? null : h('div', { class: 'map-hint', html: `${px('hand')} ${t('day.drag')}` });
         this.map = baseMap({
-      manifest: this.app.manifest!, owned: this.g.base.owned, state: this.slotState, fresh: this.fresh, start: this.mapX,
+      manifest: this.app.manifest!, owned: this.g.base.owned, state: this.slotState, fresh: this.fresh, start: this.mapPos,
       onSlot: (u) => { sfx.click(); this.cat = u.room; this.sel = u.id; this.show('catalog'); },
-      onScroll: (x) => { this.mapX = x; },
+      onMove: (c) => { this.mapPos = c; },
       onFirstDrag: () => {
         hint?.classList.add('gone');
         if (!this.g.yanaSeen.includes('hint.drag')) this.app.patch({ ...this.g, yanaSeen: [...this.g.yanaSeen, 'hint.drag'] });

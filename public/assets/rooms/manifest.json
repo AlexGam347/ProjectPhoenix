@@ -430,6 +430,12 @@
     -92
    ]
   },
+  "day/MAP_base": {
+   "w": 6720,
+   "h": 2004,
+   "src": "assets/rooms/day/MAP_base-full.webp",
+   "srcset": "assets/rooms/day/MAP_base-half.webp 3360w, assets/rooms/day/MAP_base-full.webp 6720w"
+  },
   "night/C1_CONTROL_base": {
    "w": 1920,
    "h": 1080,
