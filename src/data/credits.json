@@ -1,0 +1,16 @@
+{
+  "team": "Equipo Project Phoenix · NASA Space Apps Challenge",
+  "sources": [
+    { "name": "DONKI · Space Weather Database (NASA CCMC)", "use": "Llamaradas solares reales: base de la tormenta solar de la Noche 4.", "url": "https://ccmc.gsfc.nasa.gov/tools/DONKI/" },
+    { "name": "NASA Open APIs", "use": "Acceso a DONKI para mostrar una llamarada real.", "url": "https://api.nasa.gov/" },
+    { "name": "RadLab (OSDR)", "use": "Dosis de radiación medidas en la Estación Espacial: justifican el blindaje.", "url": "https://visualization.osdr.nasa.gov/radlab/gui/data-api/" },
+    { "name": "Mars Trek", "use": "Relieve e imágenes reales de Marte para situar la base.", "url": "https://trek.nasa.gov/mars/" },
+    { "name": "OSDR · Open Science Data Repository", "use": "Estudios de lechuga en vuelo (OSD-385, OSD-723): base del invernadero.", "url": "https://osdr.nasa.gov/bio/repo/" },
+    { "name": "Agencia Espacial Canadiense · Producción de alimentos", "use": "Experimento Veggie y cultivo de comida en el espacio.", "url": "https://www.asc-csa.gc.ca/eng/youth-educators/toolkits/food-production/" },
+    { "name": "ECLSS (NASA)", "use": "Reciclaje de aire y agua y fabricación de oxígeno en la Estación Espacial.", "url": "https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/" },
+    { "name": "NASA 3D Resources", "use": "Modelos 3D de referencia para la base y YANA.", "url": "https://science.nasa.gov/3d-resources/" }
+  ],
+  "own": "La Superbase Central es un diseño propio del equipo: distribución, salas, cámaras, mapa, personajes e historia.",
+  "ai": "Código desarrollado con ayuda de IA (Claude).",
+  "disclaimer": "NASA does not endorse any non-U.S. Government entity and is not responsible for information contained on non-U.S. Government websites."
+}

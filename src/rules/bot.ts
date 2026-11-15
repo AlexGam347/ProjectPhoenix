@@ -2,8 +2,8 @@
 // Imita las suposiciones del simulador: tareas hacia la barra más lejos de su meta,
 // tantas tareas como (6 − reparaciones)·habilidad, y reparaciones con retraso si juega peor.
 import { applyUpgrade, canBuy, endingFor, newBase, type Ending } from './economy';
-import { canTask, dawnBase, doTask, fullRate, repair, report, startNight, tick, type NightCtx, type NightReport, type NightState } from './night';
-import { PROD_ROOMS, RES, type Config, type Fault, type NightDef, type Res, type Task, type Upgrade } from './types';
+import { canTask, dawnBase, doTask, estimateEnd, repair, report, startNight, tick, type NightCtx, type NightReport, type NightState } from './night';
+import { PROD_ROOMS, type Config, type Fault, type NightDef, type Task, type Upgrade } from './types';
 import type { Plan } from './simulate';
 
 export interface BotWorld { cfg: Config; nights: NightDef[]; faults: Fault[]; tasks: Task[]; upgrades: Upgrade[] }
@@ -22,14 +22,7 @@ function expectedRepairs(def: NightDef, flags: string[]): number {
 
 function pickTask(ctx: NightCtx, s: NightState): Task | null {
   const goal = ctx.cfg.goals[String(s.n)];
-  const rate = fullRate(ctx, s);
-  const est = {} as Record<Res, number>;
-  for (const r of RES) {
-    const factor = s.rooms[r].down ? 0 : s.rooms[r].efficiency;
-    est[r] = s.start.R[r] + s.produced[r] + s.plus[r] + rate[r] * factor * (ctx.cfg.hours - s.t)
-      + (r === 'ene' ? (s.start.nuc / ctx.cfg.hours) * (ctx.cfg.hours - s.t) : 0)
-      - ctx.cfg.crewUse[r] - s.start.U[r] - s.minus[r] - s.storm[r];
-  }
+  const est = estimateEnd(ctx, s);
   const avail = ctx.tasks.filter((t) => canTask(ctx, s, t.id).ok);
   if (!avail.length) return null;
   const need = (t: Task) => (goal[t.room] - est[t.room]) / goal[t.room];

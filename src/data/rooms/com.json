@@ -1,0 +1,45 @@
+{
+ "id": "com",
+ "cam": "C4",
+ "name": "Invernadero",
+ "short": "Invernadero",
+ "resource": "com",
+ "placeholder": "invernadero",
+ "image": {
+  "w": 1920,
+  "h": 1080
+ },
+ "layers": {
+  "base": "C4_INVERNADERO_base",
+  "solar": "C4_INVERNADERO_base_tormenta_solar"
+ },
+ "restartZone": "estante",
+ "clogZone": "filtroaire",
+ "zones": [
+  {
+   "id": "estante",
+   "label": "Estante de lechugas",
+   "poly": [
+    [0,0.426],
+    [0.221,0.426],
+    [0.344,0.463],
+    [0.344,0.695],
+    [0.221,0.825],
+    [0,0.825]
+   ]
+  },
+  {
+   "id": "filtroaire",
+   "label": "Filtro de aire",
+   "icon": "filter",
+   "poly": [
+    [0.728,0.443],
+    [0.79,0.443],
+    [0.79,0.577],
+    [0.728,0.577]
+   ]
+  }
+ ],
+ "anchors": {},
+ "art": "placeholder"
+}

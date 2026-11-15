@@ -315,6 +315,7 @@ export interface NightReport {
   miss: Res[];
   pass: boolean;
   downRooms: ProdRoom[]; // salas que se quedaron sin arreglar
+  roomLost: Record<ProdRoom, number>; // horas sin producir por sala
   actions: NightAction[];
 }
 
@@ -341,8 +342,23 @@ export function report(ctx: NightCtx, s: NightState): NightReport {
   return {
     n: s.n, lines, miss, pass: miss.length === 0,
     downRooms: PROD_ROOMS.filter((r) => s.rooms[r].down),
+    roomLost: { agua: s.rooms.agua.lostHours, oxi: s.rooms.oxi.lostHours, com: s.rooms.com.lostHours, ene: s.rooms.ene.lostHours },
     actions: s.actions,
   };
+}
+
+/** Estimación del final de la noche si todo sigue como ahora (sin tope): para pistas y para el bot. */
+export function estimateEnd(ctx: NightCtx, s: NightState): Vec {
+  const rate = fullRate(ctx, s);
+  const left = ctx.cfg.hours - s.t;
+  const est = vec();
+  for (const r of RES) {
+    const factor = s.rooms[r].down ? 0 : s.rooms[r].efficiency;
+    est[r] = s.start.R[r] + s.produced[r] + s.plus[r] + rate[r] * factor * left
+      + (r === 'ene' ? (s.start.nuc / ctx.cfg.hours) * left : 0)
+      - ctx.cfg.crewUse[r] - s.start.U[r] - s.minus[r] - s.storm[r];
+  }
+  return est;
 }
 
 /** Reserva de la base al amanecer (lo que pasa a la mañana siguiente). */

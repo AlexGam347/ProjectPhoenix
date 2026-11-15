@@ -1,0 +1,53 @@
+{
+ "id": "ene",
+ "cam": "C5",
+ "name": "Sala de Energía",
+ "short": "Energía",
+ "resource": "ene",
+ "placeholder": "energia",
+ "image": {
+  "w": 1920,
+  "h": 1080
+ },
+ "layers": {
+  "base": "C5_ENERGIA_base",
+  "solar": "C5_ENERGIA_base_tormenta_solar"
+ },
+ "restartZone": "cuadro",
+ "zones": [
+  {
+   "id": "ventanal",
+   "label": "Ventanal del campo solar",
+   "poly": [
+    [0.276,0.32],
+    [0.724,0.32],
+    [0.724,0.579],
+    [0.276,0.579]
+   ]
+  },
+  {
+   "id": "cuadro",
+   "label": "Cuadro eléctrico",
+   "poly": [
+    [0.824,0.378],
+    [0.941,0.33],
+    [0.941,0.608],
+    [0.824,0.587]
+   ]
+  },
+  {
+   "id": "baterias",
+   "label": "Baterías",
+   "poly": [
+    [0.048,0.433],
+    [0.264,0.433],
+    [0.349,0.462],
+    [0.349,0.691],
+    [0.264,0.783],
+    [0.048,0.783]
+   ]
+  }
+ ],
+ "anchors": {},
+ "art": "placeholder"
+}

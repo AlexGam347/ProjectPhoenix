@@ -1,0 +1,44 @@
+{
+ "id": "oxi",
+ "cam": "C3",
+ "name": "Sala de Oxígeno",
+ "short": "Oxígeno",
+ "resource": "oxi",
+ "placeholder": "oxigeno",
+ "image": {
+  "w": 1920,
+  "h": 1080
+ },
+ "layers": {
+  "base": "C3_OXIGENO_base",
+  "solar": "C3_OXIGENO_base_tormenta_solar"
+ },
+ "restartZone": "electrolizador",
+ "clogZone": "filtroco2",
+ "zones": [
+  {
+   "id": "electrolizador",
+   "label": "Electrolizador",
+   "poly": [
+    [0.066,0.43],
+    [0.326,0.43],
+    [0.355,0.442],
+    [0.355,0.736],
+    [0.326,0.776],
+    [0.066,0.776]
+   ]
+  },
+  {
+   "id": "filtroco2",
+   "label": "Filtro de CO₂",
+   "poly": [
+    [0.859,0.363],
+    [0.964,0.32],
+    [0.964,0.613],
+    [0.859,0.594]
+   ]
+  }
+ ],
+ "anchors": {},
+ "art": "placeholder"
+}

@@ -1,0 +1,57 @@
+{
+ "id": "agua",
+ "cam": "C2",
+ "name": "Planta de Agua",
+ "short": "Agua",
+ "resource": "agua",
+ "placeholder": "agua",
+ "image": {
+  "w": 1920,
+  "h": 1080
+ },
+ "layers": {
+  "base": "C2_AGUA_base",
+  "solar": "C2_AGUA_base_tormenta_solar"
+ },
+ "restartZone": "fundidor",
+ "clogZone": "filtro",
+ "zones": [
+  {
+   "id": "fundidor",
+   "label": "Fundidor de hielo",
+   "poly": [
+    [0.079,0.394],
+    [0.313,0.394],
+    [0.355,0.418],
+    [0.355,0.717],
+    [0.313,0.77],
+    [0.079,0.77]
+   ]
+  },
+  {
+   "id": "filtro",
+   "label": "Filtro de agua",
+   "poly": [
+    [0.533,0.459],
+    [0.537,0.454],
+    [0.613,0.454],
+    [0.613,0.725],
+    [0.537,0.725],
+    [0.533,0.707]
+   ]
+  },
+  {
+   "id": "valvula",
+   "label": "Válvula de calor",
+   "icon": "valve",
+   "poly": [
+    [0.892,0.241],
+    [0.989,0.174],
+    [0.989,0.412],
+    [0.892,0.435]
+   ]
+  }
+ ],
+ "anchors": {},
+ "art": "placeholder"
+}
