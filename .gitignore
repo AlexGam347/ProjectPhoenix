@@ -1,0 +1,6 @@
+node_modules
+dist
+art-src/*.png
+art-src/*.mp4
+*.log
+.DS_Store

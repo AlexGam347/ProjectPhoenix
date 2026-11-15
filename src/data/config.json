@@ -1,0 +1,18 @@
+{
+  "crew": 6,
+  "effortPerDay": 10,
+  "hours": 6,
+  "R0": { "agua": 16, "oxi": 16, "com": 14, "ene": 20 },
+  "C0": { "agua": 30, "oxi": 30, "com": 30, "ene": 30 },
+  "P0": { "agua": 10, "oxi": 9, "com": 7, "ene": 18 },
+  "U0": { "agua": 2, "oxi": 0, "com": 0, "ene": 4 },
+  "crewUse": { "agua": 6, "oxi": 6, "com": 6, "ene": 0 },
+  "goals": {
+    "1": { "agua": 15, "oxi": 15, "com": 13, "ene": 15 },
+    "2": { "agua": 22, "oxi": 22, "com": 19, "ene": 18 },
+    "3": { "agua": 26, "oxi": 26, "com": 22, "ene": 16 },
+    "4": { "agua": 32, "oxi": 32, "com": 27, "ene": 15 }
+  },
+  "barMax": 75,
+  "robotBonus": 2
+}
