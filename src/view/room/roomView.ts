@@ -25,7 +25,7 @@ export const ROOMS: Record<RoomId, RoomDef> = {
   com: comJson as unknown as RoomDef, ene: eneJson as unknown as RoomDef,
 };
 
-export interface ImageEntry { w: number; h: number; src: string; srcset?: string }
+export interface ImageEntry { w: number; h: number; src: string; srcset?: string; rect?: number[]; center?: number[] }
 export interface Manifest { images: Record<string, ImageEntry> }
 
 export interface RoomVisual {
@@ -80,7 +80,8 @@ export class RoomView {
     this.fx = h('div', { class: 'fx' });
     this.label = h('div', { class: 'zone-label' });
     this.chips = h('div', { class: 'upg-chips' });
-    const base = manifest?.images[def.layers.base];
+    // De noche se usan los renders de la sala vista desde dentro (juego «night/»); Control aún no tiene y sigue con el boceto.
+    const base = manifest?.images[`night/${def.layers.base}`];
     this.usingImages = !!base;
     this.zones = this.usingImages && def.render ? def.render.zones : def.zones;
     this.anchors = this.usingImages && def.render ? def.render.anchors : def.anchors;
@@ -147,14 +148,16 @@ export class RoomView {
 
   private renderArt(v: RoomVisual) {
     const mine = UPGRADES.filter((u) => u.room === this.def.id && v.owned.includes(u.id));
-    const key = `${v.storm === 'solar'}|${mine.map((u) => u.id).join(',')}`;
+    const key = `${v.storm}|${mine.map((u) => u.id).join(',')}`;
     if (key === this.lastKey && !v.newUpgrade) return;
     this.lastKey = key;
     if (this.usingImages) {
       const imgs: HTMLElement[] = [];
-      const pick = (name?: string) => (name ? this.manifest!.images[name] : undefined);
-      const base = (v.storm === 'solar' && pick(this.def.layers.solar)) || pick(this.def.layers.base)!;
-      imgs.push(this.img(base, 'base'));
+      const pick = (name?: string) => (name ? this.manifest!.images[`night/${name}`] : undefined);
+      // Tormenta de arena con render propio (Energía); si no, el fondo de noche con el efecto CSS.
+      const sand = v.storm === 'sand' ? pick(this.def.layers.base.replace(/_base$/, '_sand')) : undefined;
+      this.el.classList.toggle('sand-render', !!sand);
+      imgs.push(this.img(sand ?? pick(this.def.layers.base)!, 'base'));
       for (const u of mine) {
         // Nivel II/III sin capa propia: se usa la del nivel I (la insignia lo indica).
         const e = pick(u.layer) ?? pick(u.layer.replace(/\d$/, '1'));
@@ -176,7 +179,7 @@ export class RoomView {
       }
     }
     // Con renders, la lista solo enseña las mejoras que no tienen capa propia (por ejemplo, los prefiltros).
-    const listed = this.usingImages ? mine.filter((u) => !this.manifest?.images[u.layer]) : mine;
+    const listed = this.usingImages ? mine.filter((u) => !this.manifest?.images[`night/${u.layer}`]) : mine;
     this.chips.replaceChildren(...listed.map((u) => h('span', { class: u.id === v.newUpgrade ? 'new' : '' }, u.name)));
   }
 
@@ -189,7 +192,7 @@ export class RoomView {
     this.el.classList.toggle('is-night', v.mode === 'night');
     const fx: HTMLElement[] = [];
     if (v.mode === 'night') fx.push(h('div', { class: 'night' }));
-    if (v.storm === 'sand') fx.push(h('div', { class: 'sand' }), h('div', { class: 'sand-dust' }));
+    if (v.storm === 'sand') fx.push(...(this.el.classList.contains('sand-render') ? [] : [h('div', { class: 'sand' })]), h('div', { class: 'sand-dust' }));
     for (const z of this.zones) {
       if (!z.icon || !FX_ICONS[z.icon]) continue;
       const [cx, cy] = centroid(z.poly);

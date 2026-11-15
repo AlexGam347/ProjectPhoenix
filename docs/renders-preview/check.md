@@ -33,3 +33,12 @@
 | C5_ENERGIA | P1_PanelesII | 0 | **vacía** | 736, 0, 1360, -142 | **no** | 3 |
 | C5_ENERGIA | P2_Reactor | 571 | 1168, 565, 1181, 624 | 1168, 565, 1181, 626 | sí | 969 |
 | C5_ENERGIA | Robot | 0 | **vacía** | 629, 0, 683, -184 | **no** | 2 |
+
+### Noche (renders de sala)
+
+| Sala | Capas | Base de día + capas frente a «completa_dia» (PSNR) | Píxeles distintos | Capas vacías |
+|---|---|---|---|---|
+| C2_AGUA | 6 | 28.7 dB | 3.44 % | 0 |
+| C3_OXIGENO | 6 | 27.5 dB | 4.01 % | 0 |
+| C4_INVERNADERO | 6 | 28.5 dB | 3.67 % | 0 |
+| C5_ENERGIA | 6 | 35.2 dB | 0.60 % | 0 |

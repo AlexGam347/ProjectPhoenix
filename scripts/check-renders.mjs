@@ -1,12 +1,15 @@
 // Comprueba que los renders encajan con el diseño del equipo:
 //  1. compone cada sala como el juego (fondo + todas las capas de mejora) y la compara con «*_dia_completa»;
 //  2. mide dónde está de verdad cada capa (píxeles visibles) frente a su rectángulo de huecos.json.
-//   node scripts/check-renders.mjs [carpeta]   (por defecto art-src/dia)   → imprime una tabla Markdown
-import { readdirSync, readFileSync } from 'node:fs';
+//  3. noche (art-src/sala): compone «*_base_dia» + capas y lo compara con «*_completa_dia», para ver que las capas
+//     que se ponen sobre «*_noche» son de la misma cámara.
+//   node scripts/check-renders.mjs [carpetaDia] [carpetaNoche]   → imprime tablas Markdown
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import sharp from 'sharp';
 
 const SRC = process.argv[2] ?? 'art-src/dia';
+const NIGHT = process.argv[3] ?? 'art-src/sala';
 const W = 480, H = 270; // comparación a escala reducida: suficiente para ver capas desplazadas o que faltan
 
 async function gray(input) {
@@ -58,3 +61,20 @@ for (const room of rooms) {
 console.log('\n| Sala | Capa | Píxeles opacos | Caja de los píxeles opacos (x0, y0, x1, y1) | Hueco en huecos.json | Dentro | Píxeles casi invisibles |');
 console.log('|---|---|---|---|---|---|---|');
 for (const r of layerRows) console.log(r);
+
+// ---------- Noche: renders de sala ----------
+if (existsSync(NIGHT)) {
+  const nf = readdirSync(NIGHT);
+  const nrooms = [...new Set(nf.map((f) => f.match(/^(C\d_[A-Z]+)_noche\.webp$/)?.[1]).filter(Boolean))].sort();
+  console.log('\n### Noche (renders de sala)\n');
+  console.log('| Sala | Capas | Base de día + capas frente a «completa_dia» (PSNR) | Píxeles distintos | Capas vacías |');
+  console.log('|---|---|---|---|---|');
+  for (const room of nrooms) {
+    const layers = nf.filter((f) => f.startsWith(`${room}_upg_`)).sort().map((f) => join(NIGHT, f));
+    const composed = await sharp(join(NIGHT, `${room}_base_dia.webp`)).composite(layers.map((input) => ({ input }))).png().toBuffer();
+    const s = stats(await gray(composed), await gray(join(NIGHT, `${room}_completa_dia.webp`)));
+    let empty = 0;
+    for (const f of layers) if (!(await alphaBox(f)).box) empty++;
+    console.log(`| ${room} | ${layers.length} | ${s.psnr === Infinity ? 'idéntica' : s.psnr.toFixed(1) + ' dB'} | ${s.diffPct.toFixed(2)} % | ${empty} |`);
+  }
+}
