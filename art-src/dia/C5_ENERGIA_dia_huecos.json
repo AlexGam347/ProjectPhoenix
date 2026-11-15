@@ -1,0 +1,94 @@
+{
+  "sala": "C5_ENERGIA",
+  "resolucion": [
+    1920,
+    1080
+  ],
+  "fondo": "C5_ENERGIA_dia_base.webp",
+  "huecos": {
+    "P1_PanelesI": {
+      "rect_px": [
+        703,
+        0,
+        1420,
+        77
+      ],
+      "centro_px": [
+        1062,
+        39
+      ],
+      "visible": true,
+      "capa": "C5_ENERGIA_dia_upg_P1_PanelesI.webp"
+    },
+    "P1_PanelesII": {
+      "rect_px": [
+        736,
+        0,
+        1360,
+        -142
+      ],
+      "centro_px": [
+        1048,
+        -71
+      ],
+      "visible": false,
+      "capa": "C5_ENERGIA_dia_upg_P1_PanelesII.webp"
+    },
+    "Robot": {
+      "rect_px": [
+        629,
+        0,
+        683,
+        -184
+      ],
+      "centro_px": [
+        656,
+        -92
+      ],
+      "visible": false,
+      "capa": "C5_ENERGIA_dia_upg_Robot.webp"
+    },
+    "P2_Reactor": {
+      "rect_px": [
+        1168,
+        565,
+        1181,
+        626
+      ],
+      "centro_px": [
+        1174,
+        596
+      ],
+      "visible": true,
+      "capa": "C5_ENERGIA_dia_upg_P2_Reactor.webp"
+    },
+    "C1_BateriasI": {
+      "rect_px": [
+        735,
+        598,
+        807,
+        739
+      ],
+      "centro_px": [
+        771,
+        669
+      ],
+      "visible": true,
+      "capa": "C5_ENERGIA_dia_upg_C1_BateriasI.webp"
+    },
+    "C1_BateriasII": {
+      "rect_px": [
+        716,
+        793,
+        795,
+        928
+      ],
+      "centro_px": [
+        756,
+        860
+      ],
+      "visible": true,
+      "capa": "C5_ENERGIA_dia_upg_C1_BateriasII.webp"
+    }
+  }
+}

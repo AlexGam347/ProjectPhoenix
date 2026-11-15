@@ -1,0 +1,94 @@
+{
+  "sala": "C2_AGUA",
+  "resolucion": [
+    1920,
+    1080
+  ],
+  "fondo": "C2_AGUA_dia_base.webp",
+  "huecos": {
+    "P1_TaladroI": {
+      "rect_px": [
+        903,
+        164,
+        981,
+        609
+      ],
+      "centro_px": [
+        942,
+        386
+      ],
+      "visible": true,
+      "capa": "C2_AGUA_dia_upg_P1_TaladroI.webp"
+    },
+    "P1_TaladroII": {
+      "rect_px": [
+        889,
+        0,
+        986,
+        233
+      ],
+      "centro_px": [
+        938,
+        116
+      ],
+      "visible": true,
+      "capa": "C2_AGUA_dia_upg_P1_TaladroII.webp"
+    },
+    "P2_Reciclador": {
+      "rect_px": [
+        1106,
+        557,
+        1179,
+        693
+      ],
+      "centro_px": [
+        1142,
+        625
+      ],
+      "visible": true,
+      "capa": "C2_AGUA_dia_upg_P2_Reciclador.webp"
+    },
+    "C1_DepositoI": {
+      "rect_px": [
+        758,
+        92,
+        1115,
+        418
+      ],
+      "centro_px": [
+        936,
+        255
+      ],
+      "visible": true,
+      "capa": "C2_AGUA_dia_upg_C1_DepositoI.webp"
+    },
+    "C1_DepositoII": {
+      "rect_px": [
+        1092,
+        92,
+        1381,
+        418
+      ],
+      "centro_px": [
+        1236,
+        255
+      ],
+      "visible": true,
+      "capa": "C2_AGUA_dia_upg_C1_DepositoII.webp"
+    },
+    "C1_DepositoIII": {
+      "rect_px": [
+        742,
+        216,
+        1127,
+        544
+      ],
+      "centro_px": [
+        934,
+        380
+      ],
+      "visible": true,
+      "capa": "C2_AGUA_dia_upg_C1_DepositoIII.webp"
+    }
+  }
+}

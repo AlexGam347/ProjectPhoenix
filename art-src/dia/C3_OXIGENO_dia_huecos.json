@@ -1,0 +1,94 @@
+{
+  "sala": "C3_OXIGENO",
+  "resolucion": [
+    1920,
+    1080
+  ],
+  "fondo": "C3_OXIGENO_dia_base.webp",
+  "huecos": {
+    "P1_ElectrolizadorI": {
+      "rect_px": [
+        763,
+        670,
+        864,
+        812
+      ],
+      "centro_px": [
+        813,
+        741
+      ],
+      "visible": true,
+      "capa": "C3_OXIGENO_dia_upg_P1_ElectrolizadorI.webp"
+    },
+    "P1_ElectrolizadorII": {
+      "rect_px": [
+        771,
+        583,
+        867,
+        727
+      ],
+      "centro_px": [
+        819,
+        655
+      ],
+      "visible": true,
+      "capa": "C3_OXIGENO_dia_upg_P1_ElectrolizadorII.webp"
+    },
+    "P2_MOXIE": {
+      "rect_px": [
+        985,
+        647,
+        1190,
+        770
+      ],
+      "centro_px": [
+        1087,
+        709
+      ],
+      "visible": true,
+      "capa": "C3_OXIGENO_dia_upg_P2_MOXIE.webp"
+    },
+    "C1_TanqueI": {
+      "rect_px": [
+        820,
+        260,
+        1142,
+        420
+      ],
+      "centro_px": [
+        981,
+        340
+      ],
+      "visible": true,
+      "capa": "C3_OXIGENO_dia_upg_C1_TanqueI.webp"
+    },
+    "C1_TanqueII": {
+      "rect_px": [
+        588,
+        260,
+        832,
+        420
+      ],
+      "centro_px": [
+        710,
+        340
+      ],
+      "visible": true,
+      "capa": "C3_OXIGENO_dia_upg_C1_TanqueII.webp"
+    },
+    "C1_TanqueIII": {
+      "rect_px": [
+        810,
+        378,
+        1154,
+        545
+      ],
+      "centro_px": [
+        982,
+        461
+      ],
+      "visible": true,
+      "capa": "C3_OXIGENO_dia_upg_C1_TanqueIII.webp"
+    }
+  }
+}

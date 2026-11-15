@@ -1,0 +1,94 @@
+{
+  "sala": "C4_INVERNADERO",
+  "resolucion": [
+    1920,
+    1080
+  ],
+  "fondo": "C4_INVERNADERO_dia_base.webp",
+  "huecos": {
+    "P1_EstantesI": {
+      "rect_px": [
+        778,
+        0,
+        1287,
+        955
+      ],
+      "centro_px": [
+        1032,
+        477
+      ],
+      "visible": true,
+      "capa": "C4_INVERNADERO_dia_upg_P1_EstantesI.webp"
+    },
+    "P1_EstantesII": {
+      "rect_px": [
+        1224,
+        0,
+        1860,
+        529
+      ],
+      "centro_px": [
+        1542,
+        265
+      ],
+      "visible": true,
+      "capa": "C4_INVERNADERO_dia_upg_P1_EstantesII.webp"
+    },
+    "P2_LED_I": {
+      "rect_px": [
+        736,
+        650,
+        776,
+        927
+      ],
+      "centro_px": [
+        756,
+        788
+      ],
+      "visible": true,
+      "capa": "C4_INVERNADERO_dia_upg_P2_LED_I.webp"
+    },
+    "P2_LED_II": {
+      "rect_px": [
+        779,
+        0,
+        1920,
+        487
+      ],
+      "centro_px": [
+        1350,
+        243
+      ],
+      "visible": true,
+      "capa": "C4_INVERNADERO_dia_upg_P2_LED_II.webp"
+    },
+    "C1_DespensaI": {
+      "rect_px": [
+        779,
+        593,
+        849,
+        704
+      ],
+      "centro_px": [
+        814,
+        648
+      ],
+      "visible": true,
+      "capa": "C4_INVERNADERO_dia_upg_C1_DespensaI.webp"
+    },
+    "C1_DespensaII": {
+      "rect_px": [
+        839,
+        593,
+        903,
+        704
+      ],
+      "centro_px": [
+        871,
+        648
+      ],
+      "visible": true,
+      "capa": "C4_INVERNADERO_dia_upg_C1_DespensaII.webp"
+    }
+  }
+}
