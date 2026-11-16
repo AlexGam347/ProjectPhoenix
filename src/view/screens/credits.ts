@@ -29,7 +29,8 @@ export class CreditsScreen implements Screen {
         h('h3', {}, 'Music'),
         h('p', {}, `Menu music: "${credits.music.title}" by ${credits.music.author}. `, h('span', { class: 'muted' }, credits.music.license)),
         h('p', {}, credits.own),
-        h('p', {}, credits.ai),
+        h('h3', {}, 'Use of AI'),
+        h('p', {}, credits.aiUse),
         h('p', { class: 'disclaimer' }, credits.disclaimer),
         back));
     setTimeout(() => back.focus({ preventScroll: true }), 50);

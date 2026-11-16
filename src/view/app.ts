@@ -142,7 +142,7 @@ export class App implements AppApi {
     switch (g.phase) {
       case 'dream': {
         const d = (story.dreams as Record<string, { video: string; subs?: boolean }>)[String(g.n)];
-        this.show(new StoryScreen({ video: d.video, subs: d.subs, label: t('dream', { n: g.n }), icon: 'moon' }, () => this.wakeUp(), this.settings), `dream${g.n}`);
+        this.show(new StoryScreen({ video: d.video, subs: d.subs, ai: true, label: t('dream', { n: g.n }), icon: 'moon' }, () => this.wakeUp(), this.settings), `dream${g.n}`);
         break;
       }
       case 'night': this.show(new NightScreen(this), `night${g.n}`); break;

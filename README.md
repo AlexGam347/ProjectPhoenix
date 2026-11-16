@@ -6,6 +6,12 @@ During the day you build upgrades. Four nights, a dust storm and a final solar s
 
 **Flow:** Dream 1 → Night 1 (tutorial) → Question → Result → Day → Night → Question → Dream → Result … → Night 4 → Ending video → Result → Final.
 
+## Use of AI
+
+Project Phoenix was designed and directed by our team: the concept, story, characters, game design and balance, the 3D base and room renders (Blender), the scripts and direction of the dream videos, and the choice of NASA data. The programming code of the game was entirely AI generated: Claude (Anthropic) generated all of it from our design document and our step-by-step instructions. Claude also drafted the in-game English text. Claude also helped generate the dream videos from our scripts and art direction, and Kokoro-82M (open-source text-to-speech) generated the voices in them. We tested every change and asked for corrections until it worked as we designed. The dream videos are marked "AI assisted" in the game. No NASA logos or branding are used.
+
+Details, with what the team did and what the AI did: [`docs/RESOURCES.md`](docs/RESOURCES.md#use-of-ai).
+
 ## Run
 
 ```bash
