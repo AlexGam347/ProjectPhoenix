@@ -6,7 +6,6 @@
     { "id": "tut.03b", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "highlight": "clock", "text": "Six hours. Each action takes one hour. The clock never stops." },
     { "id": "tut.04", "trigger": "nightStart", "when": { "night": 1 }, "state": "hint", "block": true, "highlight": "door.agua", "text": "Tap the blue door. Let's melt some ice." },
     { "id": "tut.05", "trigger": "fault", "when": { "night": 1 }, "state": "alarm", "block": true, "highlight": "fault", "text": "Red light! The filter is dirty. Fix it before the plant stops." },
-    { "id": "tut.06", "trigger": "firstRepair", "when": { "night": 1 }, "state": "normal", "block": true, "text": "Well done. Now refill the bar that is furthest from its mark." },
     { "id": "n2.start", "trigger": "nightStart", "when": { "night": 2 }, "state": "normal", "text": "A red door light means a broken room." },
     { "id": "n3.start", "trigger": "nightStart", "when": { "night": 3 }, "state": "alarm", "text": "Dust storm coming. Filters will clog and panels give half." },
     { "id": "n3.pre", "trigger": "nightStart", "when": { "night": 3, "flag": "prefiltros" }, "state": "normal", "text": "Pre-filters ready. Only one filter will clog." },
@@ -35,6 +34,14 @@
   },
   "solarRepair": "Room back online. Machines are weak after the storm.",
   "clogRepair": "Filter clean. Martian dust storms can cover the whole planet for weeks.",
+  "guide": {
+    "lowest": "Well done. Now the {res} bar is the lowest. Let's refill it.",
+    "door": "Tap the {room} door.",
+    "back": "First, go back to Control.",
+    "task": "Tap {task} on your tablet.",
+    "wait": "Great! When the bars look fine, you can choose wait 1 hour and let the machines work.",
+    "free": "From now on it is up to you. Keep every bar above its white mark until 6 am."
+  },
   "intro": [
     { "text": "Commander? Commander! Good, you are awake.", "state": "happy" },
     { "text": "It is {year}. Earth can no longer keep us alive." },

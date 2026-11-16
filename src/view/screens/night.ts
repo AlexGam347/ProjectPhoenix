@@ -35,6 +35,8 @@ export class NightScreen implements Screen {
   private taskCount: Record<string, number> = {};
   private ended = false;
   private tutorial: boolean;
+  /** Tutorial guiado tras la primera reparación: rellenar la barra menos llena y luego conocer «wait 1 hour». */
+  private guide: null | { step: 'refill'; res: ProdRoom } | { step: 'wait' } = null;
   private currentHl: string | null = null;
 
   constructor(private app: AppApi) {
@@ -175,6 +177,9 @@ export class NightScreen implements Screen {
   }
 
   private hint() {
+    // Durante el tutorial guiado, la pista es el siguiente paso de la guía.
+    if (this.guide?.step === 'refill') { this.say([this.guideStep(this.ex.room)]); return; }
+    if (this.guide?.step === 'wait') { this.say([{ text: YANA.guide.wait, state: 'hint', highlight: 'wait' }]); return; }
     const H = YANA.hint;
     const goal = CONFIG.goals[String(this.s.n)];
     const est = estimateEnd(this.ctx, this.s);
@@ -209,7 +214,38 @@ export class NightScreen implements Screen {
     this.lastInput = performance.now();
     this.refreshTablet();
     const lines = scripted('enterRoom', { room }, this.app.game.yanaSeen);
+    if (this.guide?.step === 'refill') { this.say([this.guideStep(room)]); return; }
     if (lines.length) this.say(lines);
+  }
+
+  // ---------- tutorial guiado ----------
+  private pendingGuideEnd = false;
+
+  /** La barra menos llena (reserva / tope) entre las cuatro. */
+  private lowestBar(): ProdRoom {
+    const v = display(this.ctx, this.s), C = this.s.start.C;
+    return PROD_ROOMS.reduce((a, b) => (v[b] / C[b] < v[a] / C[a] ? b : a));
+  }
+
+  private startGuide() {
+    const res = this.lowestBar();
+    this.guide = { step: 'refill', res };
+    this.app.patch({ ...this.app.game, yanaSeen: [...this.app.game.yanaSeen, 'guide'] });
+    this.say([{ text: fillT(YANA.guide.lowest, { res: t(`res.${res}.low`) }), state: 'normal', highlight: 'hud' }, this.guideStep(this.ex.room)]);
+  }
+
+  /** Siguiente paso hacia la tarea de la barra más baja, según la sala en la que está el jugador. */
+  private guideStep(room: RoomId): Line {
+    const g = this.guide as { step: 'refill'; res: ProdRoom };
+    const task = TASKS.find((x) => x.room === g.res)!;
+    if (room === g.res) return { text: fillT(YANA.guide.task, { task: task.name.toLowerCase() }), state: 'hint', highlight: task.zone ?? `task.${task.id}` };
+    if (room === 'control') return { text: fillT(YANA.guide.door, { room: ROOMS[g.res].name }), state: 'hint', highlight: `door.${g.res}` };
+    return { text: YANA.guide.back, state: 'hint', highlight: 'nav.control' };
+  }
+
+  private endGuide() {
+    this.guide = null;
+    this.say([{ text: YANA.guide.free, state: 'happy', highlight: 'hud' }]);
   }
 
   // ---------- salas ----------
@@ -312,6 +348,7 @@ export class NightScreen implements Screen {
     this.pendingAfter = null;
     const emits = takeEmits(this.s);
     if (what) this.afterAction(what);
+    if (this.pendingGuideEnd) { this.pendingGuideEnd = false; this.endGuide(); }
     this.handle(emits);
   }
 
@@ -324,6 +361,10 @@ export class NightScreen implements Screen {
       this.taskCount[what.task] = i + 1;
       const fact = facts[i % Math.max(1, facts.length)];
       if (fact) { this.say([{ text: fact, state: 'happy' }]); g = learn(g, fact); }
+      if (this.guide?.step === 'refill' && TASKS.find((x) => x.id === what.task)?.room === this.guide.res) {
+        this.guide = { step: 'wait' };
+        this.say([{ text: YANA.guide.wait, state: 'hint', highlight: 'wait' }]);
+      } else if (this.guide?.step === 'wait') this.endGuide();
     } else if (what.repair) {
       const f = FAULT_BY_ID[what.repair];
       const repeated = g.seenFaults.includes(f.id);
@@ -342,7 +383,7 @@ export class NightScreen implements Screen {
           },
         }]);
       } else this.say([{ text: f.fact, state: 'happy' }]);
-      if (this.tutorial) this.say(scripted('firstRepair', { night: this.s.n }, this.app.game.yanaSeen));
+      if (this.tutorial && !this.guide && !this.app.game.yanaSeen.includes('guide')) this.startGuide();
       return;
     } else if (what.clog) {
       this.say([{ text: YANA.clogRepair, state: 'happy' }]);
@@ -355,6 +396,7 @@ export class NightScreen implements Screen {
 
   private wait() {
     if (this.ended || this.anim) return;
+    if (this.guide?.step === 'wait') { this.guide = null; this.pendingGuideEnd = true; }
     sfx.click();
     this.act(() => tick(this.ctx, this.s, Math.min(CONFIG.hours, Math.floor(this.s.t + 1e-9) + 1) - this.s.t), {});
   }

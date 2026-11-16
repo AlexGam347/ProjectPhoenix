@@ -82,6 +82,7 @@ export class Explorer {
       if (id === 'tablet') entry = 'bar';
       else if (id.startsWith('door.') && this.room !== 'control') { this.back.classList.add('hl'); entry = 'nav.control'; }
       else if (id.startsWith('nav.')) { entry = id; if (id === 'nav.control') this.back.classList.add('hl'); }
+      else if (id === 'wait' || id.startsWith('task.')) entry = id;
       else if (this.view.zone(id)) {
         zone = id;
         entry = id.startsWith('door.') ? `nav.${id.slice(5)}` : `zone.${id}`;

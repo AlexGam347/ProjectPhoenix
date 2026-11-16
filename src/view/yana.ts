@@ -30,6 +30,7 @@ export const YANA = yanaJson as unknown as {
   hint: Record<string, string>;
   result: Record<string, string>;
   intro: { text: string; state?: YanaState }[];
+  guide: Record<'lowest' | 'door' | 'back' | 'task' | 'wait' | 'free', string>;
 };
 
 /** Cara de la hoja de sprites del equipo (celdas de 64×64): ojos, >_ y ^^. Alarma y sin señal se derivan en CSS. */
