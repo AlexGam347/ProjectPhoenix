@@ -3,7 +3,10 @@ import story from '../data/story.en.json';
 import { afterVideo, newGame, type Game } from '../state/game';
 import { clearSave, load, loadSettings, save, saveSettings, type Settings } from '../state/save';
 import { loadFlare, type Flare } from '../nasa/donki';
-import { t } from '../i18n/i18n';
+import { fill, t } from '../i18n/i18n';
+import { CONFIG } from '../data';
+import { playIntro, playWake } from './intro';
+import { YANA } from './yana';
 import { music, unlock } from '../audio/audio';
 import { h } from './dom';
 import { px } from './pixelIcons';
@@ -27,6 +30,8 @@ export interface AppApi {
   flare: Flare;
   debug: { speed: number };
   modalOpen: boolean;
+  /** Escena de despertar en curso: las pantallas esperan a que acabe para que YANA empiece a hablar. */
+  cutscene: Promise<void> | null;
   go(g: Game): void;
   patch(g: Game): void;
   newGame(): void;
@@ -41,6 +46,7 @@ export class App implements AppApi {
   flare: Flare = { classType: 'X9.0', peakTime: '2024-10-03T12:18Z', source: 'fallback' };
   debug = { speed: 1 };
   modalOpen = false;
+  cutscene: Promise<void> | null = null;
   private screen: Screen | null = null;
   onScreen: (name: string) => void = () => {};
 
@@ -109,6 +115,26 @@ export class App implements AppApi {
 
   patch(g: Game) { this.game = g; }
 
+  /** Al acabar un sueño: la pantalla siguiente y, encima, el comandante despertando (la presentación tras el Sueño 1). */
+  private wakeUp() {
+    const prev = this.game;
+    let next = afterVideo(prev);
+    const intro = prev.n === 1 && !prev.lastReport && !prev.yanaSeen.includes('intro');
+    if (intro) next = { ...next, yanaSeen: [...next.yanaSeen, 'intro'] };
+    this.modalOpen = true;
+    const lines = YANA.intro.map((l) => ({ ...l, text: fill(l.text, { year: CONFIG.gameYear }) }));
+    this.cutscene = new Promise<void>((resolve) => {
+      queueMicrotask(() => {
+        (intro ? playIntro(this.stage, lines) : playWake(this.stage)).then(() => {
+          this.modalOpen = false;
+          this.cutscene = null;
+          resolve();
+        });
+      });
+    });
+    this.go(next);
+  }
+
   go(g: Game) {
     music.stop();
     this.game = g;
@@ -116,7 +142,7 @@ export class App implements AppApi {
     switch (g.phase) {
       case 'dream': {
         const d = (story.dreams as Record<string, { video: string; subs?: boolean }>)[String(g.n)];
-        this.show(new StoryScreen({ video: d.video, subs: d.subs, label: t('dream', { n: g.n }), icon: 'moon' }, () => this.go(afterVideo(this.game)), this.settings), `dream${g.n}`);
+        this.show(new StoryScreen({ video: d.video, subs: d.subs, label: t('dream', { n: g.n }), icon: 'moon' }, () => this.wakeUp(), this.settings), `dream${g.n}`);
         break;
       }
       case 'night': this.show(new NightScreen(this), `night${g.n}`); break;

@@ -60,12 +60,13 @@
   "options.close": "CLOSE",
   "rotate": "ROTATE YOUR DEVICE",
   "flare.title": "SOLAR FLARE",
-  "flare.src": "NASA DONKI",
+  "flare.src": "real data: NASA DONKI, {date}",
   "nosignal": "NO SIGNAL",
   "earth": "EARTH",
   "options.mute": "MUTE",
   "audio.on": "SOUND ON",
   "audio.off": "SOUND OFF",
   "video.play": "PLAY",
-  "video.loading": "LOADING"
+  "video.loading": "LOADING",
+  "intro.wake": "WAKE UP"
 }

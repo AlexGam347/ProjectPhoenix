@@ -15,6 +15,10 @@ export interface Line {
   choices?: { label: string; ok?: boolean }[];
   /** Respuesta a una pregunta en el diálogo. */
   onChoice?: (i: number) => void;
+  /** Mientras sea cierto, la línea sigue teniendo sentido (p. ej. «la sala sigue parada»). Si deja de serlo, se quita. */
+  valid?: () => boolean;
+  /** No la sustituye un aviso más nuevo (presentación de la noche, explicaciones importantes). */
+  sticky?: boolean;
 }
 interface ScriptLine extends Line { trigger: string; when?: Record<string, unknown>; }
 
@@ -25,6 +29,7 @@ export const YANA = yanaJson as unknown as {
   clogRepair: string;
   hint: Record<string, string>;
   result: Record<string, string>;
+  intro: { text: string; state?: YanaState }[];
 };
 
 /** Cara de la hoja de sprites del equipo (celdas de 64×64): ojos, >_ y ^^. Alarma y sin señal se derivan en CSS. */
@@ -77,18 +82,40 @@ export class Yana {
     this.sprite.className = `ysprite lg face-${FACE[s]} st-${s}`;
   }
 
-  say(lines: Line | Line[], opts: { interrupt?: boolean } = {}) {
+  /**
+   * fresh: lo nuevo manda. Los avisos que esperaban (no bloqueantes ni fijos) se descartan y, si en pantalla hay
+   * uno de esos, se pasa al nuevo sin esperar: así YANA habla de lo último que hizo el jugador, no de lo de antes.
+   */
+  say(lines: Line | Line[], opts: { interrupt?: boolean; fresh?: boolean } = {}) {
     const arr = Array.isArray(lines) ? lines : [lines];
     if (opts.interrupt) { this.queue = []; this.current = null; }
-    this.queue.push(...arr);
+    const replaceable = (l: Line) => !l.block && !l.sticky && !l.choices;
+    if (opts.fresh && arr.length) {
+      this.queue = this.queue.filter((l) => !replaceable(l));
+      this.queue.push(...arr);
+      if (this.current && replaceable(this.current)) { this.next(); this.onBlockChange(this.blocking); return; }
+    } else this.queue.push(...arr);
     if (!this.current) this.next();
     this.onBlockChange(this.blocking);
+  }
+
+  /** Quita las líneas que ya no tienen sentido (su valid() es falso); si la de pantalla es una, pasa a la siguiente. */
+  prune() {
+    const stale = (l: Line) => !!l.valid && !l.valid();
+    const before = this.queue.length;
+    this.queue = this.queue.filter((l) => !stale(l));
+    if (this.current && stale(this.current)) {
+      this.next();
+      // Si no queda nada que decir, el aviso viejo desaparece ya (no se queda 2,5 s a la vista).
+      if (!this.current) { clearTimeout(this.hideTimer); this.txt.textContent = ''; this.el.classList.add('hidden'); }
+    } else if (before !== this.queue.length) this.onBlockChange(this.blocking);
   }
 
   private next() {
     clearTimeout(this.hideTimer);
     clearInterval(this.typing);
-    const line = this.queue.shift() ?? null;
+    let line = this.queue.shift() ?? null;
+    while (line && line.valid && !line.valid()) line = this.queue.shift() ?? null;
     this.current = line;
     this.choicesEl.replaceChildren();
     if (!line) {

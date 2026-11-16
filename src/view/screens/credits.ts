@@ -25,6 +25,8 @@ export class CreditsScreen implements Screen {
         h('p', {}, `Night 4 solar flare: ${flare.classType}, ${flare.peakTime.slice(0, 10)}, NASA DONKI${flare.source === 'fallback' ? ' (backup copy)' : ''}.`),
         h('h3', {}, 'Other sources'),
         list(credits.other as Source[]),
+        h('h3', {}, 'Music'),
+        h('p', {}, `Menu music: "${credits.music.title}" by ${credits.music.author}. `, h('span', { class: 'muted' }, credits.music.license)),
         h('p', {}, credits.own),
         h('p', {}, credits.ai),
         h('p', { class: 'disclaimer' }, credits.disclaimer),

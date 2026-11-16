@@ -1,6 +1,6 @@
 {
   "lines": [
-    { "id": "tut.01", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "text": "Commander, I am YANA. The robots built the base. Now we keep it alive." },
+    { "id": "tut.01", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "text": "I am YANA, your robot assistant. I will guide you tonight." },
     { "id": "tut.02", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "highlight": "hud", "text": "Water, oxygen, food and energy. The white mark is tonight's goal." },
     { "id": "tut.03", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "text": "The crew uses water, oxygen and food. If we do nothing, the bars drop." },
     { "id": "tut.03b", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "highlight": "clock", "text": "Six hours. Each action takes one hour. The clock never stops." },
@@ -35,6 +35,13 @@
   },
   "solarRepair": "Room back online. Machines are weak after the storm.",
   "clogRepair": "Filter clean. Martian dust storms can cover the whole planet for weeks.",
+  "intro": [
+    { "text": "Commander? Commander! Good, you are awake.", "state": "happy" },
+    { "text": "It is {year}. Earth can no longer keep us alive." },
+    { "text": "You lead Project Phoenix: the first home for humans on Mars." },
+    { "text": "The colonists land in four nights. If this base is not ready, they will have nowhere to live.", "state": "hint" },
+    { "text": "The future of humanity is in your hands. Let me show you how it works.", "state": "happy" }
+  ],
   "hint": {
     "door": "{res} is low. Go to the {room}.",
     "doorFault": "Red light! The {room} needs you.",

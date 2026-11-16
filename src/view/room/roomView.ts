@@ -5,7 +5,7 @@ import oxiJson from '../../data/rooms/oxi.json';
 import comJson from '../../data/rooms/com.json';
 import eneJson from '../../data/rooms/ene.json';
 import scenes from './placeholder/rooms.js';
-import { UPGRADES } from '../../data';
+import { CONFIG, UPGRADES } from '../../data';
 import type { ProdRoom, RoomId } from '../../rules/types';
 import { bbox, centroid, h, polyToClip } from '../dom';
 import { FX_ICONS } from '../icons';
@@ -241,10 +241,13 @@ export class RoomView {
     const fs = (b.x1 - b.x0) * 1920 * 0.055;
     const el = h('div', { class: 'screen-earth', 'data-mode': mode, style: `left:${b.x0 * 100}%;top:${b.y0 * 100}%;width:${(b.x1 - b.x0) * 100}%;height:${(b.y1 - b.y0) * 100}%;font-size:calc(${fs.toFixed(1)} * var(--u))` });
     if (mode === 'flare' && v.flare) {
+      // La llamarada es real (NASA DONKI): en la historia pasa en 2071, el mismo día y mes; debajo, la fecha real.
       const d = new Date(v.flare.peakTime.replace('Z', ':00Z'));
-      const date = isNaN(+d) ? v.flare.peakTime.slice(0, 10) : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+      const ok = !isNaN(+d);
+      const inGame = ok ? `${d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })} ${CONFIG.gameYear}` : String(CONFIG.gameYear);
+      const real = ok ? d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : v.flare.peakTime.slice(0, 10);
       el.style.background = '#03060b';
-      el.append(h('div', { class: 'flare' }, h('b', {}, v.flare.classType), t('flare.title'), h('br'), date, h('br'), h('small', {}, t('flare.src'))));
+      el.append(h('div', { class: 'flare' }, h('b', {}, v.flare.classType), t('flare.title'), h('br'), inGame, h('br'), h('small', {}, t('flare.src', { date: real }))));
     } else {
       const c = h('canvas', { width: 160, height: 90 }) as HTMLCanvasElement;
       el.append(c, h('div', { class: 'nosig' }, t('nosignal')));

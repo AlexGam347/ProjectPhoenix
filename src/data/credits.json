@@ -51,6 +51,7 @@
     }
   ],
   "own": "The Central Superbase, its rooms, story and characters are the team's own design.",
-  "ai": "Code written with AI assistance (Claude). The menu music is composed by code for the game (scripts/make-menu-music.mjs).",
+  "music": { "title": "Pondering the Cosmos", "author": "Ruskerdax", "license": "Public domain. Free to use, modify and distribute." },
+  "ai": "Code written with AI assistance (Claude).",
   "disclaimer": "NASA does not endorse any non-U.S. Government entity and is not responsible for information contained on non-U.S. Government websites."
 }

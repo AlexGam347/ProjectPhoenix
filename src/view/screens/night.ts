@@ -57,7 +57,9 @@ export class NightScreen implements Screen {
     this.el.addEventListener('keydown', () => (this.lastInput = performance.now()), true);
     this.ex.yana.onHighlight = (id) => { this.currentHl = id === 'fault' ? this.faultTarget() : id; this.ex.highlight(this.currentHl); };
     const lines = scripted('nightStart', { night: g.n, flags: g.base.flags }, g.yanaSeen);
-    this.say(lines);
+    // Si el comandante está despertando, YANA empieza a hablar cuando termina la escena.
+    const start = () => { if (!this.ended) this.say(lines.map((l) => ({ ...l, sticky: true }))); };
+    if (app.cutscene) void app.cutscene.then(start); else start();
     if (def.storm === 'sand') storm(true);
     this.updateHud();
     this.last = performance.now();
@@ -79,7 +81,7 @@ export class NightScreen implements Screen {
     if (this.anim && now - this.anim.start >= ACTION_MS) this.endAnim();
     this.updateHud(now);
     const key = this.computeKey();
-    if (key !== this.visualKey) { this.visualKey = key; this.ex.refresh(); this.refreshTablet(); }
+    if (key !== this.visualKey) { this.visualKey = key; this.ex.refresh(); this.refreshTablet(); this.ex.yana.prune(); }
     if (!this.ended && !this.paused() && !this.ex.tablet.open && !this.ex.yana.busy && now - this.lastInput > 15000) {
       this.lastInput = now;
       this.hint();
@@ -114,17 +116,17 @@ export class NightScreen implements Screen {
       if (e.type === 'fault') {
         sfx.alarm();
         const f = FAULT_BY_ID[e.faultId];
-        this.say(scripted('fault', { night: this.s.n }, this.app.game.yanaSeen, { room: ROOMS[e.room].name, fault: f.name }));
+        this.say(this.whileDown(e.room, scripted('fault', { night: this.s.n }, this.app.game.yanaSeen, { room: ROOMS[e.room].name, fault: f.name })));
       } else if (e.type === 'clog') {
         sfx.alarm();
-        this.say(scripted('clog', {}, [], { room: ROOMS[e.room].name }));
+        this.say(this.whileDown(e.room, scripted('clog', {}, [], { room: ROOMS[e.room].name })));
       } else if (e.type === 'solar') {
         sfx.solar();
         storm(true);
         this.ex.yana.noSignal = true;
         this.say(scripted('solar', {}, []), true);
       } else if (e.type === 'graceOver') {
-        this.say(scripted('graceOver', {}, [], { room: ROOMS[e.room].name }));
+        this.say(this.whileDown(e.room, scripted('graceOver', {}, [], { room: ROOMS[e.room].name })));
       } else if (e.type === 'hour') {
         sfx.hour();
       } else if (e.type === 'dawn') {
@@ -149,13 +151,19 @@ export class NightScreen implements Screen {
   }
 
   // ---------- YANA ----------
+  /** Avisos de una sala parada: dejan de tener sentido en cuanto se arregla (YANA no se queda atrasada). */
+  private whileDown(room: ProdRoom, lines: Line[]): Line[] {
+    return lines.map((l) => ({ ...l, valid: () => this.s.rooms[room].down }));
+  }
+
   private say(lines: Line[], interrupt = false) {
     if (!lines.length) return;
     let g = this.app.game;
     for (const l of lines) if (l.id && !g.yanaSeen.includes(l.id)) g = { ...g, yanaSeen: [...g.yanaSeen, l.id] };
     this.app.patch(g);
     // En el tutorial, todo lo que dice YANA para el reloj hasta que se lee.
-    this.ex.yana.say(this.tutorial ? lines.map((l) => ({ ...l, block: true })) : lines, { interrupt });
+    // Fuera del tutorial, lo nuevo sustituye a los avisos que aún no se habían leído.
+    this.ex.yana.say(this.tutorial ? lines.map((l) => ({ ...l, block: true })) : lines, { interrupt, fresh: !this.tutorial });
   }
 
   private faultTarget(): string | null {
