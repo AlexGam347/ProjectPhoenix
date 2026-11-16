@@ -272,22 +272,26 @@ export function doTask(ctx: NightCtx, s: NightState, taskId: string): NightState
   const task = ctx.tasks.find((t) => t.id === taskId)!;
   addInto(s.plus, task.plus);
   addInto(s.minus, task.minus);
-  for (const r of RES) { if (task.plus[r]) applyRes(s, r, task.plus[r]!); if (task.minus[r]) applyRes(s, r, -task.minus[r]!); }
+  for (const r of RES) if (task.plus[r]) applyRes(s, r, task.plus[r]!);
   s.actions.push({ t: s.t, kind: 'task', id: task.id, room: task.room });
   spendHour(ctx, s);
+  // El gasto se cobra al final de la hora, después de la producción: con la barra llena, la producción
+  // que no cabe se pierde y el gasto se nota (si se cobrara antes, esa producción lo rellenaría y parecería gratis).
+  for (const r of RES) if (task.minus[r]) applyRes(s, r, -task.minus[r]!);
   return s;
 }
 
 export function repair(ctx: NightCtx, s: NightState, room: ProdRoom): NightState {
   const st = s.rooms[room];
   if (s.done || !st.down) return s;
+  // Coste de la reparación: se cobra al final de la hora, como el de las tareas.
+  let cost: Partial<Vec> | undefined;
   if (st.cause === 'fault') {
-    const f = ctx.faults.find((x) => x.id === st.faultId);
-    addInto(s.minus, f?.cost);
-    for (const r of RES) if (f?.cost[r]) applyRes(s, r, -f.cost[r]!);
+    cost = ctx.faults.find((x) => x.id === st.faultId)?.cost;
+    addInto(s.minus, cost);
   } else if (st.cause === 'clog') {
-    addInto(s.storm, ctx.def.clogCost);
-    for (const r of RES) if (ctx.def.clogCost?.[r]) applyRes(s, r, -ctx.def.clogCost[r]!);
+    cost = ctx.def.clogCost;
+    addInto(s.storm, cost);
   }
   s.actions.push({ t: s.t, kind: 'repair', id: st.faultId ?? st.cause ?? 'repair', room });
   const solar = st.cause === 'solar';
@@ -298,6 +302,7 @@ export function repair(ctx: NightCtx, s: NightState, room: ProdRoom): NightState
   st.cause = null;
   st.faultId = null;
   if (!solar) spendHour(ctx, s);
+  for (const r of RES) if (cost?.[r]) applyRes(s, r, -cost[r]!);
   return s;
 }
 

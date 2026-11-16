@@ -57,3 +57,31 @@ describe('jornada', () => {
     expect(canEndDay(g)).toBe(false);
   });
 });
+
+describe('los sueños no se saltan', () => {
+  // Juega la partida entera por la máquina de estados con noches que fallan y se repiten,
+  // y cuenta cuántas veces aparece cada sueño.
+  const play = (fails: Record<number, number>) => {
+    const seen: number[] = [];
+    let g = newGame();
+    for (let guard = 0; guard < 200 && g.phase !== 'final'; guard++) {
+      if (g.phase === 'dream') { seen.push(g.n); g = afterVideo(g); }
+      else if (g.phase === 'night') {
+        const pass = (fails[g.n] ?? 0) < g.attempt;
+        g = finishNight(g, rep(pass, g.n), dawnOf(g));
+      } else if (g.phase === 'quiz') g = answerQuiz(g, true);
+      else if (g.phase === 'result') g = afterResult(g);
+      else if (g.phase === 'ending') g = afterVideo(g);
+      else if (g.phase === 'day') {
+        for (const id of ['dep1', 'tan1', 'pan1', 'des1', 'bat1', 'tal1', 'ele1', 'est1', 'led1', 'tan2']) g = buy(g, id);
+        g = endDay(canEndDay(g) ? g : { ...g, dayBought: ['x', 'y', 'z'] });
+      } else break;
+    }
+    return seen;
+  };
+  for (const fails of [{}, { 2: 1 }, { 3: 2 }, { 1: 1, 2: 2, 3: 1 }] as Record<number, number>[]) {
+    it(`sueños 1, 2 y 3 una vez cada uno (noches falladas: ${JSON.stringify(fails)})`, () => {
+      expect(play(fails)).toEqual([1, 2, 3]);
+    });
+  }
+});

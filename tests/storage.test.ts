@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { CONFIG, FAULTS, NIGHTS, TASKS, UPGRADES } from '../src/data';
 import { botNight } from '../src/rules/bot';
 import { applyUpgrade, canBuy, newBase } from '../src/rules/economy';
-import { dawnBase, display, netRate, repair, startNight, tick, type NightCtx } from '../src/rules/night';
+import { dawnBase, display, doTask, netRate, repair, startNight, tick, type NightCtx } from '../src/rules/night';
 import { PRESETS, type Plan } from '../src/rules/simulate';
 import { PROD_ROOMS, RES, type Base } from '../src/rules/types';
 
@@ -62,4 +62,19 @@ describe('almacén continuo en toda la partida', () => {
       });
     }
   }
+});
+
+describe('con la barra llena, gastar se nota', () => {
+  it('una tarea que gasta agua deja la barra en tope menos coste, aunque sobre producción', () => {
+    const ctx = ctxFor(2);
+    const base = newBase(CONFIG);
+    base.R.agua = base.C.agua;
+    base.P.agua = 40; // mucha más producción de la que cabe
+    const s = startNight(ctx, base, 5);
+    const task = TASKS.find((t) => (t.minus.agua ?? 0) > 0)!;
+    const before = display(ctx, s).agua;
+    expect(before).toBe(base.C.agua);
+    doTask(ctx, s, task.id);
+    expect(display(ctx, s).agua).toBeCloseTo(base.C.agua - task.minus.agua!, 6);
+  });
 });

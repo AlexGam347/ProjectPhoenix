@@ -1,6 +1,6 @@
 {
   "title": "PROJECT PHOENIX",
-  "menu.new": "NEW GAME",
+  "menu.new": "START",
   "menu.continue": "CONTINUE",
   "menu.options": "OPTIONS",
   "menu.credits": "CREDITS",
@@ -66,5 +66,6 @@
   "options.mute": "MUTE",
   "audio.on": "SOUND ON",
   "audio.off": "SOUND OFF",
-  "video.play": "PLAY"
+  "video.play": "PLAY",
+  "video.loading": "LOADING"
 }
