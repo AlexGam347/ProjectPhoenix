@@ -1,6 +1,6 @@
 // Música del menú, compuesta por código: ambiente espacial retro, tranquila y algo misteriosa.
 //   node scripts/make-menu-music.mjs   → public/assets/audio/menu.ogg (Opus) y menu.mp3
-// 60 BPM, re menor: pad Dm9 · Bbmaj9 · Gm9 · Asus4→A, bajo redondo, arpegio cuadrado filtrado,
+// 60 BPM, re menor: pad Dm9 · Bbmaj9 · Gm9 · Asus4→A, bajo redondo, arpegio suave tipo caja de música,
 // campanitas lejanas y, en la segunda vuelta, una melodía suave. 64 s que encadenan sin corte:
 // las colas (pad, eco, reverb) del final se suman al principio. Todo con semilla: sale igual cada vez.
 import { execFileSync } from 'node:child_process';
@@ -40,70 +40,66 @@ function add(i, l, r, rev = 0, dly = 0) {
   if (dly) busDly[i] += (l + r) * 0.5 * dly;
 }
 
-// ---------- pad: dos sierras desafinadas por voz, filtradas, entrada y salida lentas ----------
+// Todos los timbres son redondos (senos con pocos armónicos): nada de sierras ni cuadradas, que chillan.
+// ---------- pad: senos ligeramente desafinados (coro), entrada y salida lentas ----------
 function pad(note, t0, dur, gain, pan) {
   const f = hz(note), n = Math.floor((dur + 2) * SR);
-  let p1 = rand(), p2 = rand(), lp1 = 0, lp2 = 0;
-  const k = 1 - Math.exp(-2 * Math.PI * 900 / SR);
+  const ph = rand() * 6.28;
   for (let j = 0; j < n; j++) {
     const t = j / SR;
-    p1 = (p1 + f * 1.003 / SR) % 1; p2 = (p2 + f * 0.997 / SR) % 1;
-    let s = (p1 * 2 - 1) + (p2 * 2 - 1);
-    lp1 += k * (s - lp1); lp2 += k * (lp1 - lp2); s = lp2;
-    const e = env(t, dur, 1.6, 2) * gain * (0.85 + 0.15 * Math.sin(2 * Math.PI * 0.11 * t + note));
-    add(Math.floor((t0 + t) * SR), s * e * (1 - pan), s * e * (1 + pan), 0.55);
+    const w = 2 * Math.PI * f * t + ph;
+    const s = 0.5 * Math.sin(w * 1.002) + 0.5 * Math.sin(w * 0.998) + 0.18 * Math.sin(2 * w);
+    const e = env(t, dur, 1.8, 2) * gain * (0.85 + 0.15 * Math.sin(2 * Math.PI * 0.11 * t + note));
+    add(Math.floor((t0 + t) * SR), s * e * (1 - pan), s * e * (1 + pan), 0.45);
   }
 }
 
-// ---------- bajo: seno con un poco de armónico, notas largas ----------
+// ---------- bajo: seno puro, notas largas ----------
 function bass(note, t0, dur, gain) {
   const f = hz(note), n = Math.floor((dur + 0.6) * SR);
-  let p = 0;
   for (let j = 0; j < n; j++) {
     const t = j / SR;
-    p += f / SR;
-    const s = Math.tanh(1.6 * (Math.sin(2 * Math.PI * p) + 0.25 * Math.sin(4 * Math.PI * p)));
-    const e = env(t, dur, 0.04, 0.5) * gain * Math.exp(-t * 0.25);
-    add(Math.floor((t0 + t) * SR), s * e, s * e, 0.1);
+    const w = 2 * Math.PI * f * t;
+    const s = Math.sin(w) + 0.12 * Math.sin(2 * w);
+    const e = env(t, dur, 0.08, 0.6) * gain * Math.exp(-t * 0.3);
+    add(Math.floor((t0 + t) * SR), s * e, s * e, 0.08);
   }
 }
 
-// ---------- arpegio: cuadrada filtrada, corta, con eco ----------
+// ---------- arpegio: pulsación suave tipo caja de música grave, con eco ----------
 function pluck(note, t0, gain, pan) {
-  const f = hz(note), n = Math.floor(0.6 * SR);
-  let p = 0, lp = 0;
+  const f = hz(note), n = Math.floor(1.4 * SR);
   for (let j = 0; j < n; j++) {
     const t = j / SR;
-    p = (p + f / SR) % 1;
-    const sq = p < 0.5 ? 1 : -1;
-    const cut = 400 + 2600 * Math.exp(-t * 14);
-    lp += (1 - Math.exp(-2 * Math.PI * cut / SR)) * (sq - lp);
-    const e = gain * Math.min(1, t / 0.004) * Math.exp(-t * 7);
-    add(Math.floor((t0 + t) * SR), lp * e * (1 - pan), lp * e * (1 + pan), 0.25, 0.5);
+    const w = 2 * Math.PI * f * t;
+    const s = Math.sin(w) + 0.15 * Math.sin(2 * w) * Math.exp(-t * 6);
+    const e = gain * Math.min(1, t / 0.012) * Math.exp(-t * 3.2);
+    add(Math.floor((t0 + t) * SR), s * e * (1 - pan), s * e * (1 + pan), 0.3, 0.4);
   }
 }
 
-// ---------- campanitas lejanas: seno con parcial inarmónico ----------
+// ---------- campanitas lejanas: seno con un armónico suave ----------
 function bell(note, t0, gain, pan) {
   const f = hz(note), n = Math.floor(3 * SR);
   for (let j = 0; j < n; j++) {
     const t = j / SR;
-    const s = Math.sin(2 * Math.PI * f * t) + 0.35 * Math.sin(2 * Math.PI * f * 2.76 * t) * Math.exp(-t * 3);
-    const e = gain * Math.min(1, t / 0.003) * Math.exp(-t * 1.6);
-    add(Math.floor((t0 + t) * SR), s * e * (1 - pan), s * e * (1 + pan), 0.8, 0.3);
+    const w = 2 * Math.PI * f * t;
+    const s = Math.sin(w) + 0.12 * Math.sin(2 * w) * Math.exp(-t * 4);
+    const e = gain * Math.min(1, t / 0.01) * Math.exp(-t * 1.4);
+    add(Math.floor((t0 + t) * SR), s * e * (1 - pan), s * e * (1 + pan), 0.7, 0.25);
   }
 }
 
-// ---------- melodía de la segunda vuelta: triangular con vibrato suave ----------
+// ---------- melodía de la segunda vuelta: seno con vibrato suave ----------
 function lead(note, t0, dur, gain) {
   const f = hz(note), n = Math.floor((dur + 1.2) * SR);
   let p = 0;
   for (let j = 0; j < n; j++) {
     const t = j / SR;
-    p = (p + f * (1 + 0.004 * Math.sin(2 * Math.PI * 5 * t) * Math.min(1, t / 0.8)) / SR) % 1;
-    const s = 1 - 4 * Math.abs(p - 0.5);
-    const e = env(t, dur, 0.25, 1.2) * gain;
-    add(Math.floor((t0 + t) * SR), s * e * 0.9, s * e, 0.6, 0.35);
+    p += f * (1 + 0.003 * Math.sin(2 * Math.PI * 4.5 * t) * Math.min(1, t / 0.8)) / SR;
+    const s = Math.sin(2 * Math.PI * p) + 0.08 * Math.sin(4 * Math.PI * p);
+    const e = env(t, dur, 0.4, 1.4) * gain;
+    add(Math.floor((t0 + t) * SR), s * e * 0.9, s * e, 0.55, 0.3);
   }
 }
 
@@ -120,14 +116,14 @@ for (let loop = 0; loop < 2; loop++) {
     // Bajo: cada 2 tiempos
     for (let b = 0; b < CHORD; b += 2 * BEAT) bass(c.bass, t0 + b, 1.7, 0.22);
     // Arpegio en semicorcheas (0,25 s), una octava sobre el pad
-    for (let s = 0; s < CHORD / 0.25; s++) {
-      const voices = c.pad2 && s * 0.25 >= CHORD / 2 ? c.pad2 : c.pad;
-      const m = voices[ARP[s % 8]] + 12;
-      pluck(m, t0 + s * 0.25, s % 4 === 0 ? 0.05 : 0.032, Math.sin(s * 0.7) * 0.4);
-      if (rand() < 0.07) bell(voices[Math.floor(rand() * voices.length)] + 24, t0 + s * 0.25, 0.03, rand() * 1.4 - 0.7);
+    for (let s = 0; s < CHORD / 0.5; s++) {
+      const voices = c.pad2 && s * 0.5 >= CHORD / 2 ? c.pad2 : c.pad;
+      const m = voices[ARP[s % 8]];
+      pluck(m, t0 + s * 0.5, s % 2 === 0 ? 0.06 : 0.04, Math.sin(s * 0.7) * 0.35);
+      if (rand() < 0.08) bell(voices[Math.floor(rand() * voices.length)] + 12, t0 + s * 0.5, 0.025, rand() * 1.2 - 0.6);
     }
     // Melodía solo en la segunda vuelta
-    if (loop === 1) MELODY[ci].forEach((m, k) => lead(m, t0 + k * BAR, BAR * 0.9, 0.05));
+    if (loop === 1) MELODY[ci].forEach((m, k) => lead(m - 12, t0 + k * BAR, BAR * 0.9, 0.06));
   });
 }
 
@@ -153,7 +149,7 @@ function schroeder(input, combs, gain) {
     let idx = 0, lp = 0;
     for (let i = 0; i < N; i++) {
       const y = buf[idx];
-      lp = y * 0.7 + lp * 0.3; // amortigua agudos
+      lp = y * 0.35 + lp * 0.65; // amortigua bastante los agudos (sin brillo metálico)
       buf[idx] = input[i] + lp * g;
       out[i] += y;
       idx = (idx + 1) % d;
@@ -173,24 +169,30 @@ function schroeder(input, combs, gain) {
   for (let i = 0; i < N; i++) out[i] *= gain;
   return out;
 }
-const revL = schroeder(busRev, [[29.7, 0.84], [37.1, 0.83], [41.1, 0.82], [43.7, 0.81]], 0.22);
-const revR = schroeder(busRev, [[31.3, 0.84], [36.7, 0.83], [40.3, 0.82], [44.9, 0.81]], 0.22);
+const revL = schroeder(busRev, [[29.7, 0.8], [37.1, 0.79], [41.1, 0.78], [43.7, 0.77]], 0.14);
+const revR = schroeder(busRev, [[31.3, 0.8], [36.7, 0.79], [40.3, 0.78], [44.9, 0.77]], 0.14);
 for (let i = 0; i < N; i++) { L[i] += revL[i]; R[i] += revR[i]; }
 
 // ---------- bucle sin corte: la cola del final se suma al principio ----------
 const OUTN = LEN * SR;
 for (let i = 0; i < TAIL * SR; i++) { L[i] += L[OUTN + i]; R[i] += R[OUTN + i]; }
 
-// ---------- normalizar a −1,5 dBFS con saturación suave ----------
+// ---------- master: paso bajo suave (quita lo chillón) y pico a −6 dBFS, sin saturar ----------
+{
+  const k = 1 - Math.exp(-2 * Math.PI * 3500 / SR);
+  let l1 = 0, r1 = 0, l2 = 0, r2 = 0;
+  for (let i = 0; i < OUTN; i++) {
+    l1 += k * (L[i] - l1); l2 += k * (l1 - l2); L[i] = l2;
+    r1 += k * (R[i] - r1); r2 += k * (r1 - r2); R[i] = r2;
+  }
+}
 let peak = 0;
 for (let i = 0; i < OUTN; i++) peak = Math.max(peak, Math.abs(L[i]), Math.abs(R[i]));
-const target = 10 ** (-1.5 / 20);
-const g = target / peak;
+const g = 10 ** (-6 / 20) / peak;
 const pcm = Buffer.alloc(OUTN * 4);
 for (let i = 0; i < OUTN; i++) {
-  const l = Math.tanh(L[i] * g * 1.1) / Math.tanh(1.1), r = Math.tanh(R[i] * g * 1.1) / Math.tanh(1.1);
-  pcm.writeInt16LE(Math.round(Math.max(-1, Math.min(1, l)) * 32767), i * 4);
-  pcm.writeInt16LE(Math.round(Math.max(-1, Math.min(1, r)) * 32767), i * 4 + 2);
+  pcm.writeInt16LE(Math.round(L[i] * g * 32767), i * 4);
+  pcm.writeInt16LE(Math.round(R[i] * g * 32767), i * 4 + 2);
 }
 const header = Buffer.alloc(44);
 header.write('RIFF', 0); header.writeUInt32LE(36 + pcm.length, 4); header.write('WAVE', 8);
@@ -204,4 +206,4 @@ mkdirSync('public/assets/audio', { recursive: true });
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', tmp, '-c:a', 'libopus', '-b:a', '96k', 'public/assets/audio/menu.ogg']);
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', tmp, '-c:a', 'libmp3lame', '-b:a', '112k', 'public/assets/audio/menu.mp3']);
 rmSync(tmp);
-console.log(`menu.ogg y menu.mp3: ${LEN} s, pico ${(20 * Math.log10(peak * g)).toFixed(1)} dBFS antes de saturar`);
+console.log(`menu.ogg y menu.mp3: ${LEN} s, pico −6 dBFS`);
