@@ -4,7 +4,7 @@
   "hours": 6,
   "R0": { "agua": 16, "oxi": 16, "com": 14, "ene": 20 },
   "C0": { "agua": 30, "oxi": 30, "com": 30, "ene": 30 },
-  "P0": { "agua": 10, "oxi": 9, "com": 7, "ene": 18 },
+  "P0": { "agua": 10, "oxi": 9, "com": 8, "ene": 18 },
   "U0": { "agua": 2, "oxi": 0, "com": 0, "ene": 4 },
   "crewUse": { "agua": 6, "oxi": 6, "com": 6, "ene": 0 },
   "goals": {

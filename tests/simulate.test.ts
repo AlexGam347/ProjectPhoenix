@@ -25,6 +25,6 @@ describe('simulate(): tabla de equilibrio', () => {
     const r = simulate(CONFIG, UPGRADES, TASKS, PRESETS.equilibrado, 1);
     expect(r.days.map((d) => d.bought)).toEqual([4, 4, 3]);
     expect(r.days.every((d) => d.notes.length === 0)).toBe(true);
-    expect(r.nights[0].R).toEqual({ agua: 26, oxi: 24, com: 25, ene: 30 });
+    expect(r.nights[0].R).toEqual({ agua: 26, oxi: 24, com: 26, ene: 30 });
   });
 });

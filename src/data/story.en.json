@@ -1,5 +1,5 @@
 {
-  "dreams": { "1": { "video": "dream1" }, "2": { "video": "dream2" }, "3": { "video": "dream3" } },
+  "dreams": { "1": { "video": "dream1" }, "2": { "video": "dream2", "subs": true }, "3": { "video": "dream3", "subs": true } },
   "endings": {
     "good": { "video": "ending_good", "title": "THE BASE IS READY", "yana": "Every choice you made keeps someone alive." },
     "mid": { "video": "ending_mid", "title": "RATIONING {res}", "yana": "We were short of {res}." },
