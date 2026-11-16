@@ -1,8 +1,39 @@
 {
-  "dreams": { "1": { "video": "dream1" }, "2": { "video": "dream2", "subs": true }, "3": { "video": "dream3", "subs": true } },
+  "dreams": { "1": { "video": "dream1", "subs": true }, "2": { "video": "dream2", "subs": true }, "3": { "video": "dream3", "subs": true } },
+  "finale": { "video": "finale" },
+  "epilogue": {
+    "intro": [
+      "Once upon a time, humanity had a perfect home.",
+      "Earth gave us air to breathe, clean water, food and a sky that kept us safe. All of it for free.",
+      "But we took more than Earth could give. Factories and fires filled the air with smoke. Droughts dried the fields. Acid rain poisoned the lakes and the soil.",
+      "The satellites warned us, and we did not listen.",
+      "When the sky turned gray, humanity built one last hope: Project Phoenix, a base on Mars.",
+      "For four nights, one commander kept it running. Water. Oxygen. Food. Energy.",
+      "Now the first colonists have landed."
+    ],
+    "good": [
+      "The base was ready. Every tank was full, and every colonist had air, water and food from the very first day.",
+      "Year after year, more ships arrived. Greenhouses grew into gardens, and children were born under a red sky.",
+      "On Mars, humanity learned what Earth had always done for us. That knowledge went home, and slowly, Earth's sky began to clear.",
+      "And that is how humanity was saved: one breath, one drop, one choice at a time."
+    ],
+    "mid": [
+      "The colonists made it, but the base was short of {res}. Everyone had to ration.",
+      "The first years were hard, and every day was a careful balance.",
+      "But humanity held on, and the base grew stronger along with its people.",
+      "Humanity survived, just barely. Its future depends on learning from every mistake."
+    ],
+    "bad": [
+      "The colonists stepped out of the ship, but the base could not keep water, oxygen, food and energy going at once.",
+      "Tanks ran dry and the lights flickered. The colonists had to go back to their ship and wait in orbit, far from a home that was not ready.",
+      "On Earth, the sky stayed gray.",
+      "Humanity had made the same mistake twice: it did not take care of its life support in time.",
+      "Maybe next time, the story can end differently."
+    ]
+  },
   "endings": {
-    "good": { "video": "ending_good", "title": "THE BASE IS READY", "yana": "Every choice you made keeps someone alive." },
-    "mid": { "video": "ending_mid", "title": "RATIONING {res}", "yana": "We were short of {res}." },
-    "bad": { "video": "ending_bad", "title": "THE SHIP STAYS IN ORBIT", "yana": "A base needs all four at once. Try another plan?" }
+    "good": { "title": "THE BASE IS READY", "yana": "Every choice you made keeps someone alive." },
+    "mid": { "title": "RATIONING {res}", "yana": "We were short of {res}." },
+    "bad": { "title": "THE BASE WAS NOT READY", "yana": "A base needs all four at once. Try another plan?" }
   }
 }

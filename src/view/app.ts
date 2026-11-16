@@ -15,6 +15,7 @@ import type { Manifest } from './room/roomView';
 import { CreditsScreen } from './screens/credits';
 import { DayScreen } from './screens/day';
 import { FinalScreen } from './screens/final';
+import { EpilogueScreen } from './screens/epilogue';
 import { MenuScreen } from './screens/menu';
 import { NightScreen } from './screens/night';
 import { QuizScreen } from './screens/quiz';
@@ -148,8 +149,14 @@ export class App implements AppApi {
       case 'night': this.show(new NightScreen(this), `night${g.n}`); break;
       case 'quiz': this.show(new QuizScreen(this), 'quiz'); break;
       case 'ending': {
-        const e = story.endings[g.ending!];
-        this.show(new StoryScreen({ video: e.video, label: t(`result.${g.ending}`), icon: g.ending === 'good' ? 'rocket' : g.ending === 'mid' ? 'warn' : 'orbit' }, () => this.go(afterVideo(this.game)), this.settings), 'ending');
+        // Cinemática final (la misma en los tres finales, hecha con ayuda de IA), luego el epílogo y el cartel del final.
+        const end = g.ending!;
+        const miss = g.lastReport?.miss[0];
+        const res = miss ? t(`res.${miss}.low`) : '';
+        this.show(new StoryScreen({ video: story.finale.video, ai: true, label: 'Arrival on Mars', icon: 'rocket' }, () => {
+          if (this.game !== g) return;
+          this.show(new EpilogueScreen(end, res, () => { if (this.game === g) this.go(afterVideo(this.game)); }), 'epilogue');
+        }, this.settings), 'ending');
         break;
       }
       case 'result': this.show(new ResultScreen(this), 'result'); break;

@@ -30,15 +30,16 @@ Required notice, shown in Credits: "NASA does not endorse any non-U.S. Governmen
 ## Team's own work
 
 - 3D base, room renders (day and night) and upgrade layers, made in Blender: `art-src/dia`, `art-src/sala`.
-- Dream videos: ideas, scripts and art direction by the team; generated with AI assistance (see Use of AI): `public/assets/video`.
-- Dream video subtitles: `art-src/subs`.
+- Dream videos and the finale cinematic: ideas, scripts and art direction by the team; generated with AI assistance (see Use of AI): `public/assets/video`.
+- Epilogue text after the finale (story crawl and the three endings): written by the team with Claude's drafting help, in `src/data/story.en.json`.
+- Dream video subtitles (Dreams 1, 2 and 3): `art-src/subs`.
 - YANA sprites: `public/assets/yana`.
 - Menu background: the team's Mars image (`art-src/menu/mars.webp`), pixelated by `scripts/pixelate-menu.mjs`.
 - Story, characters, base design and game design.
 
 ## Use of AI
 
-Project Phoenix was designed and directed by our team: the concept, story, characters, game design and balance, the 3D base and room renders (Blender), the scripts and direction of the dream videos, and the choice of NASA data. The programming code of the game was entirely AI generated: Claude (Anthropic) generated all of it from our design document and our step-by-step instructions. Claude also drafted the in-game English text. Claude also helped generate the dream videos from our scripts and art direction, and Kokoro-82M (open-source text-to-speech) generated the voices in them. We tested every change and asked for corrections until it worked as we designed. The dream videos are marked "AI assisted" in the game. No NASA logos or branding are used.
+Project Phoenix was designed and directed by our team: the concept, story, characters, game design and balance, the 3D base and room renders (Blender), the scripts and direction of the dream videos and the finale cinematic, and the choice of NASA data. The programming code of the game was entirely AI generated: Claude (Anthropic) generated all of it from our design document and our step-by-step instructions. Claude also drafted the in-game English text. Claude also helped generate the dream videos and the finale cinematic from our scripts and art direction, and Kokoro-82M (open-source text-to-speech) generated the voices in the dream videos. We tested every change and asked for corrections until it worked as we designed. The dream videos and the finale cinematic are marked "AI assisted" in the game. No NASA logos or branding are used.
 
 | Part | Team | AI |
 |---|---|---|
@@ -47,7 +48,7 @@ Project Phoenix was designed and directed by our team: the concept, story, chara
 | Programming code (game, tests, build scripts) | Design document and step-by-step instructions; testing and requested corrections | **Entirely AI generated** by Claude (Anthropic) |
 | In-game English text (YANA lines, tasks, questions) | Content and facts chosen by the team; reviewed | Drafted by Claude |
 | 3D base and room renders | All, made in Blender | None |
-| Dream videos | Ideas, scripts and art direction | Generated with Claude's assistance; voices by Kokoro-82M. Marked "AI assisted" in the game |
+| Dream videos and finale cinematic | Ideas, scripts and art direction | Generated with Claude's assistance; voices by Kokoro-82M (dreams). Marked "AI assisted" in the game |
 | Menu background | Original Mars image | None (pixelated by a script) |
 | Menu music | Chosen by the team | None (public domain track by Ruskerdax) |
 | Choice and use of NASA data | All | None |

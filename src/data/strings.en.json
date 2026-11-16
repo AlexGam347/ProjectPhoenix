@@ -48,6 +48,8 @@
   "result.good": "GOOD",
   "result.mid": "MID",
   "result.bad": "BAD",
+  "result.landing": "THE SHIP IS LANDING",
+  "ending.card": "{end} ENDING",
   "result.next": "NEXT",
   "final.again": "PLAY AGAIN",
   "final.credits": "CREDITS",

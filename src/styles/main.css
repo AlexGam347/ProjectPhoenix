@@ -477,3 +477,25 @@ img.thumb { object-fit: contain; }
 .intro-on .yana { visibility: hidden; }
 /* Etiqueta discreta en los vídeos hechos con ayuda de IA */
 .story .ai-label { position: absolute; left: calc(30 * var(--u)); bottom: calc(6 * var(--u)); z-index: 3; font-size: .55em; letter-spacing: .12em; color: rgba(236, 242, 238, .45); pointer-events: none; }
+
+/* Epílogo tras la cinemática final: texto que sube en perspectiva sobre negro y cartel del final. */
+.epilogue { background: #000; }
+.epilogue .crawl-wrap { position: absolute; inset: 0; overflow: hidden; perspective: calc(900 * var(--u)); perspective-origin: 50% 0%;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%); mask-image: linear-gradient(to bottom, transparent 0%, #000 30%);
+  transition: opacity 1.4s ease; }
+.epilogue .crawl-wrap.out { opacity: 0; }
+.epilogue .crawl { position: absolute; left: 50%; top: 0; width: calc(980 * var(--u)); margin-left: calc(-490 * var(--u));
+  transform-origin: 50% 0%; transform: rotateX(28deg) translateY(var(--from, 110%)); visibility: hidden;
+  font-size: 1.4em; line-height: 1.3; text-align: center; color: var(--amber); text-shadow: 0 0 calc(8 * var(--u)) rgba(255, 192, 74, .45); }
+.epilogue .crawl.run { visibility: visible; animation: crawl-up linear forwards; }
+.epilogue .crawl p { margin: 0 0 1.1em; }
+.epilogue .crawl p:first-child { color: var(--g); text-shadow: var(--glow); }
+.epilogue .crawl-gap { height: 2.2em; }
+@keyframes crawl-up { from { transform: rotateX(28deg) translateY(var(--from)); } to { transform: rotateX(28deg) translateY(var(--to)); } }
+.reduce-flash .epilogue .crawl, .reduce-flash .epilogue .crawl.run { animation-name: crawl-up-flat; transform: translateY(var(--from, 110%)); }
+@keyframes crawl-up-flat { from { transform: translateY(var(--from)); } to { transform: translateY(var(--to)); } }
+.epilogue .end-card { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; transition: opacity 1.6s ease; pointer-events: none; }
+.epilogue .end-card.on { opacity: 1; pointer-events: auto; cursor: pointer; }
+.epilogue .end-card .stamp { font-size: 3.6em; padding: .1em .6em; text-shadow: 0 0 calc(10 * var(--u)) currentColor; }
+.epilogue .skip { position: absolute; right: calc(30 * var(--u)); bottom: calc(24 * var(--u)); z-index: 3; }
+.epilogue.leaving { opacity: 0; transition: opacity .6s ease; }
