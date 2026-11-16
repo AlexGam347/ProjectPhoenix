@@ -9,7 +9,6 @@ interface Source { name: string; use: string; url: string; inGame?: boolean }
 
 const list = (items: Source[]) => h('ul', {}, ...items.map((s) => h('li', {},
   h('a', { href: s.url, target: '_blank', rel: 'noopener' }, s.name),
-  s.inGame ? h('span', { class: 'chip plus' }, 'used in game') : null,
   h('br'), h('span', { class: 'muted' }, s.use))));
 
 export class CreditsScreen implements Screen {
