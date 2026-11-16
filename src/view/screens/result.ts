@@ -55,8 +55,9 @@ export class ResultScreen implements Screen {
     const fixes = rep.actions.filter((a) => a.kind === 'repair').length;
     const quiz = g.history.quiz.find((q) => q.n === g.n);
     const bought = g.history.purchases.filter((p) => p.day === g.n - 1).map((p) => UPG_BY_ID[p.id]);
-    const stampKey = g.n === 4 ? `result.${g.ending}` : rep.pass ? 'result.passed' : 'result.retry';
-    const stampCls = g.n === 4 ? g.ending! : rep.pass ? 'good' : 'bad';
+    // En la Noche 4 el sello no desvela el final: eso llega con el epílogo.
+    const stampKey = g.n === 4 ? 'result.landing' : rep.pass ? 'result.passed' : 'result.retry';
+    const stampCls = g.n === 4 ? 'mid' : rep.pass ? 'good' : 'bad';
     const next = h('button', { class: 'btn primary', onclick: () => { sfx.click(); this.app.go(afterResult(this.app.game)); } },
       (rep.pass || g.n === 4 ? t('result.next') : t('result.retry')).toLowerCase());
     this.el = h('div', { class: 'screen' }, h('div', { class: 'mars-bg' }), h('div', { class: 'backdrop' }),

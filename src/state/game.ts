@@ -52,7 +52,8 @@ export function toNight(g: Game): Game {
 export function finishNight(g: Game, rep: NightReport, dawn: Base): Game {
   const keep = rep.pass || g.n === 4;
   const next = { ...g, lastReport: rep, base: keep ? dawn : cloneBase(g.preNight) };
-  if (g.n === 4) return { ...next, phase: 'ending', ending: endingFor(rep.miss.length) };
+  // Noche 4: informe de la última noche y después el final (cinemática, epílogo y cartel).
+  if (g.n === 4) return { ...next, phase: 'result', ending: endingFor(rep.miss.length) };
   // La pregunta de antes de dormir se hace una vez por noche (no se repite al repetir la noche).
   if (g.history.quiz.some((q) => q.n === g.n)) return afterSleep(next);
   return { ...next, phase: 'quiz' };
@@ -68,15 +69,16 @@ export function answerQuiz(g: Game, ok: boolean): Game {
   return afterSleep({ ...g, effortBonus: ok ? 1 : 0, history: { ...g.history, quiz: [...g.history.quiz, { n: g.n, ok }] } });
 }
 
-/** Al terminar un vídeo: el Sueño 1 abre la partida; los demás llevan al resultado. */
+/** Al terminar un vídeo: el Sueño 1 abre la partida; el final lleva al resumen; los demás, al resultado. */
 export function afterVideo(g: Game): Game {
   if (g.phase === 'dream' && !g.lastReport) return toNight(g);
+  if (g.phase === 'ending') return { ...g, phase: 'final' };
   return { ...g, phase: 'result' };
 }
 
 export function afterResult(g: Game): Game {
   const rep = g.lastReport!;
-  if (g.n === 4) return { ...g, phase: 'final' };
+  if (g.n === 4) return { ...g, phase: 'ending' };
   if (rep.pass) return toDay(g);
   return toNight({ ...g, attempt: g.attempt + 1, base: cloneBase(g.preNight), history: { ...g.history, repeats: [...g.history.repeats, g.n] } });
 }

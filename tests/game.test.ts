@@ -41,12 +41,12 @@ describe('jornada', () => {
     g = finishNight(g, rep(true, 2), dawnOf(g));
     expect(g.phase).toBe('result');
   });
-  it('la Noche 4 va al vídeo del final, luego al resultado y al resumen', () => {
+  it('la Noche 4 va al resultado, luego al final (cinemática y epílogo) y al resumen', () => {
     let g = finishNight({ ...newGame(), phase: 'night', n: 4 }, rep(false, 4, ['agua', 'oxi']), newGame().base);
-    expect([g.phase, g.ending]).toEqual(['ending', 'bad']);
-    g = afterVideo(g);
-    expect(g.phase).toBe('result');
-    expect(afterResult(g).phase).toBe('final');
+    expect([g.phase, g.ending]).toEqual(['result', 'bad']);
+    g = afterResult(g);
+    expect(g.phase).toBe('ending');
+    expect(afterVideo(g).phase).toBe('final');
   });
   it('el esfuerzo se gasta al construir; deshacer lo devuelve', () => {
     let g = toDay({ ...newGame(), phase: 'result' });

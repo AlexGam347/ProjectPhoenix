@@ -27,7 +27,7 @@ Control: 4 doors, catalog kiosk, Earth screen, YANA. Water: ice melter, filter, 
 Oxygen: electrolyzer, CO₂ filter. Greenhouse: lettuce shelf, air filter. Energy: solar field window, power panel, batteries.
 
 **Videos** (`public/assets/video/`): MP4 H.264, 1280×720 or 1920×1080, under 15 MB.
-`dream1.mp4`, `dream2.mp4`, `dream3.mp4`, `ending_good.mp4`, `ending_mid.mp4`, `ending_bad.mp4`, with optional English subtitles
+`dream1.mp4`, `dream2.mp4`, `dream3.mp4` and `finale.mp4` (the same arrival cinematic for all three endings; the epilogue text and the GOOD / MID / BAD ENDING card come after it, from `src/data/story.en.json`), with optional English subtitles
 `dream1.en.vtt` … Any missing video shows a placeholder frame and the game continues.
 
 ```bash

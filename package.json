@@ -1,5 +1,6 @@
 {
   "name": "project-phoenix",
+  "description": "Educational browser game for NASA Space Apps. The programming code is entirely AI generated (Claude, Anthropic) from the team's design and instructions.",
   "private": true,
   "version": "0.1.0",
   "type": "module",

@@ -111,3 +111,56 @@ export function storm(on: boolean) {
   src.start();
   stormNode = { stop: () => { try { src.stop(); } catch { /* ya parado */ } } };
 }
+
+/** Música en bucle (por ahora, la del menú: scripts/make-menu-music.mjs). Pasa por el volumen general. */
+const tracks: Record<string, Promise<AudioBuffer | null>> = {};
+let current: { name: string; src: AudioBufferSourceNode; gain: GainNode } | null = null;
+let wanted: string | null = null;
+
+function loadTrack(name: string): Promise<AudioBuffer | null> {
+  if (!ctx) return Promise.resolve(null);
+  const ac = ctx;
+  tracks[name] ??= (async () => {
+    // Opus en OGG donde se pueda (Chrome, Firefox, Edge); MP3 si no (Safari antiguo).
+    const ext = document.createElement('audio').canPlayType('audio/ogg; codecs="opus"') ? 'ogg' : 'mp3';
+    try {
+      const res = await fetch(`${import.meta.env.BASE_URL}assets/audio/${name}.${ext}`);
+      if (!res.ok) return null;
+      return await ac.decodeAudioData(await res.arrayBuffer());
+    } catch { return null; }
+  })();
+  return tracks[name];
+}
+
+export const music = {
+  /** Empieza (con fundido de entrada) si el audio está desbloqueado; si no, empezará al llamar otra vez. */
+  async play(name: string, level = 0.55) {
+    wanted = name;
+    if (!ctx || !master || current?.name === name) return;
+    const buf = await loadTrack(name);
+    if (!buf || !ctx || !master || wanted !== name || current?.name === name) return;
+    const src = ctx.createBufferSource(), gain = ctx.createGain();
+    src.buffer = buf;
+    src.loop = true;
+    const t = ctx.currentTime;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(level, t + 2);
+    src.connect(gain).connect(master);
+    src.start();
+    current = { name, src, gain };
+  },
+  /** Para con fundido de salida. */
+  stop(fade = 1) {
+    wanted = null;
+    if (!current || !ctx) return;
+    const { src, gain } = current;
+    const t = ctx.currentTime;
+    gain.gain.cancelScheduledValues(t);
+    gain.gain.setValueAtTime(Math.max(0.0001, gain.gain.value), t);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + fade);
+    try { src.stop(t + fade + 0.05); } catch { /* ya parada */ }
+    current = null;
+  },
+  /** La que debería sonar ahora (para arrancarla al activar el sonido). */
+  get wanted() { return wanted; },
+};

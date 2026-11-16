@@ -12,6 +12,8 @@ export const PROD_ROOMS: ProdRoom[] = ['agua', 'oxi', 'com', 'ene'];
 export type Flag = 'robot' | 'blindaje' | 'prefiltros';
 
 export interface Config {
+  /** Año en que pasa el juego. */
+  gameYear: number;
   crew: number;
   effortPerDay: number;
   hours: number;

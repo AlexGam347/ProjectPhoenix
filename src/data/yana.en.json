@@ -1,12 +1,11 @@
 {
   "lines": [
-    { "id": "tut.01", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "text": "Commander, I am YANA. The robots built the base. Now we keep it alive." },
+    { "id": "tut.01", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "text": "I am YANA, your robot assistant. I will guide you tonight." },
     { "id": "tut.02", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "highlight": "hud", "text": "Water, oxygen, food and energy. The white mark is tonight's goal." },
     { "id": "tut.03", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "text": "The crew uses water, oxygen and food. If we do nothing, the bars drop." },
     { "id": "tut.03b", "trigger": "nightStart", "when": { "night": 1 }, "state": "normal", "block": true, "highlight": "clock", "text": "Six hours. Each action takes one hour. The clock never stops." },
     { "id": "tut.04", "trigger": "nightStart", "when": { "night": 1 }, "state": "hint", "block": true, "highlight": "door.agua", "text": "Tap the blue door. Let's melt some ice." },
     { "id": "tut.05", "trigger": "fault", "when": { "night": 1 }, "state": "alarm", "block": true, "highlight": "fault", "text": "Red light! The filter is dirty. Fix it before the plant stops." },
-    { "id": "tut.06", "trigger": "firstRepair", "when": { "night": 1 }, "state": "normal", "block": true, "text": "Well done. Now refill the bar that is furthest from its mark." },
     { "id": "n2.start", "trigger": "nightStart", "when": { "night": 2 }, "state": "normal", "text": "A red door light means a broken room." },
     { "id": "n3.start", "trigger": "nightStart", "when": { "night": 3 }, "state": "alarm", "text": "Dust storm coming. Filters will clog and panels give half." },
     { "id": "n3.pre", "trigger": "nightStart", "when": { "night": 3, "flag": "prefiltros" }, "state": "normal", "text": "Pre-filters ready. Only one filter will clog." },
@@ -35,6 +34,21 @@
   },
   "solarRepair": "Room back online. Machines are weak after the storm.",
   "clogRepair": "Filter clean. Martian dust storms can cover the whole planet for weeks.",
+  "guide": {
+    "lowest": "Well done. Now the {res} bar is the lowest. Let's refill it.",
+    "door": "Tap the {room} door.",
+    "back": "First, go back to Control.",
+    "task": "Tap {task} on your tablet.",
+    "wait": "Great! When the bars look fine, you can choose wait 1 hour and let the machines work.",
+    "free": "From now on it is up to you. Keep every bar above its white mark until 6 am."
+  },
+  "intro": [
+    { "text": "Commander? Commander! Good, you are awake.", "state": "happy" },
+    { "text": "It is {year}. Earth can no longer keep us alive." },
+    { "text": "You lead Project Phoenix: the first home for humans on Mars." },
+    { "text": "The colonists land in four nights. If this base is not ready, they will have nowhere to live.", "state": "hint" },
+    { "text": "The future of humanity is in your hands. Let me show you how it works.", "state": "happy" }
+  ],
   "hint": {
     "door": "{res} is low. Go to the {room}.",
     "doorFault": "Red light! The {room} needs you.",

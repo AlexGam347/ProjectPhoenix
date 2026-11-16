@@ -1,6 +1,6 @@
 // Opciones: volumen, reducir parpadeos, texto grande e idioma.
 import { t } from '../i18n/i18n';
-import { setVolume } from '../audio/audio';
+import { music, setVolume, unlock } from '../audio/audio';
 import { saveSettings, type Settings } from '../state/save';
 import { h } from './dom';
 
@@ -8,6 +8,8 @@ export function applySettings(s: Settings) {
   document.documentElement.classList.toggle('reduce-flash', s.reduceFlash);
   document.documentElement.classList.toggle('big-text', s.bigText);
   setVolume(s.muted ? 0 : s.volume);
+  // Si se activa el sonido con una música pendiente (el menú), arranca ya: este cambio es un gesto del jugador.
+  if (!s.muted && music.wanted) { unlock(); void music.play(music.wanted); }
 }
 
 export function openOptions(host: HTMLElement, s: Settings, onClose: () => void) {

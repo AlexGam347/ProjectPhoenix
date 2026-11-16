@@ -5,7 +5,7 @@ import { h } from '../dom';
 import { px } from '../pixelIcons';
 import type { Screen } from '../app';
 
-export interface VideoDef { video: string; label: string; icon: string; subs?: boolean }
+export interface VideoDef { video: string; label: string; icon: string; subs?: boolean; ai?: boolean }
 
 export class StoryScreen implements Screen {
   el: HTMLElement;
@@ -16,7 +16,9 @@ export class StoryScreen implements Screen {
   constructor(def: VideoDef, private onDone: () => void, audio: { muted: boolean; volume: number } = { muted: false, volume: 1 }) {
     const base = import.meta.env.BASE_URL;
     const skip = h('button', { class: 'btn skip', onclick: () => this.skip() }, t('story.skip').toLowerCase());
-    this.el = h('div', { class: 'screen story' }, skip);
+    // Los sueños se hicieron con ayuda de IA (docs/RESOURCES.md): etiqueta discreta mientras se ven.
+    const ai = def.ai ? h('div', { class: 'ai-label' }, 'AI assisted') : null;
+    this.el = h('div', { class: 'screen story' }, skip, ai);
     const v = h('video', { playsinline: true, preload: 'auto', 'aria-label': def.label }) as HTMLVideoElement;
     v.muted = audio.muted;
     v.volume = Math.min(1, Math.max(0, audio.volume));
