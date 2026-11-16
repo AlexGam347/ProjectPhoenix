@@ -20,6 +20,8 @@ export class CreditsScreen implements Screen {
       h('div', { class: 'credits term', role: 'dialog', 'aria-label': t('credits.title') },
         h('h2', {}, t('credits.title')),
         h('p', {}, credits.team),
+        h('h3', {}, 'How we used NASA data'),
+        h('ul', {}, ...credits.nasaUse.map((u) => h('li', {}, h('b', {}, `${u.where}: `), u.how))),
         h('h3', {}, 'NASA Space Apps Challenge resources'),
         list(credits.spaceApps as Source[]),
         h('p', {}, `Night 4 solar flare: ${flare.classType}, ${flare.peakTime.slice(0, 10)}, NASA DONKI${flare.source === 'fallback' ? ' (backup copy)' : ''}.`),

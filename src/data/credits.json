@@ -51,6 +51,13 @@
     }
   ],
   "own": "The Central Superbase, its rooms, story and characters are the team's own design.",
+  "nasaUse": [
+    { "where": "In the game", "how": "Every build downloads the strongest solar flare of the last 12 months from NASA DONKI, through NASA Open APIs. Night 4 starts with that real flare on the Control screen (the story year is 2071, the real date is shown below it) and it triggers the solar storm: no signal, machines down, red lights." },
+    { "where": "Game rules", "how": "RadLab radiation doses on the ISS are why the Equipment Shielding upgrade exists and why fewer rooms fail in the storm when you have it." },
+    { "where": "Rooms and tasks", "how": "ECLSS shaped the water and oxygen rooms: melting ice costs energy, the electrolyzer splits water into oxygen, CO2 filters fill up. OSDR lettuce studies and the CSA Veggie kit shaped the greenhouse and its harvest task." },
+    { "where": "The base", "how": "Mars Trek terrain guided where the base, the buried ice and the solar field are placed." },
+    { "where": "Learning", "how": "YANA's facts, the questions before sleep and the upgrade notes come from these sources, written for ages 7 to 14 with the help of the CSA STEM resources." }
+  ],
   "music": { "title": "Pondering the Cosmos", "author": "Ruskerdax", "license": "Public domain. Free to use, modify and distribute." },
   "ai": "Code written with AI assistance (Claude).",
   "disclaimer": "NASA does not endorse any non-U.S. Government entity and is not responsible for information contained on non-U.S. Government websites."
