@@ -4,7 +4,7 @@ import { afterVideo, newGame, type Game } from '../state/game';
 import { clearSave, load, loadSettings, save, saveSettings, type Settings } from '../state/save';
 import { loadFlare, type Flare } from '../nasa/donki';
 import { t } from '../i18n/i18n';
-import { unlock } from '../audio/audio';
+import { music, unlock } from '../audio/audio';
 import { h } from './dom';
 import { px } from './pixelIcons';
 import { applySettings, openOptions } from './options';
@@ -67,7 +67,7 @@ export class App implements AppApi {
       this.settings.muted = muted;
       saveSettings(this.settings);
       applySettings(this.settings);
-      if (!muted) unlock();
+      if (!muted) { unlock(); if (music.wanted) void music.play(music.wanted); }
       gate.remove();
       (this.stage.querySelector('.menu .btn') as HTMLElement | null)?.focus();
     };
@@ -87,6 +87,8 @@ export class App implements AppApi {
   }
 
   menu() {
+    // Música del menú: sigue sonando en opciones y créditos; para al entrar en la partida (go).
+    void music.play('menu');
     const saved = load();
     this.show(new MenuScreen({
       newGame: () => this.newGame(),
@@ -108,6 +110,7 @@ export class App implements AppApi {
   patch(g: Game) { this.game = g; }
 
   go(g: Game) {
+    music.stop();
     this.game = g;
     if (g.phase === 'final') clearSave(); else save(g);
     switch (g.phase) {
